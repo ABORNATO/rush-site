@@ -186,81 +186,29 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </div>
 
 <script>
-const CLIENTS = {
-  "af2026xk9": {
-    id: "africa",
-    name: "Africa",
-    expiresAt: "2026-12-31",
-    campanhas: [
-      {
-        id: "cannes2026",
-        name: "Cannes 2026",
-        pecas: [
-          { dimensao: "970x250", label: "Billboard" },
-          { dimensao: "300x250", label: "Medium Rectangle" },
-          { dimensao: "728x90",  label: "Leaderboard" },
-          { dimensao: "300x600", label: "Half Page" },
-        ]
-      },
-      {
-        id: "natal2025",
-        name: "Natal 2025",
-        pecas: [
-          { dimensao: "970x250", label: "Billboard" },
-          { dimensao: "300x250", label: "Medium Rectangle" },
-          { dimensao: "stories", label: "Stories" },
-        ]
+// Clientes carregados de /clients.json
+let CLIENTS = {};
+fetch('/clients.json')
+  .then(r => r.json())
+  .then(data => {
+    CLIENTS = data;
+    // Se ja tem token na URL, faz login automatico
+    const path = window.location.pathname;
+    const match = path.match(/\/ver\/([^/]+)/);
+    if (match) {
+      const token = match[1];
+      const client = CLIENTS[token];
+      if (client && !isExpired(client)) {
+        currentClient = client;
+        renderPortal(client);
+        showScreen('portal');
+      } else if (client && isExpired(client)) {
+        document.getElementById('tokenInput').classList.add('error');
+        document.getElementById('loginExpired').classList.add('show');
       }
-    ]
-  },
-  "bt2026mz3": {
-    id: "betc",
-    name: "BETC",
-    expiresAt: "2026-12-31",
-    campanhas: [
-      {
-        id: "awareness2026",
-        name: "Awareness 2026",
-        pecas: [
-          { dimensao: "300x250", label: "Medium Rectangle" },
-          { dimensao: "stories", label: "Stories" },
-          { dimensao: "reels",   label: "Reels" },
-        ]
-      }
-    ]
-  },
-  "cp2026vw7": {
-    id: "caipe",
-    name: "Caipe",
-    expiresAt: "2026-12-31",
-    campanhas: [
-      {
-        id: "digital2026",
-        name: "Digital 2026",
-        pecas: [
-          { dimensao: "970x250", label: "Billboard" },
-          { dimensao: "300x250", label: "Medium Rectangle" },
-          { dimensao: "728x90",  label: "Leaderboard" },
-        ]
-      }
-    ]
-  },
-  "sa2026vk7": {
-    id: "africa/sadia",
-    name: "Sadia",
-    expiresAt: "2026-12-31",
-    campanhas: [
-      {
-        id: "futebol-032026",
-        name: "Futebol 2026",
-        pecas: [
-          { dimensao: "300x250", label: "Medium Rectangle" },
-          { dimensao: "300x600", label: "Half Page" },
-        ]
-      }
-    ]
-  }
-};
+    }
+  })
+  .catch(e => console.error('Erro ao carregar clients.json:', e));
 
 const BASE_URL = "https://displays.voidda.com.br";
 let currentClient = null;
