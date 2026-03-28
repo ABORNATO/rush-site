@@ -493,7 +493,8 @@ body::before{
         autocomplete="off"
         spellcheck="false"
       >
-      <div class="login-error" id="loginError">Código inválido. Verifique e tente novamente.</div>
+      <div class="login-error" id="loginError" id="loginError">Código inválido. Verifique e tente novamente.</div>
+  <div class="login-error" id="loginExpired">Este acesso expirou. Entre em contato com a Voidda.</div>
       <button class="login-btn" onclick="doLogin()">Entrar</button>
     </div>
     <div class="login-footer">
@@ -574,6 +575,7 @@ const CLIENTS = {
   "af2026xk9": {
     id: "africa",
     name: "Africa",
+    expiresAt: "2026-12-31",
     campanhas: [
       {
         id: "cannes2026",
@@ -599,6 +601,7 @@ const CLIENTS = {
   "bt2026mz3": {
     id: "betc",
     name: "BETC",
+    expiresAt: "2026-12-31",
     campanhas: [
       {
         id: "awareness2026",
@@ -614,6 +617,7 @@ const CLIENTS = {
   "cp2026vw7": {
     id: "caipe",
     name: "Caipe",
+    expiresAt: "2026-12-31",
     campanhas: [
       {
         id: "digital2026",
@@ -634,12 +638,24 @@ let currentPeca = null;
 let bgDark = true;
 
 /* ═══ LOGIN ═══ */
+function isExpired(client) {
+  if (!client.expiresAt) return false;
+  return new Date(client.expiresAt + 'T23:59:59') < new Date();
+}
+
 function doLogin() {
   const token = document.getElementById('tokenInput').value.trim().toLowerCase();
   const client = CLIENTS[token];
   if (!client) {
     document.getElementById('tokenInput').classList.add('error');
     document.getElementById('loginError').classList.add('show');
+    document.getElementById('loginExpired').classList.remove('show');
+    return;
+  }
+  if (isExpired(client)) {
+    document.getElementById('tokenInput').classList.add('error');
+    document.getElementById('loginExpired').classList.add('show');
+    document.getElementById('loginError').classList.remove('show');
     return;
   }
   currentClient = client;
@@ -660,10 +676,13 @@ window.addEventListener('DOMContentLoaded', () => {
   if (match) {
     const token = match[1];
     const client = CLIENTS[token];
-    if (client) {
+    if (client && !isExpired(client)) {
       currentClient = client;
       renderPortal(client);
       showScreen('portal');
+    } else if (client && isExpired(client)) {
+      document.getElementById('tokenInput').classList.add('error');
+      document.getElementById('loginExpired').classList.add('show');
     }
   }
 });
@@ -681,8 +700,11 @@ function renderPortal(client) {
   document.getElementById('portalTitle').textContent = `Suas peças, ${client.name}.`;
 
   const total = client.campanhas.reduce((a, c) => a + c.pecas.length, 0);
+  const expStr = client.expiresAt
+    ? ` · acesso válido até ${new Date(client.expiresAt + 'T12:00:00').toLocaleDateString('pt-BR')}`
+    : '';
   document.getElementById('portalSub').textContent =
-    `${client.campanhas.length} campanha${client.campanhas.length > 1 ? 's' : ''} · ${total} peça${total > 1 ? 's' : ''}`;
+    `${client.campanhas.length} campanha${client.campanhas.length > 1 ? 's' : ''} · ${total} peça${total > 1 ? 's' : ''}${expStr}`;
 
   const grid = document.getElementById('campanhasGrid');
   grid.innerHTML = '';
