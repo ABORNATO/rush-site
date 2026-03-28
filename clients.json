@@ -1,0 +1,120 @@
+{
+  "af2026xk9": {
+    "id": "africa",
+    "name": "Africa",
+    "expiresAt": "2026-12-31",
+    "campanhas": [
+      {
+        "id": "cannes2026",
+        "name": "Cannes 2026",
+        "pecas": [
+          {
+            "dimensao": "970x250",
+            "label": "Billboard"
+          },
+          {
+            "dimensao": "300x250",
+            "label": "Medium Rectangle"
+          },
+          {
+            "dimensao": "728x90",
+            "label": "Leaderboard"
+          },
+          {
+            "dimensao": "300x600",
+            "label": "Half Page"
+          }
+        ]
+      },
+      {
+        "id": "natal2025",
+        "name": "Natal 2025",
+        "pecas": [
+          {
+            "dimensao": "970x250",
+            "label": "Billboard"
+          },
+          {
+            "dimensao": "300x250",
+            "label": "Medium Rectangle"
+          },
+          {
+            "dimensao": "stories",
+            "label": "Stories"
+          }
+        ]
+      }
+    ]
+  },
+  "bt2026mz3": {
+    "id": "betc",
+    "name": "BETC",
+    "expiresAt": "2026-12-31",
+    "campanhas": [
+      {
+        "id": "awareness2026",
+        "name": "Awareness 2026",
+        "pecas": [
+          {
+            "dimensao": "300x250",
+            "label": "Medium Rectangle"
+          },
+          {
+            "dimensao": "stories",
+            "label": "Stories"
+          },
+          {
+            "dimensao": "reels",
+            "label": "Reels"
+          }
+        ]
+      }
+    ]
+  },
+  "cp2026vw7": {
+    "id": "caipe",
+    "name": "Caipe",
+    "expiresAt": "2026-12-31",
+    "campanhas": [
+      {
+        "id": "digital2026",
+        "name": "Digital 2026",
+        "pecas": [
+          {
+            "dimensao": "970x250",
+            "label": "Billboard"
+          },
+          {
+            "dimensao": "300x250",
+            "label": "Medium Rectangle"
+          },
+          {
+            "dimensao": "728x90",
+            "label": "Leaderboard"
+          }
+        ]
+      }
+    ]
+  },
+  "sa2026vk7": {
+    "id": "africa/sadia",
+    "name": "Sadia",
+    "expiresAt": "2026-12-31",
+    "campanhas": [
+      {
+        "id": "futebol-032026",
+        "name": "Futebol 2026",
+        "pecas": [
+          {
+            "dimensao": "300x250",
+            "label": "Medium Rectangle"
+          },
+          {
+            "dimensao": "300x600",
+            "label": "Half Page"
+          }
+        ]
+      }
+    ]
+  }
+}
