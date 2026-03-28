@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/ver", "destination": "/ver.html" },
     { "source": "/ver/:token", "destination": "/ver.html" }
   ]
 }
