@@ -186,83 +186,103 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </div>
 
 <script>
-const BASE_URL = "https://displays.voidda.com.br";
-let CLIENTS = {};
-let currentClient = null;
-let bgDark = true;
+const BASE_URL="https://displays.voidda.com.br";
+let CLIENTS={},cur=null,bgDark=true;
 
-fetch('/clients.json')
-  .then(r => r.json())
-  .then(data => {
-    CLIENTS = data;
-    const path = window.location.pathname;
-    const match = path.match(/\/ver\/([^/]+)/);
-    if (match) {
-      const token = match[1];
-      const client = CLIENTS[token];
-      if (client && !isExpired(client)) { currentClient = client; renderPortal(client); showScreen('portal'); }
-      else if (client && isExpired(client)) { document.getElementById('tokenInput').classList.add('error'); document.getElementById('loginExpired').classList.add('show'); }
-    }
-  })
-  .catch(e => console.error('clients.json error', e));
+fetch('/clients.json').then(r=>r.json()).then(d=>{
+  CLIENTS=d;
+  const m=window.location.pathname.match(/\/ver\/([^/]+)/);
+  if(m){const c=CLIENTS[m[1]];if(c&&!exp(c)){cur=c;render(c);show('portal');}else if(c)showExp();}
+}).catch(console.error);
 
-function isExpired(c) { if (!c.expiresAt) return false; return new Date(c.expiresAt+'T23:59:59') < new Date(); }
-function doLogin() {
-  const t = document.getElementById('tokenInput').value.trim().toLowerCase();
-  const c = CLIENTS[t];
-  if (!c) { document.getElementById('tokenInput').classList.add('error'); document.getElementById('loginError').classList.add('show'); document.getElementById('loginExpired').classList.remove('show'); return; }
-  if (isExpired(c)) { document.getElementById('tokenInput').classList.add('error'); document.getElementById('loginExpired').classList.add('show'); document.getElementById('loginError').classList.remove('show'); return; }
-  currentClient = c; renderPortal(c); showScreen('portal');
+function exp(c){return c.expiresAt?new Date(c.expiresAt+'T23:59:59')<new Date():false;}
+function showExp(){document.getElementById('tokenInput').classList.add('error');document.getElementById('loginExpired').classList.add('show');}
+function doLogin(){
+  const t=document.getElementById('tokenInput').value.trim().toLowerCase(),c=CLIENTS[t];
+  if(!c){document.getElementById('tokenInput').classList.add('error');document.getElementById('loginError').classList.add('show');document.getElementById('loginExpired').classList.remove('show');return;}
+  if(exp(c)){document.getElementById('tokenInput').classList.add('error');document.getElementById('loginExpired').classList.add('show');document.getElementById('loginError').classList.remove('show');return;}
+  cur=c;render(c);show('portal');
 }
-document.getElementById('tokenInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
+document.getElementById('tokenInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter')doLogin();
   document.getElementById('tokenInput').classList.remove('error');
   document.getElementById('loginError').classList.remove('show');
 });
-function doLogout() { currentClient = null; document.getElementById('tokenInput').value = ''; showScreen('login'); }
-function renderPortal(client) {
-  document.getElementById('topbarClientName').textContent = client.name;
-  document.getElementById('topbarAvatar').textContent = client.name.substring(0,2).toUpperCase();
-  document.getElementById('portalTitle').textContent = 'Suas pecas, '+client.name+'.';
-  const total = client.campanhas.reduce((a,c) => a+c.pecas.length, 0);
-  const expStr = client.expiresAt ? ' · acesso valido ate '+new Date(client.expiresAt+'T12:00:00').toLocaleDateString('pt-BR') : '';
-  document.getElementById('portalSub').textContent = client.campanhas.length+' campanha'+(client.campanhas.length>1?'s':'')+' · '+total+' peca'+(total>1?'s':'')+expStr;
-  const grid = document.getElementById('campanhasGrid');
-  grid.innerHTML = '';
-  if (client.campanhas.length === 0) { grid.innerHTML = '<div class="empty-state"><h3>Nenhuma peca disponivel</h3><p>Em breve suas pecas aparecerao aqui.</p></div>'; return; }
-  client.campanhas.forEach((camp, ci) => {
-    const card = document.createElement('div');
-    card.className = 'campanha-card';
-    card.style.animationDelay = (ci*0.07)+'s';
-    card.innerHTML = '<div class="campanha-head" onclick="toggleCampanha(this.parentElement)"><div class="campanha-info"><div class="campanha-name">'+camp.name+'</div><div class="campanha-meta">'+camp.pecas.length+' peca'+(camp.pecas.length>1?'s':'')+'</div></div><div class="campanha-count">'+camp.pecas.length+' pecas</div></div><div class="campanha-pecas" id="pecas-'+ci+'">'+camp.pecas.map(p => '<div class="peca-btn"><div><div class="peca-dim">'+p.dimensao+'</div><div class="peca-label">'+p.label+'</div></div><div class="peca-actions"><div class="peca-action" title="Ver inline" onclick="openViewer(''+client.id+'',''+camp.id+'',''+p.dimensao+'',''+p.label+'',''+camp.name+'')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><a class="peca-action" title="Abrir no browser" href="'+BASE_URL+'/'+client.id+'/'+camp.id+'/'+p.dimensao+'/" target="_blank"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>').join('')+'</div>';
+function doLogout(){cur=null;document.getElementById('tokenInput').value='';show('login');}
+
+async function listDirs(path){
+  try{
+    const r=await fetch('/api/pecas?path='+encodeURIComponent(path));
+    if(!r.ok)return[];
+    return r.json();
+  }catch(e){return[];}
+}
+
+async function render(client){
+  document.getElementById('topbarClientName').textContent=client.name;
+  document.getElementById('topbarAvatar').textContent=client.name.substring(0,2).toUpperCase();
+  document.getElementById('portalTitle').textContent='Suas pecas, '+client.name+'.';
+  document.getElementById('portalSub').textContent='Carregando...';
+  const grid=document.getElementById('campanhasGrid');
+  grid.innerHTML='';
+  const camps=await Promise.all(
+    client.campanhas.map(async camp=>({...camp,pecas:await listDirs(client.path+'/'+camp.id)}))
+  );
+  const total=camps.reduce((a,c)=>a+c.pecas.length,0);
+  const ex=client.expiresAt?' · acesso valido ate '+new Date(client.expiresAt+'T12:00:00').toLocaleDateString('pt-BR'):'';
+  document.getElementById('portalSub').textContent=camps.length+' campanha'+(camps.length>1?'s':'')+' · '+total+' peca'+(total>1?'s':'')+ex;
+  if(!camps.length){grid.innerHTML='<div class="empty-state"><h3>Nenhuma peca disponivel</h3></div>';return;}
+  camps.forEach((camp,ci)=>{
+    const card=document.createElement('div');
+    card.className='campanha-card';
+    card.style.animationDelay=ci*0.07+'s';
+    const ph=camp.pecas.length===0
+      ?'<div style="padding:12px 22px;font-size:12px;color:var(--text3)">Nenhuma peca — aguarde o Motion subir os arquivos</div>'
+      :camp.pecas.map(dim=>{
+        const url=BASE_URL+'/'+client.path+'/'+camp.id+'/'+dim+'/';
+        return '<div class="peca-btn"><div><div class="peca-dim">'+dim+'</div></div>'
+          +'<div class="peca-actions">'
+          +'<div class="peca-action" title="Ver" onclick="openV(''+client.path+'',''+camp.id+'',''+dim+'',''+camp.name+'')">'
+          +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>'
+          +'<a class="peca-action" href="'+url+'" target="_blank" title="Abrir no browser">'
+          +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>'
+          +'</div></div>';
+      }).join('');
+    card.innerHTML='<div class="campanha-head" onclick="toggleCampanha(this.parentElement)">'
+      +'<div class="campanha-info"><div class="campanha-name">'+camp.name+'</div>'
+      +'<div class="campanha-meta">'+camp.pecas.length+' peca'+(camp.pecas.length!==1?'s':'')+'</div></div>'
+      +'<div class="campanha-count">'+camp.pecas.length+' pecas</div></div>'
+      +'<div class="campanha-pecas">'+ph+'</div>';
     grid.appendChild(card);
   });
 }
-function toggleCampanha(card) { card.classList.toggle('open'); }
-function openViewer(clientId, campId, dimensao, label, campName) {
-  const url = BASE_URL+'/'+clientId+'/'+campId+'/'+dimensao+'/';
-  const parts = dimensao.match(/^(\d+)x(\d+)$/);
-  const w = parts ? parseInt(parts[1]) : 400;
-  const h = parts ? parseInt(parts[2]) : 300;
-  document.getElementById('viewerBreadcrumb').textContent = currentClient.name+' · '+campName+' · '+dimensao;
-  document.getElementById('viewerOpenLink').href = url;
-  document.getElementById('viewerSizeDisplay').textContent = w+' x '+h+' px';
-  document.getElementById('viewerMeta').innerHTML = '<span class="viewer-tag">'+dimensao+'</span><span class="viewer-tag">'+label+'</span><span class="viewer-tag">'+campName+'</span>';
-  const frame = document.getElementById('viewerFrame');
-  const bg = document.getElementById('viewerFrameBg');
-  frame.style.width = w+'px'; frame.style.height = h+'px';
-  bg.style.width = (w+48)+'px'; bg.style.height = (h+48)+'px';
-  frame.src = url;
-  showScreen('viewer');
+function toggleCampanha(card){card.classList.toggle('open');}
+function openV(cp,cid,dim,cn){
+  const url=BASE_URL+'/'+cp+'/'+cid+'/'+dim+'/';
+  const p=dim.match(/^(\d+)x(\d+)$/);
+  const w=p?parseInt(p[1]):400,h=p?parseInt(p[2]):300;
+  document.getElementById('viewerBreadcrumb').textContent=cur.name+' · '+cn+' · '+dim;
+  document.getElementById('viewerOpenLink').href=url;
+  document.getElementById('viewerSizeDisplay').textContent=w+' x '+h+' px';
+  document.getElementById('viewerMeta').innerHTML='<span class="viewer-tag">'+dim+'</span><span class="viewer-tag">'+cn+'</span>';
+  const f=document.getElementById('viewerFrame'),bg=document.getElementById('viewerFrameBg');
+  f.style.width=w+'px';f.style.height=h+'px';
+  bg.style.width=(w+48)+'px';bg.style.height=(h+48)+'px';
+  f.src=url;show('viewer');
 }
-function backToPortal() { document.getElementById('viewerFrame').src = ''; showScreen('portal'); }
-function reloadFrame() { const f=document.getElementById('viewerFrame'); f.src=f.src; }
-function toggleBg() {
-  const bg = document.getElementById('viewerFrameBg');
-  bgDark = !bgDark;
-  bg.style.background = bgDark ? 'repeating-conic-gradient(#1a2236 0% 25%,#111827 0% 50%) 0 0/20px 20px' : 'repeating-conic-gradient(#e5e7eb 0% 25%,#ffffff 0% 50%) 0 0/20px 20px';
+function backToPortal(){document.getElementById('viewerFrame').src='';show('portal');}
+function reloadFrame(){const f=document.getElementById('viewerFrame');f.src=f.src;}
+function toggleBg(){
+  const bg=document.getElementById('viewerFrameBg');bgDark=!bgDark;
+  bg.style.background=bgDark
+    ?'repeating-conic-gradient(#1a2236 0% 25%,#111827 0% 50%) 0 0/20px 20px'
+    :'repeating-conic-gradient(#e5e7eb 0% 25%,#ffffff 0% 50%) 0 0/20px 20px';
 }
-function showScreen(name) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); window.scrollTo(0,0); }
+function show(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+  window.scrollTo(0,0);
+}
 </script>
 </body>
 </html>
