@@ -218,6 +218,42 @@ async function listDirs(path){
   }catch(e){return[];}
 }
 
+// Cria botão de peca usando createElement (sem aspas aninhadas em HTML)
+function makePecaBtn(clientPath,campId,dim,campName){
+  const wrap=document.createElement('div');
+  wrap.className='peca-btn';
+
+  const info=document.createElement('div');
+  const dimEl=document.createElement('div');
+  dimEl.className='peca-dim';
+  dimEl.textContent=dim;
+  info.appendChild(dimEl);
+
+  const acts=document.createElement('div');
+  acts.className='peca-actions';
+
+  const url=BASE_URL+'/'+clientPath+'/'+campId+'/'+dim+'/';
+
+  const viewBtn=document.createElement('div');
+  viewBtn.className='peca-action';
+  viewBtn.title='Ver inline';
+  viewBtn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  viewBtn.addEventListener('click',()=>openV(clientPath,campId,dim,campName));
+
+  const openLink=document.createElement('a');
+  openLink.className='peca-action';
+  openLink.href=url;
+  openLink.target='_blank';
+  openLink.title='Abrir no browser';
+  openLink.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>';
+
+  acts.appendChild(viewBtn);
+  acts.appendChild(openLink);
+  wrap.appendChild(info);
+  wrap.appendChild(acts);
+  return wrap;
+}
+
 async function render(client){
   document.getElementById('topbarClientName').textContent=client.name;
   document.getElementById('topbarAvatar').textContent=client.name.substring(0,2).toUpperCase();
@@ -236,27 +272,32 @@ async function render(client){
     const card=document.createElement('div');
     card.className='campanha-card';
     card.style.animationDelay=ci*0.07+'s';
-    const ph=camp.pecas.length===0
-      ?'<div style="padding:12px 22px;font-size:12px;color:var(--text3)">Nenhuma peca — aguarde o Motion subir os arquivos</div>'
-      :camp.pecas.map(dim=>{
-        const url=BASE_URL+'/'+client.path+'/'+camp.id+'/'+dim+'/';
-        return '<div class="peca-btn"><div><div class="peca-dim">'+dim+'</div></div>'
-          +'<div class="peca-actions">'
-          +'<div class="peca-action" title="Ver" onclick="openV(''+client.path+'',''+camp.id+'',''+dim+'',''+camp.name+'')">'
-          +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>'
-          +'<a class="peca-action" href="'+url+'" target="_blank" title="Abrir no browser">'
-          +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>'
-          +'</div></div>';
-      }).join('');
-    card.innerHTML='<div class="campanha-head" onclick="toggleCampanha(this.parentElement)">'
-      +'<div class="campanha-info"><div class="campanha-name">'+camp.name+'</div>'
+
+    // Head
+    const head=document.createElement('div');
+    head.className='campanha-head';
+    head.innerHTML='<div class="campanha-info"><div class="campanha-name">'+camp.name+'</div>'
       +'<div class="campanha-meta">'+camp.pecas.length+' peca'+(camp.pecas.length!==1?'s':'')+'</div></div>'
-      +'<div class="campanha-count">'+camp.pecas.length+' pecas</div></div>'
-      +'<div class="campanha-pecas">'+ph+'</div>';
+      +'<div class="campanha-count">'+camp.pecas.length+' pecas</div>';
+    head.addEventListener('click',()=>card.classList.toggle('open'));
+
+    // Pecas
+    const pecasDiv=document.createElement('div');
+    pecasDiv.className='campanha-pecas';
+    if(camp.pecas.length===0){
+      pecasDiv.innerHTML='<div style="padding:12px 22px;font-size:12px;color:var(--text3)">Nenhuma peca — aguarde o Motion subir os arquivos</div>';
+    } else {
+      camp.pecas.forEach(dim=>{
+        pecasDiv.appendChild(makePecaBtn(client.path,camp.id,dim,camp.name));
+      });
+    }
+
+    card.appendChild(head);
+    card.appendChild(pecasDiv);
     grid.appendChild(card);
   });
 }
-function toggleCampanha(card){card.classList.toggle('open');}
+
 function openV(cp,cid,dim,cn){
   const url=BASE_URL+'/'+cp+'/'+cid+'/'+dim+'/';
   const p=dim.match(/^(\d+)x(\d+)$/);
