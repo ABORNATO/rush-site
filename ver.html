@@ -93,6 +93,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .empty-state p{font-size:14px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.portal-main{padding:24px 16px}.topbar{padding:0 16px}.portal-title{font-size:24px}.campanhas-grid{grid-template-columns:1fr}.viewer-main{padding:16px}}
+
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.filter-chip{padding:5px 12px;border-radius:20px;font-family:var(--font-mono,monospace);font-size:11px;cursor:pointer;border:1px solid var(--border,#2a2a2a);color:var(--text3,#888);background:transparent;transition:all .15s;}
+.filter-chip:hover{border-color:var(--text2,#aaa);color:var(--text,#f0f0f0);}
+.filter-chip.active{background:var(--accent,#c8f53a);color:#0a0a0a;border-color:var(--accent,#c8f53a);}
+.peca-ver{font-family:var(--font-mono,monospace);font-size:10px;font-weight:600;color:var(--accent,#c8f53a);margin-left:4px;}
+.peca-updated{display:inline-block;font-family:var(--font-mono,monospace);font-size:9px;background:rgba(200,245,58,0.15);color:var(--accent,#c8f53a);border:1px solid rgba(200,245,58,0.3);border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -187,10 +194,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 <script>
 const BASE_URL="https://displays.voidda.com.br";
-let CLIENTS={},cur=null,bgDark=true;
+let CLIENTS={},cur=null,bgDark=true,logs=[];
+let activeFilter='todas';
 
-fetch('/clients.json').then(r=>r.json()).then(d=>{
-  CLIENTS=d;
+Promise.all([
+  fetch('/clients.json').then(r=>r.json()),
+  fetch('/api/logs').then(r=>r.ok?r.json():[]).catch(()=>[])
+]).then(([clients,logsData])=>{
+  CLIENTS=clients;logs=logsData||[];
   const m=window.location.pathname.match(/\/ver\/([^/]+)/);
   if(m){const c=CLIENTS[m[1]];if(c&&!exp(c)){cur=c;render(c);show('portal');}else if(c)showExp();}
 }).catch(console.error);
@@ -211,47 +222,21 @@ document.getElementById('tokenInput').addEventListener('keydown',e=>{
 function doLogout(){cur=null;document.getElementById('tokenInput').value='';show('login');}
 
 async function listDirs(path){
-  try{
-    const r=await fetch('/api/pecas?path='+encodeURIComponent(path));
-    if(!r.ok)return[];
-    return r.json();
-  }catch(e){return[];}
+  try{const r=await fetch('/api/pecas?path='+encodeURIComponent(path));if(!r.ok)return[];return r.json();}catch(e){return[];}
 }
-
-// Cria botão de peca usando createElement (sem aspas aninhadas em HTML)
-function makePecaBtn(clientPath,campId,dim,campName){
-  const wrap=document.createElement('div');
-  wrap.className='peca-btn';
-
-  const info=document.createElement('div');
-  const dimEl=document.createElement('div');
-  dimEl.className='peca-dim';
-  dimEl.textContent=dim;
-  info.appendChild(dimEl);
-
-  const acts=document.createElement('div');
-  acts.className='peca-actions';
-
-  const url=BASE_URL+'/'+clientPath+'/'+campId+'/'+dim+'/';
-
-  const viewBtn=document.createElement('div');
-  viewBtn.className='peca-action';
-  viewBtn.title='Ver inline';
-  viewBtn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-  viewBtn.addEventListener('click',()=>openV(clientPath,campId,dim,campName));
-
-  const openLink=document.createElement('a');
-  openLink.className='peca-action';
-  openLink.href=url;
-  openLink.target='_blank';
-  openLink.title='Abrir no browser';
-  openLink.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>';
-
-  acts.appendChild(viewBtn);
-  acts.appendChild(openLink);
-  wrap.appendChild(info);
-  wrap.appendChild(acts);
-  return wrap;
+function getVersion(basePath,formato){
+  return logs.filter(l=>l.path===basePath&&l.formato===formato&&!l.disabled).length;
+}
+function isUpdated(basePath,formato){
+  const fl=logs.filter(l=>l.path===basePath&&l.formato===formato&&!l.disabled);
+  if(!fl.length)return false;
+  const latest=fl.sort((a,b)=>new Date(b.data)-new Date(a.data))[0];
+  return(new Date()-new Date(latest.data))<48*60*60*1000;
+}
+function getPecaUrl(basePath,formato){
+  const ver=getVersion(basePath,formato);
+  if(ver>0)return BASE_URL+'/'+basePath+'/'+formato+'/v'+ver+'/';
+  return BASE_URL+'/'+basePath+'/'+formato+'/';
 }
 
 async function render(client){
@@ -267,57 +252,87 @@ async function render(client){
   const total=camps.reduce((a,c)=>a+c.pecas.length,0);
   const ex=client.expiresAt?' · acesso valido ate '+new Date(client.expiresAt+'T12:00:00').toLocaleDateString('pt-BR'):'';
   document.getElementById('portalSub').textContent=camps.length+' campanha'+(camps.length>1?'s':'')+' · '+total+' peca'+(total>1?'s':'')+ex;
-  if(!camps.length){grid.innerHTML='<div class="empty-state"><h3>Nenhuma peca disponivel</h3></div>';return;}
-  camps.forEach((camp,ci)=>{
-    const card=document.createElement('div');
-    card.className='campanha-card';
-    card.style.animationDelay=ci*0.07+'s';
 
-    // Head
-    const head=document.createElement('div');
-    head.className='campanha-head';
+  // Filtros de campanha
+  const oldFilter=document.getElementById('filter-row');if(oldFilter)oldFilter.remove();
+  if(camps.length>1){
+    const filterArea=document.createElement('div');filterArea.className='filter-row';filterArea.id='filter-row';
+    const allChip=document.createElement('button');allChip.className='filter-chip active';allChip.textContent='todas';
+    allChip.addEventListener('click',()=>{activeFilter='todas';updateFilterChips();renderCamps(camps,client,grid);});
+    filterArea.appendChild(allChip);
+    camps.forEach(camp=>{
+      const chip=document.createElement('button');chip.className='filter-chip';chip.textContent=camp.name;chip.dataset.campId=camp.id;
+      chip.addEventListener('click',()=>{activeFilter=camp.id;updateFilterChips();renderCamps(camps,client,grid);});
+      filterArea.appendChild(chip);
+    });
+    grid.parentNode.insertBefore(filterArea,grid);
+  }
+  if(!camps.length){grid.innerHTML='<div class="empty-state"><h3>Nenhuma peca disponivel</h3></div>';return;}
+  renderCamps(camps,client,grid);
+}
+function updateFilterChips(){
+  document.querySelectorAll('.filter-chip').forEach(c=>{
+    c.classList.toggle('active',c.textContent==='todas'?activeFilter==='todas':c.dataset.campId===activeFilter);
+  });
+}
+function renderCamps(camps,client,grid){
+  grid.innerHTML='';
+  const filtered=activeFilter==='todas'?camps:camps.filter(c=>c.id===activeFilter);
+  if(!filtered.length){grid.innerHTML='<div class="empty-state"><h3>Nenhuma peca para este filtro</h3></div>';return;}
+  filtered.forEach((camp,ci)=>{
+    const card=document.createElement('div');card.className='campanha-card';card.style.animationDelay=ci*0.07+'s';
+    const head=document.createElement('div');head.className='campanha-head';
     head.innerHTML='<div class="campanha-info"><div class="campanha-name">'+camp.name+'</div>'
       +'<div class="campanha-meta">'+camp.pecas.length+' peca'+(camp.pecas.length!==1?'s':'')+'</div></div>'
       +'<div class="campanha-count">'+camp.pecas.length+' pecas</div>';
     head.addEventListener('click',()=>card.classList.toggle('open'));
-
-    // Pecas
-    const pecasDiv=document.createElement('div');
-    pecasDiv.className='campanha-pecas';
+    const pecasDiv=document.createElement('div');pecasDiv.className='campanha-pecas';
     if(camp.pecas.length===0){
       pecasDiv.innerHTML='<div style="padding:12px 22px;font-size:12px;color:var(--text3)">Nenhuma peca — aguarde o Motion subir os arquivos</div>';
-    } else {
+    }else{
       camp.pecas.forEach(dim=>{
-        pecasDiv.appendChild(makePecaBtn(client.path,camp.id,dim,camp.name));
+        const basePath=client.path+'/'+camp.id;
+        const ver=getVersion(basePath,dim);
+        const updated=isUpdated(basePath,dim);
+        const url=getPecaUrl(basePath,dim);
+        const btn=document.createElement('div');btn.className='peca-btn';
+        const left=document.createElement('div');left.style.display='flex';left.style.alignItems='center';
+        const dimEl=document.createElement('div');dimEl.className='peca-dim';dimEl.textContent=dim;
+        left.appendChild(dimEl);
+        if(ver>0){const ve=document.createElement('span');ve.className='peca-ver';ve.textContent='v'+ver;left.appendChild(ve);}
+        if(updated){const ue=document.createElement('span');ue.className='peca-updated';ue.textContent='novo';left.appendChild(ue);}
+        const acts=document.createElement('div');acts.className='peca-actions';
+        const viewBtn=document.createElement('div');viewBtn.className='peca-action';viewBtn.title='Ver';
+        viewBtn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        viewBtn.addEventListener('click',()=>openV(client.path,camp.id,dim,camp.name,ver));
+        const openLink=document.createElement('a');openLink.className='peca-action';openLink.href=url;openLink.target='_blank';
+        openLink.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>';
+        acts.appendChild(viewBtn);acts.appendChild(openLink);
+        btn.appendChild(left);btn.appendChild(acts);
+        pecasDiv.appendChild(btn);
       });
     }
-
-    card.appendChild(head);
-    card.appendChild(pecasDiv);
+    card.appendChild(head);card.appendChild(pecasDiv);
     grid.appendChild(card);
   });
 }
-
-function openV(cp,cid,dim,cn){
-  const url=BASE_URL+'/'+cp+'/'+cid+'/'+dim+'/';
+function openV(cp,cid,dim,cn,ver){
+  const url=getPecaUrl(cp+'/'+cid,dim);
   const p=dim.match(/^(\d+)x(\d+)$/);
   const w=p?parseInt(p[1]):400,h=p?parseInt(p[2]):300;
-  document.getElementById('viewerBreadcrumb').textContent=cur.name+' · '+cn+' · '+dim;
+  document.getElementById('viewerBreadcrumb').textContent=cur.name+' · '+cn+' · '+dim+(ver?' v'+ver:'');
   document.getElementById('viewerOpenLink').href=url;
   document.getElementById('viewerSizeDisplay').textContent=w+' x '+h+' px';
-  document.getElementById('viewerMeta').innerHTML='<span class="viewer-tag">'+dim+'</span><span class="viewer-tag">'+cn+'</span>';
+  document.getElementById('viewerMeta').innerHTML='<span class="viewer-tag">'+dim+'</span><span class="viewer-tag">'+cn+'</span>'+(ver?'<span class="viewer-tag">v'+ver+'</span>':'');
   const f=document.getElementById('viewerFrame'),bg=document.getElementById('viewerFrameBg');
-  f.style.width=w+'px';f.style.height=h+'px';
-  bg.style.width=(w+48)+'px';bg.style.height=(h+48)+'px';
+  f.style.width=w+'px';f.style.height=h+'px';bg.style.width=(w+48)+'px';bg.style.height=(h+48)+'px';
   f.src=url;show('viewer');
 }
 function backToPortal(){document.getElementById('viewerFrame').src='';show('portal');}
 function reloadFrame(){const f=document.getElementById('viewerFrame');f.src=f.src;}
 function toggleBg(){
   const bg=document.getElementById('viewerFrameBg');bgDark=!bgDark;
-  bg.style.background=bgDark
-    ?'repeating-conic-gradient(#1a2236 0% 25%,#111827 0% 50%) 0 0/20px 20px'
-    :'repeating-conic-gradient(#e5e7eb 0% 25%,#ffffff 0% 50%) 0 0/20px 20px';
+  bg.style.background=bgDark?'repeating-conic-gradient(#1a2236 0% 25%,#111827 0% 50%) 0 0/20px 20px':'repeating-conic-gradient(#e5e7eb 0% 25%,#ffffff 0% 50%) 0 0/20px 20px';
 }
 function show(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
