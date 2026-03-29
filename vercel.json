@@ -1,8 +1,28 @@
 {
   "rewrites": [
-    { "source": "/ver",        "destination": "/ver.html" },
-    { "source": "/ver/:token", "destination": "/ver.html" },
-    { "source": "/upload",     "destination": "/upload.html" },
-    { "source": "/upload/:token", "destination": "/upload.html" }
+    {
+      "source": "/ver",
+      "destination": "/ver.html"
+    },
+    {
+      "source": "/ver/",
+      "destination": "/ver.html"
+    },
+    {
+      "source": "/ver/:token",
+      "destination": "/ver.html"
+    },
+    {
+      "source": "/upload",
+      "destination": "/upload.html"
+    },
+    {
+      "source": "/upload/",
+      "destination": "/upload.html"
+    },
+    {
+      "source": "/upload/:token",
+      "destination": "/upload.html"
+    }
   ]
 }
