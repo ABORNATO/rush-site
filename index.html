@@ -37,6 +37,7 @@
     html{scroll-behavior:smooth}
     body{background:radial-gradient(circle at top, #151b2b 0%, var(--bg) 38%), var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
     a{text-decoration:none;color:inherit}
+    .rush-name{color:var(--blue);font-weight:800;letter-spacing:.02em;text-shadow:0 0 20px rgba(91,124,255,.3)}
     .container{width:min(1220px,calc(100% - 40px));margin:0 auto}
     .noise,.grid,.glow{position:fixed;inset:0;pointer-events:none;z-index:0}
     .noise{opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -71,26 +72,26 @@
     .hero-note{display:flex;gap:14px;align-items:flex-start;margin-top:24px;color:#9eabc9;font-size:13px;max-width:540px}
     .hero-note strong{color:var(--text)}
 
-    .hero-stage{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:32px;overflow:hidden;box-shadow:var(--shadow);min-height:620px}
+    .hero-stage{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:32px;overflow:hidden;box-shadow:var(--shadow);min-height:360px}
     .stage-top{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03)}
     .stage-title{font:700 13px/1 var(--mono);letter-spacing:.12em;color:#d5dcf3;text-transform:uppercase}
     .stage-badge{padding:8px 12px;border-radius:999px;background:rgba(212,255,63,.1);border:1px solid rgba(212,255,63,.28);color:var(--acid);font:600 11px/1 var(--mono);letter-spacing:.08em}
-    .stage-body{position:relative;padding:22px 18px 26px;height:560px}
+    .stage-body{position:relative;padding:18px 18px 22px;height:280px}
     .belt{position:absolute;left:16px;right:16px;top:48%;height:92px;transform:translateY(-50%);border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.1);background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.01));overflow:hidden;border-radius:18px}
     .belt:before,.belt:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 46px, rgba(255,255,255,.05) 46px 48px);opacity:.7;animation:track 16s linear infinite}
     .belt:after{opacity:.35;transform:translateX(28px)}
     @keyframes track{from{transform:translateX(0)}to{transform:translateX(96px)}}
-    .job{position:absolute;width:180px;height:76px;border-radius:18px;padding:10px 12px 8px;display:flex;flex-direction:column;justify-content:space-between;color:white;box-shadow:0 18px 36px rgba(0,0,0,.35);animation:move 14s linear infinite;overflow:hidden}
-    .job:nth-child(1){top:24%;animation-delay:-1s;background:linear-gradient(135deg,#ff6a3d,#ff8c52)}
-    .job:nth-child(2){top:46%;animation-delay:-6s;background:linear-gradient(135deg,#5675ff,#8097ff)}
-    .job:nth-child(3){top:68%;animation-delay:-10s;background:linear-gradient(135deg,#25d68a,#67efad)}
+    .job{position:absolute;width:170px;height:68px;border-radius:16px;padding:8px 10px 7px;display:flex;flex-direction:column;justify-content:space-between;color:white;box-shadow:0 14px 30px rgba(0,0,0,.35);animation:move 14s linear infinite;overflow:hidden}
+    .job:nth-child(3){top:16%;animation-delay:-1s;background:linear-gradient(135deg,#ff6a3d,#ff8c52)}
+    .job:nth-child(4){top:42%;animation-delay:-6s;background:linear-gradient(135deg,#5675ff,#8097ff)}
+    .job:nth-child(5){top:68%;animation-delay:-10s;background:linear-gradient(135deg,#25d68a,#67efad)}
     .job small{font:600 9px/1 var(--mono);letter-spacing:.09em;opacity:.88;text-transform:uppercase}
     .job strong{font-size:11px;line-height:1.2;letter-spacing:-.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .job span{font-size:10px;opacity:.88;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     @keyframes move{from{left:-220px}to{left:calc(100% + 40px)}}
     .nodes{position:absolute;inset:0;padding:0 24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
-    .node{display:flex;flex-direction:column;align-items:center;gap:8px;transform:translateY(-118px)}
-    .node.down{transform:translateY(118px)}
+    .node{display:flex;flex-direction:column;align-items:center;gap:6px;transform:translateY(-60px)}
+    .node.down{transform:translateY(60px)}
     .node-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.18);background:var(--panel);box-shadow:0 0 0 10px rgba(255,255,255,.02)}
     .node.orange .node-dot{background:rgba(255,106,61,.22);border-color:rgba(255,106,61,.55)}
     .node.blue .node-dot{background:rgba(91,124,255,.22);border-color:rgba(91,124,255,.55)}
@@ -127,22 +128,22 @@
     .chaos-item strong{display:block;font-size:28px;letter-spacing:-.04em;font-family:var(--display);margin-bottom:6px}
     .chaos-item p{color:#b7c0da;line-height:1.6}
 
-    .flow-scene{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
-    .pipeline-map{padding:28px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);border-radius:32px;box-shadow:var(--shadow);overflow-x:auto}
+    .flow-scene{display:grid;grid-template-columns:1fr;gap:24px}
+    .pipeline-map{padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);border-radius:32px;box-shadow:var(--shadow);overflow-x:auto}
     .pipeline-map::-webkit-scrollbar{height:10px}
     .pipeline-map::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:999px}
-    .pipeline-rail{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:14px;align-items:start;min-width:1180px}
-    .step-card{position:relative;min-height:178px;padding:18px;border-radius:24px;background:var(--panel);border:1px solid rgba(255,255,255,.08)}
-    .step-card:after{content:'';position:absolute;top:38px;right:-14px;width:28px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.14),rgba(255,255,255,.04))}
+    .pipeline-rail{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:start}
+    .step-card{position:relative;min-height:160px;padding:16px;border-radius:20px;background:var(--panel);border:1px solid rgba(255,255,255,.08)}
+    .step-card:after{content:'';position:absolute;top:34px;right:-12px;width:24px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.14),rgba(255,255,255,.04))}
     .step-card:last-child:after{display:none}
-    .step-tag{font:700 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#9eb0db;margin-bottom:10px}
-    .step-card h3{font-family:var(--display);font-size:22px;line-height:1;letter-spacing:-.04em;margin-bottom:12px}
-    .step-card p{font-size:13px;line-height:1.55;color:#aeb8d1}
+    .step-tag{font:700 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#9eb0db;margin-bottom:8px}
+    .step-card h3{font-family:var(--display);font-size:18px;line-height:1.1;letter-spacing:-.04em;margin-bottom:10px}
+    .step-card p{font-size:12px;line-height:1.5;color:#aeb8d1}
     .step-card.orange{background:linear-gradient(180deg,rgba(255,106,61,.14),rgba(255,106,61,.04))}
     .step-card.blue{background:linear-gradient(180deg,rgba(91,124,255,.14),rgba(91,124,255,.04))}
     .step-card.green{background:linear-gradient(180deg,rgba(77,240,143,.14),rgba(77,240,143,.04))}
     .step-card.violet{background:linear-gradient(180deg,rgba(159,124,255,.14),rgba(159,124,255,.04))}
-    .flow-side{display:grid;gap:18px}
+    .flow-side{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
     .impact{padding:26px;border-radius:28px;background:linear-gradient(135deg,rgba(255,106,61,.12),rgba(255,106,61,.04));border:1px solid rgba(255,106,61,.18)}
     .impact h4{font-family:var(--display);font-size:24px;letter-spacing:-.04em;margin-bottom:10px}
     .impact p{color:#e4d6d1;line-height:1.65}
@@ -217,25 +218,73 @@
     @media (max-width: 1100px){
       .hero-grid,.section-head,.chaos-board,.flow-scene,.factory-grid,.tech-wrap,.cta-box{grid-template-columns:1fr}
       .section-head p,.cta-side{justify-self:start}
-      .pipeline-rail{grid-template-columns:repeat(2,1fr)}
-      .step-card:after{display:none}
       .modules-grid{grid-template-columns:1fr 1fr}
     }
     @media (max-width: 760px){
       .nav-links{display:none}
       h1{font-size:52px}
-      .hero-stage{min-height:520px}
-      .stage-body{height:460px}
+      .hero-stage{min-height:300px}
+      .stage-body{height:240px}
       .job{width:150px;height:60px;padding:8px 10px 6px}
       .nodes{padding:0 12px}
       .node span{font-size:9px}
-      .pipeline-rail,.modules-grid,.compare{grid-template-columns:1fr}
+      .pipeline-rail{grid-template-columns:repeat(7,140px)}
+      .flow-side{grid-template-columns:1fr}
+      .modules-grid,.compare{grid-template-columns:1fr}
       .paper{width:180px}
       .paper.one{left:18px}
       .paper.two{right:14px;top:110px}
       .paper.three{left:46px}
       .cta-side{min-width:0;width:100%}
     }
+
+    .quiz-inline{max-width:680px;margin:0 auto;padding:0 0 40px}
+    .qi-inner{padding:28px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);border-radius:28px;box-shadow:var(--shadow)}
+    .qi-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .qi-label{font:700 10px/1 var(--mono);letter-spacing:.12em;color:#9fb0d9;text-transform:uppercase}
+    .qi-dots{display:flex;gap:6px}
+    .qi-dot{width:28px;height:4px;border-radius:2px;background:rgba(255,255,255,.1);transition:.3s}
+    .qi-dot.done{background:var(--blue)}
+    .qi-dot.active{background:var(--blue2)}
+    .qi-question{font-family:var(--display);font-size:20px;line-height:1.3;letter-spacing:-.03em;margin-bottom:22px;min-height:52px;color:var(--text)}
+    .qi-buttons{display:flex;gap:12px;flex-wrap:wrap}
+    .qi-btn{flex:1;min-width:calc(50% - 6px);padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font:600 14px/1.2 var(--font);cursor:pointer;transition:.2s;color:var(--text)}
+    .qi-btn:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
+    .qi-btn:active{transform:scale(.98)}
+    .qi-btn.sim{border-color:rgba(77,240,143,.3);color:var(--green)}
+    .qi-btn.sim:hover{background:rgba(77,240,143,.1)}
+    .qi-btn.nao{border-color:rgba(255,77,97,.3);color:var(--red)}
+    .qi-btn.nao:hover{background:rgba(255,77,97,.1)}
+    .qi-done{text-align:center;padding:22px;background:linear-gradient(135deg,rgba(91,124,255,.1),rgba(91,124,255,.04));border:1px solid rgba(91,124,255,.2);border-radius:28px;font:600 15px/1 var(--font);color:var(--blue2)}
+    .qi-done .qi-bolt{display:inline-block;font-size:18px;margin-right:8px}
+    .quiz-counter{position:fixed;bottom:24px;right:24px;z-index:50;display:none;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:rgba(8,9,13,.85);backdrop-filter:blur(12px);border:1px solid rgba(91,124,255,.3);box-shadow:0 8px 32px rgba(0,0,0,.4);font:700 14px/1 var(--mono);color:var(--blue2);transition:.3s}
+    .quiz-counter.visible{display:flex}
+    .quiz-counter .qc-bolt{font-size:16px;transition:.3s}
+    .quiz-counter.celebrate{border-color:var(--blue);box-shadow:0 0 30px rgba(91,124,255,.4)}
+    .quiz-counter.celebrate .qc-bolt{transform:scale(1.6);filter:drop-shadow(0 0 8px rgba(91,124,255,.8))}
+    .qc-reward{position:absolute;top:-8px;right:-4px;font:800 13px/1 var(--display);color:var(--acid);opacity:0;transition:.4s;pointer-events:none}
+    .qc-reward.pop{opacity:1;transform:translateY(-18px);transition:opacity .4s,transform .6s}
+    .qi-fade{animation:qifade .3s ease}
+    @keyframes qifade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    #quiz-final{max-width:680px;margin:0 auto}
+    .qf-verdict{text-align:center;padding:32px;border-radius:28px;background:linear-gradient(135deg,rgba(91,124,255,.12),rgba(91,124,255,.04));border:1px solid rgba(91,124,255,.2);margin-bottom:24px}
+    .qf-title{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.04em;margin-bottom:8px}
+    .qf-sub{font-size:15px;color:#b5bfd9;line-height:1.55;max-width:520px;margin:0 auto}
+    .qf-bar-wrap{height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin:20px auto 8px;max-width:400px;overflow:hidden}
+    .qf-bar{height:100%;border-radius:3px;transition:.8s ease}
+    .qf-bar-label{font:600 11px/1 var(--mono);color:#9fb0d9;text-align:center}
+    .qf-section-title{font:700 11px/1 var(--mono);letter-spacing:.12em;color:#9fb0d9;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .qf-gap{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
+    .qf-gap-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px;font-weight:700}
+    .qf-gap .nao-i{background:rgba(255,77,97,.15);color:var(--red)}
+    .qf-gap .sim-i{background:rgba(77,240,143,.15);color:var(--green)}
+    .qf-gap-text strong{display:block;font-size:14px;font-weight:600;margin-bottom:3px;color:var(--text)}
+    .qf-gap-text span{font-size:13px;color:#9fb0d9;line-height:1.45}
+    .qf-mt{margin-top:24px}
+    .qf-hidden{display:none}
+    .qf-cta{margin-top:24px;text-align:center}
+    .qf-cta a{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--orange),#ff7e59);color:white;font:700 15px/1 var(--font);text-decoration:none;box-shadow:0 12px 30px rgba(255,106,61,.22);transition:.2s}
+    .qf-cta a:hover{transform:translateY(-2px)}
   </style>
 </head>
 <body>
@@ -258,7 +307,7 @@
         </div>
         <div class="brand-copy">
           <small>BY VOIDDA</small>
-          <strong>RUSH</strong>
+          <strong class="rush-name">RUSH</strong>
         </div>
       </a>
       <div class="nav-links">
@@ -267,6 +316,7 @@
         <a href="#fabrica">Fábrica</a>
         <a href="#tecnico">Controle técnico</a>
         <a href="#modulos">Módulos</a>
+        <a href="#resultado">Diagnóstico</a>
         <a href="#contato" class="btn btn-secondary">Ver visão</a>
         <a href="#contato" class="btn btn-primary">Pedir demo</a>
       </div>
@@ -278,9 +328,9 @@
       <div class="hero-copy reveal">
         <div class="eyebrow"><span class="dot"></span> operação criativa em tempo real</div>
         <h1>Pare de operar no improviso.</h1>
-        <p style="margin-top:16px;font-size:15px;color:#9fb0d9">O problema não é sua equipe. É seu fluxo. O RUSH organiza pedido → fábrica → entrega sem ruído.</p>
+        <p style="margin-top:16px;font-size:15px;color:#9fb0d9">O problema não é sua equipe. É seu fluxo. O <span class="rush-name">RUSH</span> organiza pedido → fábrica → entrega sem ruído.</p>
         <p>
-          O RUSH organiza o miolo que normalmente quebra: pedido, decupagem, orçamento, jobs, fábrica, validação e entrega.
+          O <span class="rush-name">RUSH</span> organiza o miolo que normalmente quebra: pedido, decupagem, orçamento, jobs, fábrica, validação e entrega.
           <br><br>
           Sem isso, você escala caos. Com isso, você escala operação.
         </p>
@@ -290,7 +340,7 @@
         </div>
         <div class="hero-note">
           <div>✦</div>
-          <div><strong>RUSH</strong> é produto da <strong>VOIDDA</strong>. Desenvolvido para produtoras de pós-produção publicitária que precisam de controle real sobre o fluxo operacional.</div>
+          <div><span class="rush-name">RUSH</span> é produto da <strong>VOIDDA</strong>. Desenvolvido para produtoras de pós-produção publicitária que precisam de controle real sobre o fluxo operacional.</div>
         </div>
         <div class="hero-pills">
           <div class="hero-pill">Pedido → Decupagem → Carta → Jobs</div>
@@ -425,14 +475,28 @@
           </div>
           <div class="chaos-item">
             <strong>Os concorrentes atacam as bordas</strong>
-            <p>O RUSH foi desenhado para cobrir o vão entre orçamento, fábrica e entrega — exatamente onde o caos costuma morar.</p>
+            <p>O <span class="rush-name">RUSH</span> foi desenhado para cobrir o vão entre orçamento, fábrica e entrega — exatamente onde o caos costuma morar.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="fluxo">
+  
+      <div class="quiz-inline reveal" id="quiz-block-0">
+        <div class="qi-inner" id="qi-inner-0">
+          <div class="qi-header">
+            <div class="qi-dots" id="qi-dots-0"></div>
+            <div class="qi-label">desafio · visibilidade</div>
+          </div>
+          <div class="qi-question" id="qi-q-0"></div>
+          <div class="qi-buttons" id="qi-btn-0"></div>
+        </div>
+        <div class="qi-done" id="qi-done-0" style="display:none">
+          <span class="qi-bolt">⚡</span> Bloco completo
+        </div>
+      </div>
+    <section class="section" id="fluxo">
     <div class="container">
       <div class="section-head reveal">
         <div>
@@ -514,7 +578,21 @@
     </div>
   </section>
 
-  <section class="section" id="prova">
+
+      <div class="quiz-inline reveal" id="quiz-block-1">
+        <div class="qi-inner" id="qi-inner-1">
+          <div class="qi-header">
+            <div class="qi-dots" id="qi-dots-1"></div>
+            <div class="qi-label">desafio · processo</div>
+          </div>
+          <div class="qi-question" id="qi-q-1"></div>
+          <div class="qi-buttons" id="qi-btn-1"></div>
+        </div>
+        <div class="qi-done" id="qi-done-1" style="display:none">
+          <span class="qi-bolt">⚡</span> Bloco completo
+        </div>
+      </div>
+    <section class="section" id="prova">
     <div class="container">
       <div class="section-head reveal">
         <div>
@@ -543,7 +621,7 @@
 
       <div class="mock reveal">
         <div class="mock-top">
-          <strong>Fila de produção · RUSH</strong>
+          <strong>Fila de produção · <span class="rush-name">RUSH</span></strong>
           <span style="font:600 11px var(--mono);color:#9fb0d9">tempo real</span>
         </div>
         <div class="mock-body">
@@ -628,14 +706,28 @@
     </div>
   </section>
 
-  <section class="section" id="tecnico">
+
+      <div class="quiz-inline reveal" id="quiz-block-2">
+        <div class="qi-inner" id="qi-inner-2">
+          <div class="qi-header">
+            <div class="qi-dots" id="qi-dots-2"></div>
+            <div class="qi-label">desafio · qualidade</div>
+          </div>
+          <div class="qi-question" id="qi-q-2"></div>
+          <div class="qi-buttons" id="qi-btn-2"></div>
+        </div>
+        <div class="qi-done" id="qi-done-2" style="display:none">
+          <span class="qi-bolt">⚡</span> Bloco completo
+        </div>
+      </div>
+    <section class="section" id="tecnico">
     <div class="container">
       <div class="section-head reveal">
         <div>
           <div class="label">controle técnico</div>
           <h2>Sem controle técnico, sua operação vira opinião.</h2>
         </div>
-        <p>Sem medição objetiva, qualidade vira discussão. O RUSH transforma validação em dado técnico — e isso muda a forma como a produtora trabalha e negocia.</p>
+        <p>Sem medição objetiva, qualidade vira discussão. O <span class="rush-name">RUSH</span> transforma validação em dado técnico — e isso muda a forma como a produtora trabalha e negocia.</p>
       </div>
 
       <div class="tech-wrap">
@@ -741,7 +833,21 @@
     </div>
   </section>
 
-  <section class="section" id="modulos">
+
+      <div class="quiz-inline reveal" id="quiz-block-3">
+        <div class="qi-inner" id="qi-inner-3">
+          <div class="qi-header">
+            <div class="qi-dots" id="qi-dots-3"></div>
+            <div class="qi-label">desafio · entrega</div>
+          </div>
+          <div class="qi-question" id="qi-q-3"></div>
+          <div class="qi-buttons" id="qi-btn-3"></div>
+        </div>
+        <div class="qi-done" id="qi-done-3" style="display:none">
+          <span class="qi-bolt">⚡</span> Bloco completo
+        </div>
+      </div>
+    <section class="section" id="modulos">
     <div class="container">
       <div class="section-head reveal">
         <div>
@@ -775,7 +881,7 @@
         <article class="module reveal" style="transition-delay:.1s">
           <small>qualidade</small>
           <h3>Validador + Laudo + Gate</h3>
-          <p>Onde o RUSH se distancia da concorrência administrativa tradicional.</p>
+          <p>Onde o <span class="rush-name">RUSH</span> se distancia da concorrência administrativa tradicional.</p>
           <ul>
             <li>— validação estrutural de PSD</li>
             <li>— confronto de saída</li>
@@ -816,13 +922,41 @@
     </div>
   </section>
 
-  <section class="section closing" id="contato">
+
+  <section class="section" id="resultado">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <div class="label">seu diagnóstico</div>
+          <h2>Resultado do desafio</h2>
+        </div>
+        <p>Baseado nas suas 12 respostas.</p>
+      </div>
+      <div id="quiz-final" class="qf-hidden reveal">
+        <div class="qf-verdict">
+          <div class="qf-title" id="qf-title"></div>
+          <div class="qf-sub" id="qf-sub"></div>
+          <div class="qf-bar-wrap"><div class="qf-bar" id="qf-bar"></div></div>
+          <div class="qf-bar-label" id="qf-bar-label"></div>
+        </div>
+        <div id="qf-gaps"></div>
+        <div class="qf-cta">
+          <a href="mailto:atendimento@voidda.com.br">Falar com a Voidda sobre o RUSH</a>
+        </div>
+      </div>
+      <div id="quiz-final-placeholder" class="reveal" style="text-align:center;padding:40px 0;color:#9fb0d9;font-size:15px">
+        Responda os 4 blocos de desafio espalhados pela página para ver seu diagnóstico completo.
+      </div>
+    </div>
+  </section>
+
+    <section class="section closing" id="contato">
     <div class="container">
       <div class="cta-box reveal">
         <div>
           <div class="label">fechamento</div>
           <h2>Se você não controlar o fluxo, o fluxo controla você.</h2>
-          <p>O RUSH nasce para cobrir o que o mercado normalmente deixa no meio do caminho: a operação real entre orçamento, criação, produção, validação e entrega.</p>
+          <p>O <span class="rush-name">RUSH</span> nasce para cobrir o que o mercado normalmente deixa no meio do caminho: a operação real entre orçamento, criação, produção, validação e entrega.</p>
           <div class="hero-actions" style="margin-top:26px">
             <a class="btn btn-primary" href="mailto:atendimento@voidda.com.br">Solicitar apresentação</a>
             <a class="btn btn-secondary" href="#top">Voltar ao topo</a>
@@ -830,16 +964,23 @@
         </div>
         <div class="cta-side">
           <div class="cta-note"><strong style="display:block;margin-bottom:8px">VOIDDA · dados legais e contato</strong>VOIDDA SERVICOS SOB DEMANDA PARA INTERNET LTDA<br>CNPJ 40.644.576/0001-06<br>WhatsApp (11) 97500-9521</div>
-          <div class="cta-note"><strong style="display:block;margin-bottom:8px">RUSH dentro da VOIDDA</strong>Produto focado em organizar o fluxo operacional de produtoras criativas pequenas, do pedido à entrega, sem deixar o miolo da fábrica no improviso.</div>
+          <div class="cta-note"><strong style="display:block;margin-bottom:8px"><span class="rush-name">RUSH</span> dentro da VOIDDA</strong>Produto focado em organizar o fluxo operacional de produtoras criativas pequenas, do pedido à entrega, sem deixar o miolo da fábrica no improviso.</div>
         </div>
       </div>
     </div>
   </section>
 
+
+  <div class="quiz-counter" id="quiz-counter">
+    <span class="qc-bolt">⚡</span>
+    <span id="qc-text">0 / 12</span>
+    <span class="qc-reward" id="qc-reward">+3</span>
+  </div>
+
   <footer>
     <div class="container footer-row">
       <div class="footer-legal">
-        <div><strong>RUSH</strong> · produto para fluxo operacional de pós-publicidade</div>
+        <div><strong class="rush-name">RUSH</strong> · produto para fluxo operacional de pós-publicidade</div>
         <div><strong>VOIDDA SERVICOS SOB DEMANDA PARA INTERNET LTDA</strong></div>
         <div>CNPJ 40.644.576/0001-06</div>
       </div>
@@ -858,6 +999,159 @@
       },{threshold:0.12});
       document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     });
+
+    (function(){
+      var groups=[
+        [
+          {q:"Quantas planilhas sua opera\u00e7\u00e3o precisa pra funcionar hoje?",r:"O RUSH substitui planilhas por um fluxo \u00fanico: pedido, produ\u00e7\u00e3o, entrega.",multi:["Nenhuma","1 a 3","4 a 10","Perdi a conta"],scores:[1,0,0,0]},
+          {q:"Quantas pe\u00e7as est\u00e3o na sua esteira de produ\u00e7\u00e3o neste momento?",r:"Kanban ao vivo com contagem por status, prioridade e respons\u00e1vel."},
+          {q:"Qual o status de cada pe\u00e7a \u2014 e quem \u00e9 o respons\u00e1vel agora?",r:"Dashboard por papel: cada profissional v\u00ea s\u00f3 o que \u00e9 seu."}
+        ],
+        [
+          {q:"Quando o cliente pede mais formatos no meio do job \u2014 voc\u00ea tem registro formal?",r:"Pedido edit\u00e1vel com hist\u00f3rico + nova Decupagem no mesmo escopo."},
+          {q:"O or\u00e7amento aprovado pela ag\u00eancia est\u00e1 documentado de forma incontest\u00e1vel?",r:"Carta de Or\u00e7amento: PDF imut\u00e1vel, congelado, com aprova\u00e7\u00e3o registrada."},
+          {q:"Sabe quem da equipe est\u00e1 sobrecarregado e quem est\u00e1 ocioso neste momento?",r:"Vis\u00e3o de capacidade por profissional, fila e prioridade."}
+        ],
+        [
+          {q:"Quantas revis\u00f5es o PSD j\u00e1 teve antes de chegar no Motion?",r:"Hist\u00f3rico de vers\u00f5es e rastreabilidade por atividade."},
+          {q:"J\u00e1 entregou pe\u00e7a com resolu\u00e7\u00e3o errada, camada oculta ou perfil CMYK?",r:"Validador PSD com 14 checks autom\u00e1ticos antes da f\u00e1brica come\u00e7ar."},
+          {q:"Consegue garantir que a cor da pe\u00e7a final bateu com o PSD original?",r:"Laudo T\u00e9cnico com confronto autom\u00e1tico \u0394E2000 \u2014 gate de cor."}
+        ],
+        [
+          {q:"Quando a ag\u00eancia cobra o andamento \u2014 voc\u00ea responde na hora?",r:"Portal da ag\u00eancia com status em tempo real. Zero liga\u00e7\u00e3o."},
+          {q:"Quando o cliente diz que n\u00e3o era isso que pediu \u2014 voc\u00ea tem como provar?",r:"Hist\u00f3rico completo: Pedido \u2192 Carta aprovada \u2192 entregas versionadas."},
+          {q:"Consegue mostrar o fluxo completo da sua opera\u00e7\u00e3o em 30 segundos?",r:"Pedido \u2192 Decupagem \u2192 Carta \u2192 Jobs \u2192 F\u00e1brica \u2192 QA \u2192 Entrega \u2014 tudo vis\u00edvel."}
+        ]
+      ];
+
+      var state=groups.map(function(){return{cur:0,ans:[],done:false}});
+      var totalAnswered=0;
+
+      function renderBlock(g){
+        var s=state[g],qs=groups[g];
+        if(s.done)return;
+        var dots=document.getElementById('qi-dots-'+g);
+        dots.innerHTML=qs.map(function(_,i){return '<div class="qi-dot'+(i<s.cur?' done':'')+(i===s.cur?' active':'')+'"></div>'}).join('');
+        var qEl=document.getElementById('qi-q-'+g);
+        qEl.textContent=qs[s.cur].q;
+        var btnEl=document.getElementById('qi-btn-'+g);
+        if(qs[s.cur].multi){
+          btnEl.innerHTML=qs[s.cur].multi.map(function(opt,i){return '<button class="qi-btn" onclick="qiMulti('+g+','+i+')">'+opt+'</button>'}).join('');
+        } else {
+          btnEl.innerHTML='<button class="qi-btn sim" onclick="qiAns('+g+',true)">Sim, consigo</button><button class="qi-btn nao" onclick="qiAns('+g+',false)">N\u00e3o consigo</button>';
+        }
+        qEl.classList.add('qi-fade');
+      }
+
+      function updateCounter(){
+        totalAnswered=state.reduce(function(t,s){return t+s.ans.length},0);
+        var el=document.getElementById('qc-text');
+        el.textContent=totalAnswered+' / 12';
+        var counter=document.getElementById('quiz-counter');
+        if(totalAnswered>0)counter.classList.add('visible');
+        if(totalAnswered>=12)showFinalResult();
+      }
+
+      function celebrate(g){
+        var counter=document.getElementById('quiz-counter');
+        counter.classList.add('celebrate');
+        var reward=document.getElementById('qc-reward');
+        reward.textContent='+3';
+        reward.classList.add('pop');
+        setTimeout(function(){counter.classList.remove('celebrate');reward.classList.remove('pop')},800);
+      }
+
+      function completeBlock(g){
+        state[g].done=true;
+        document.getElementById('qi-inner-'+g).style.display='none';
+        var done=document.getElementById('qi-done-'+g);
+        done.style.display='block';
+        done.classList.add('qi-fade');
+        celebrate(g);
+        updateCounter();
+      }
+
+      window.qiAns=function(g,yes){
+        state[g].ans.push(yes);
+        state[g].cur++;
+        if(state[g].cur<groups[g].length){
+          document.getElementById('qi-q-'+g).classList.remove('qi-fade');
+          setTimeout(function(){renderBlock(g)},50);
+          updateCounter();
+        } else {
+          completeBlock(g);
+        }
+      };
+
+      window.qiMulti=function(g,idx){
+        var q=groups[g][state[g].cur];
+        state[g].ans.push(q.scores?q.scores[idx]>0:false);
+        state[g].cur++;
+        if(state[g].cur<groups[g].length){
+          document.getElementById('qi-q-'+g).classList.remove('qi-fade');
+          setTimeout(function(){renderBlock(g)},50);
+          updateCounter();
+        } else {
+          completeBlock(g);
+        }
+      };
+
+      function showFinalResult(){
+        document.getElementById('quiz-final-placeholder').style.display='none';
+        var final=document.getElementById('quiz-final');
+        final.classList.remove('qf-hidden');
+
+        var allQ=[],allA=[];
+        groups.forEach(function(grp,g){grp.forEach(function(q,i){allQ.push(q);allA.push(state[g].ans[i])})});
+        var sim=allA.filter(function(a){return a}).length;
+        var total=allQ.length;
+        var pct=Math.round(sim/total*100);
+
+        var title,sub,color;
+        if(sim<=4){
+          title='Sim, voc\u00ea precisa do RUSH.';
+          sub='Sua opera\u00e7\u00e3o est\u00e1 no improviso. Voc\u00ea n\u00e3o precisa de mais uma ferramenta \u2014 precisa de um sistema. O RUSH foi feito exatamente pra isso.';
+          color='#ff4d61';
+        } else if(sim<=8){
+          title='Sim, voc\u00ea precisa do RUSH.';
+          sub='Voc\u00ea tem processo, mas o miolo ainda escapa. O RUSH fecha as lacunas que planilha n\u00e3o alcan\u00e7a.';
+          color='#ffd166';
+        } else if(sim<=11){
+          title='Sim, voc\u00ea precisa do RUSH.';
+          sub='Voc\u00ea j\u00e1 tem controle parcial \u2014 mas faz isso com quantas ferramentas? O RUSH consolida tudo em um fluxo s\u00f3.';
+          color='var(--blue)';
+        } else {
+          title='Pelo visto voc\u00ea est\u00e1 bem preparado.';
+          sub='Mas esse question\u00e1rio \u00e9 s\u00f3 uma amostra do que o RUSH cobre \u2014 e do que ainda est\u00e1 por vir. Se voc\u00ea j\u00e1 controla tudo isso na m\u00e3o, imagine com sistema de verdade.';
+          color='var(--green)';
+        }
+
+        document.getElementById('qf-title').innerHTML=title.replace('RUSH','<span class="rush-name">RUSH</span>');
+        document.getElementById('qf-sub').textContent=sub;
+        var bar=document.getElementById('qf-bar');
+        bar.style.width=Math.max(100-pct,12)+'%';
+        bar.style.background=color;
+        document.getElementById('qf-bar-label').textContent=sim+' de '+total+' sob controle \u2014 '+(total-sim)+' no escuro';
+
+        var nos=[],yeses=[];
+        allA.forEach(function(a,i){if(!a)nos.push(i);else yeses.push(i)});
+        var h='';
+        if(nos.length){
+          h+='<div class="qf-section-title">O que o <span class="rush-name">RUSH</span> resolve ('+nos.length+' lacuna'+(nos.length>1?'s':'')+')</div>';
+          nos.forEach(function(i){h+='<div class="qf-gap qi-fade"><div class="qf-gap-icon nao-i">\u2715</div><div class="qf-gap-text"><strong>'+allQ[i].q.replace('?','')+'</strong><span>'+allQ[i].r+'</span></div></div>'});
+        }
+        if(yeses.length){
+          h+='<div class="qf-section-title'+(nos.length?' qf-mt':'')+'">O que voc\u00ea j\u00e1 faz bem ('+yeses.length+')</div>';
+          yeses.forEach(function(i){h+='<div class="qf-gap qi-fade"><div class="qf-gap-icon sim-i">\u2713</div><div class="qf-gap-text"><strong>'+allQ[i].q.replace('?','')+'</strong><span>'+allQ[i].r+'</span></div></div>'});
+        }
+        document.getElementById('qf-gaps').innerHTML=h;
+
+        setTimeout(function(){document.getElementById('resultado').scrollIntoView({behavior:'smooth',block:'start'})},400);
+      }
+
+      for(var g=0;g<4;g++)renderBlock(g);
+      updateCounter();
+    })();
   </script>
 </body>
 </html>
