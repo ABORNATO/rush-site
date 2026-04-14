@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rush — Laudo Técnico de Artefato</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='96' height='96' rx='17.3' fill='%230d1117'/%3E%3Cpolygon points='28.6,66.7 49.5,14.4 61.4,14.4 45.0,48.7 67.4,48.7 40.5,81.6 28.6,81.6' fill='%232563eb'/%3E%3Cpolygon points='45.0,48.7 67.4,48.7 40.5,81.6 55.5,81.6 74.9,48.7 61.4,14.4 49.5,14.4' fill='%231d4ed8'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #010409; --card: #0d1117; --border: #21262d; --border2: #161b22;
+    --text: #c9d1d9; --text-bright: #f0f6fc; --text-dim: #484f58; --text-muted: #8b949e;
+    --blue: #2563eb; --blue-dark: #1d4ed8;
+    --ok: #22c55e; --warn: #eab308; --fail: #ef4444;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+  .top-bar { max-width: 1400px; margin: 0 auto; padding: 24px 24px 16px; display: flex; align-items: center; gap: 12px; }
+  .top-bar .logo { display: flex; align-items: center; gap: 10px; }
+  .top-bar .title { color: var(--text-bright); font-size: 15px; font-weight: 700; letter-spacing: 0.05em; }
+  .top-bar .sep { color: var(--border); font-size: 15px; }
+  .top-bar .sub { color: var(--text-muted); font-size: 13px; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; }
+
+  /* Drop zones */
+  .drop-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+  .drop-zone {
+    flex: 1; min-width: 300px; min-height: 160px;
+    border: 2px dashed var(--border); border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; cursor: pointer; transition: all 0.2s;
+    background: var(--card); padding: 24px;
+  }
+  .drop-zone:hover, .drop-zone.dragover { border-color: var(--blue); background: #2563eb0a; }
+  .drop-zone.has-file { border-style: solid; border-color: var(--ok); opacity: 0.7; min-height: auto; padding: 12px; }
+  .drop-zone .label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); }
+  .drop-zone .hint { font-size: 12px; color: var(--text-muted); }
+  .drop-zone .filename { font-size: 12px; color: var(--ok); font-family: var(--mono); }
+  .drop-zone input { display: none; }
+  .drop-zone.blocked {
+    border-color: var(--fail); opacity: 0.35; pointer-events: none; position: relative;
+  }
+  .drop-zone.blocked::after {
+    content: ''; position: absolute; inset: 0; border-radius: 6px;
+    background: repeating-linear-gradient(135deg, transparent, transparent 10px, #ef444410 10px, #ef444410 20px);
+  }
+
+  /* Flow indicator */
+  .flow-bar { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 20px; }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 140px; }
+  .flow-dot {
+    width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff; border: 1px solid var(--border);
+  }
+  .flow-dot.pending { background: var(--border); color: var(--text-dim); }
+  .flow-dot.active { background: var(--blue); border: none; }
+  .flow-dot.ok { background: var(--ok); border: none; }
+  .flow-dot.fail { background: var(--fail); border: none; }
+  .flow-dot.bridge { border-radius: 6px; }
+  .flow-label { font-size: 11px; font-weight: 600; color: var(--text-dim); }
+  .flow-label.active { color: var(--text); }
+  .flow-label.fail { color: var(--fail); }
+  .flow-sub { font-size: 10px; color: var(--border); }
+  .flow-sub.active { color: var(--text-muted); }
+  .flow-sub.fail { color: #ef444499; }
+  .flow-line { width: 50px; height: 1px; background: var(--border); margin-bottom: 28px; }
+  .flow-line.active { background: #2563eb66; }
+  .flow-line.fail { height: 2px; background: repeating-linear-gradient(90deg, #ef444488 0px, #ef444488 4px, transparent 4px, transparent 8px); }
+
+  /* Cards */
+  .results-row { display: flex; gap: 20px; flex-wrap: wrap; }
+  .laudo-card { flex: 1; min-width: 340px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .laudo-header {
+    padding: 20px 24px; display: flex; justify-content: space-between; align-items: flex-start;
+    border-bottom: 2px solid #2563eb33;
+    background: linear-gradient(135deg, #2563eb15, transparent 60%);
+  }
+  .laudo-header .info { display: flex; gap: 12px; align-items: flex-start; }
+  .laudo-header .type { font-size: 10px; color: var(--blue); font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+  .laudo-header .name { font-size: 15px; color: var(--text-bright); font-weight: 700; margin-bottom: 4px; }
+  .laudo-header .meta { font-size: 11px; color: var(--text-muted); }
+  .laudo-body { padding: 16px 24px 24px; }
+
+  .section-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-muted);
+    padding: 12px 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 2px;
+  }
+
+  .metric-header {
+    display: grid; grid-template-columns: 36px 1fr 140px 120px 80px;
+    padding: 6px 0; font-size: 10px; color: var(--text-dim);
+    font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .metric-header span:last-child { text-align: right; }
+
+  .metric-row { border-bottom: 1px solid var(--border2); padding: 7px 0; }
+  .metric-row .grid {
+    display: grid; grid-template-columns: 36px 1fr 140px 120px 80px;
+    align-items: center; font-size: 13px;
+  }
+  .metric-row .id { color: var(--text-dim); font-family: var(--mono); font-size: 11px; }
+  .metric-row .nome { color: var(--text); }
+  .metric-row .medido { color: var(--text-bright); font-weight: 600; font-family: var(--mono); font-size: 12px; }
+  .metric-row .ref { color: var(--text-dim); font-family: var(--mono); font-size: 11px; }
+  .metric-row .status { text-align: right; }
+
+  .status-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; }
+  .status-dot .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .status-dot.ok { color: var(--ok); }
+  .status-dot.ok .dot { background: var(--ok); box-shadow: 0 0 6px #22c55e44; }
+  .status-dot.atencao { color: var(--warn); }
+  .status-dot.atencao .dot { background: var(--warn); box-shadow: 0 0 6px #eab30844; }
+  .status-dot.fora { color: var(--fail); }
+  .status-dot.fora .dot { background: var(--fail); box-shadow: 0 0 6px #ef444444; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px; border-radius: 6px;
+    font-size: 14px; font-weight: 800; letter-spacing: 0.08em;
+  }
+  .badge.ok { color: var(--ok); border: 2px solid var(--ok); background: #22c55e11; }
+  .badge.fail { color: var(--fail); border: 2px solid var(--fail); background: #ef444411; }
+  .badge.small { padding: 5px 14px; font-size: 12px; }
+
+  .flood-bar { margin-top: 4px; padding-left: 36px; padding-right: 80px; max-width: 400px; }
+  .flood-track { position: relative; height: 6px; background: var(--border2); border-radius: 3px; overflow: hidden; }
+  .flood-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .flood-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-dim); margin-top: 2px; font-family: var(--mono); }
+
+  /* Zone bar */
+  .zone-bar { margin-top: 4px; }
+  .zone-track { position: relative; height: 10px; border-radius: 5px; display: flex; overflow: hidden; border: 1px solid var(--border); }
+  .zone-ok { background: #22c55e44; }
+  .zone-warn { background: #eab30844; }
+  .zone-fail { background: #ef444444; }
+  .zone-over { background: #ef444422; }
+  .zone-needle {
+    position: absolute; top: -3px; bottom: -3px; width: 3px;
+    border-radius: 2px; transform: translateX(-50%); transition: left 0.4s ease;
+  }
+  .zone-labels { position: relative; height: 14px; margin-top: 3px; font-size: 9px; font-family: var(--mono); }
+  .zone-labels span { position: absolute; transform: translateX(-50%); }
+
+  .zone-mini .zone-track { height: 6px; border-radius: 3px; }
+
+  /* Paleta */
+  .paleta { display: flex; gap: 12px; padding: 10px 0; flex-wrap: wrap; }
+  .paleta-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .swatch { border-radius: 4px; border: 1px solid var(--border); }
+
+  /* Confronto */
+  .confronto-panel { background: var(--card); border-radius: 8px; overflow: hidden; margin-top: 20px; }
+  .confronto-panel.ok { border: 2px solid #22c55e44; }
+  .confronto-panel.fail { border: 2px solid #ef444444; }
+  .confronto-header { padding: 16px 28px; display: flex; justify-content: space-between; align-items: center; }
+  .confronto-header.ok { background: linear-gradient(135deg, #22c55e11, transparent 60%); border-bottom: 2px solid #22c55e33; }
+  .confronto-header.fail { background: linear-gradient(135deg, #ef444411, transparent 60%); border-bottom: 2px solid #ef444433; }
+  .confronto-body { padding: 20px 28px 24px; }
+
+  .confronto-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+
+  .color-map-header {
+    display: grid; grid-template-columns: 50px 100px 40px 100px 90px 1fr 70px;
+    align-items: center; gap: 6px; padding: 4px 0 8px;
+    font-size: 10px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .color-map-row {
+    display: grid; grid-template-columns: 50px 100px 40px 100px 90px 1fr 70px;
+    align-items: center; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--border2);
+  }
+  .color-map-row .swatch-group { display: flex; align-items: center; gap: 6px; }
+  .color-map-row .hex { font-size: 9px; font-family: var(--mono); color: var(--text-dim); }
+  .color-map-row .arrow { color: var(--text-dim); font-size: 18px; text-align: center; }
+  .color-map-row .delta { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+
+  .bloqueio {
+    margin-top: 20px; padding: 14px 18px; border-radius: 6px;
+    background: #ef444411; border: 1px solid #ef444444;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .bloqueio .msg { font-size: 12px; color: var(--fail); font-weight: 700; }
+  .bloqueio .sub { font-size: 11px; color: #f85149cc; margin-top: 2px; }
+
+  .hidden { display: none; }
+  .loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; }
+
+  @media (max-width: 800px) {
+    .metric-header, .metric-row .grid { grid-template-columns: 30px 1fr 100px 80px; }
+    .metric-row .ref { display: none; }
+    .color-map-header, .color-map-row { grid-template-columns: 40px 80px 30px 80px 70px 1fr 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <div class="logo">
+    <svg viewBox="0 0 96 96" width="28" height="28">
+      <rect width="96" height="96" rx="17.3" fill="#0d1117" stroke="#21262d" stroke-width="1"/>
+      <polygon points="28.6,66.7 49.5,14.4 61.4,14.4 45.0,48.7 67.4,48.7 40.5,81.6 28.6,81.6" fill="#2563eb"/>
+      <polygon points="45.0,48.7 67.4,48.7 40.5,81.6 55.5,81.6 74.9,48.7 61.4,14.4 49.5,14.4" fill="#1d4ed8"/>
+    </svg>
+    <span class="title">RUSH</span>
+    <span class="sep">|</span>
+    <span class="sub">Laudo Técnico de Artefato</span>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Drop zones -->
+  <div id="flowBar" class="flow-bar hidden"></div>
+  <div class="drop-row">
+    <div class="drop-zone" id="dropPsd">
+      <span class="label">LAUDO DE ENTRADA</span>
+      <span class="hint">Arraste o arquivo .PSD aqui</span>
+      <input type="file" accept=".psd" id="inputPsd">
+    </div>
+    <div class="drop-zone" id="dropPeca">
+      <span class="label">LAUDO DE SAÍDA</span>
+      <span class="hint">Arraste o arquivo .GIF ou .PNG aqui</span>
+      <input type="file" accept=".gif,.png" id="inputPeca">
+    </div>
+  </div>
+  <div id="blockedMsg" class="hidden" style="background:#ef444411;border:1px solid #ef444444;border-radius:6px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px">
+    <div style="width:36px;height:36px;border-radius:50%;background:#ef444422;border:2px solid #ef444466;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--fail);flex-shrink:0">✕</div>
+    <div>
+      <div style="font-size:13px;color:var(--fail);font-weight:700;margin-bottom:2px">FLUXO INTERROMPIDO NO LAUDO DE ENTRADA</div>
+      <div style="font-size:12px;color:#f85149cc">O PSD não atende os requisitos estruturais. No Rush, a peça não avançaria para o Motion.<br>Corrija os itens reprovados e valide novamente.</div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results" class="hidden">
+    <div class="results-row" id="resultsRow"></div>
+    <div id="confrontoContainer"></div>
+  </div>
+</div>
+
+<script type="module">
+// ─── ag-psd ───
+let readPsd;
+const cdnUrls = [
+  'https://cdn.jsdelivr.net/npm/ag-psd@30/+esm',
+  'https://esm.sh/ag-psd@30',
+  'https://esm.sh/ag-psd@30.1.1',
+];
+for (const url of cdnUrls) {
+  try {
+    const agPsd = await import(url);
+    readPsd = agPsd.readPsd || agPsd.default?.readPsd;
+    if (readPsd) { console.log('ag-psd carregado de:', url); break; }
+  } catch (e) { console.warn('Tentativa falhou:', url, e.message); }
+}
+if (!readPsd) {
+  document.querySelector('.container').innerHTML = '<div style="color:var(--fail);padding:40px;text-align:center;font-size:14px">⚠ Não foi possível carregar a biblioteca ag-psd.<br><br><span style="color:var(--text-muted);font-size:12px">Verifique sua conexão e recarregue a página.<br>Se persistir, pode ser bloqueio de rede ou CDN instável.</span></div>';
+}
+
+// ─── Color Math ───
+
+function srgbToLinear(c) {
+  c = c / 255;
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
+function rgbToXyz(r, g, b) {
+  const lr = srgbToLinear(r), lg = srgbToLinear(g), lb = srgbToLinear(b);
+  return [
+    lr * 0.4124564 + lg * 0.3575761 + lb * 0.1804375,
+    lr * 0.2126729 + lg * 0.7151522 + lb * 0.0721750,
+    lr * 0.0193339 + lg * 0.1191920 + lb * 0.9503041,
+  ];
+}
+
+function xyzToLab(x, y, z) {
+  const Xn = 0.95047, Yn = 1.0, Zn = 1.08883;
+  const f = (t) => t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + 16 / 116;
+  const fx = f(x / Xn), fy = f(y / Yn), fz = f(z / Zn);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+
+function rgbToLab(r, g, b) {
+  const [x, y, z] = rgbToXyz(r, g, b);
+  return xyzToLab(x, y, z);
+}
+
+function deltaE2000(lab1, lab2) {
+  const [L1, a1, b1] = lab1;
+  const [L2, a2, b2] = lab2;
+  const kL = 1, kC = 1, kH = 1;
+  const C1 = Math.sqrt(a1 * a1 + b1 * b1);
+  const C2 = Math.sqrt(a2 * a2 + b2 * b2);
+  const Cab = (C1 + C2) / 2;
+  const Cab7 = Math.pow(Cab, 7);
+  const G = 0.5 * (1 - Math.sqrt(Cab7 / (Cab7 + Math.pow(25, 7))));
+  const a1p = a1 * (1 + G), a2p = a2 * (1 + G);
+  const C1p = Math.sqrt(a1p * a1p + b1 * b1);
+  const C2p = Math.sqrt(a2p * a2p + b2 * b2);
+  let h1p = Math.atan2(b1, a1p) * 180 / Math.PI; if (h1p < 0) h1p += 360;
+  let h2p = Math.atan2(b2, a2p) * 180 / Math.PI; if (h2p < 0) h2p += 360;
+  const dLp = L2 - L1;
+  const dCp = C2p - C1p;
+  let dhp;
+  if (C1p * C2p === 0) dhp = 0;
+  else if (Math.abs(h2p - h1p) <= 180) dhp = h2p - h1p;
+  else if (h2p - h1p > 180) dhp = h2p - h1p - 360;
+  else dhp = h2p - h1p + 360;
+  const dHp = 2 * Math.sqrt(C1p * C2p) * Math.sin(dhp * Math.PI / 360);
+  const Lbp = (L1 + L2) / 2;
+  const Cbp = (C1p + C2p) / 2;
+  let Hbp;
+  if (C1p * C2p === 0) Hbp = h1p + h2p;
+  else if (Math.abs(h1p - h2p) <= 180) Hbp = (h1p + h2p) / 2;
+  else if (h1p + h2p < 360) Hbp = (h1p + h2p + 360) / 2;
+  else Hbp = (h1p + h2p - 360) / 2;
+  const T = 1 - 0.17 * Math.cos((Hbp - 30) * Math.PI / 180) + 0.24 * Math.cos(2 * Hbp * Math.PI / 180) + 0.32 * Math.cos((3 * Hbp + 6) * Math.PI / 180) - 0.20 * Math.cos((4 * Hbp - 63) * Math.PI / 180);
+  const SL = 1 + 0.015 * Math.pow(Lbp - 50, 2) / Math.sqrt(20 + Math.pow(Lbp - 50, 2));
+  const SC = 1 + 0.045 * Cbp;
+  const SH = 1 + 0.015 * Cbp * T;
+  const Cbp7 = Math.pow(Cbp, 7);
+  const RT = -2 * Math.sqrt(Cbp7 / (Cbp7 + Math.pow(25, 7))) * Math.sin(60 * Math.exp(-Math.pow((Hbp - 275) / 25, 2)) * Math.PI / 180);
+  return Math.sqrt(
+    Math.pow(dLp / (kL * SL), 2) +
+    Math.pow(dCp / (kC * SC), 2) +
+    Math.pow(dHp / (kH * SH), 2) +
+    RT * (dCp / (kC * SC)) * (dHp / (kH * SH))
+  );
+}
+
+// ─── Median Cut Palette ───
+
+function extractPalette(imageData, numColors = 5) {
+  const data = imageData.data || imageData;
+  const pixels = [];
+  const step = Math.max(1, Math.floor(data.length / 4 / 10000)); // sample max ~10k pixels
+  for (let i = 0; i < data.length; i += 4 * step) {
+    const a = data[i + 3];
+    if (a < 128) continue; // skip transparent
+    pixels.push([data[i], data[i + 1], data[i + 2]]);
+  }
+  if (pixels.length === 0) return [];
+
+  function medianCut(pixels, depth) {
+    if (depth === 0 || pixels.length === 0) {
+      const avg = [0, 0, 0];
+      pixels.forEach(p => { avg[0] += p[0]; avg[1] += p[1]; avg[2] += p[2]; });
+      return [{ r: Math.round(avg[0] / pixels.length), g: Math.round(avg[1] / pixels.length), b: Math.round(avg[2] / pixels.length), count: pixels.length }];
+    }
+    let ranges = [0, 1, 2].map(ch => {
+      let min = 255, max = 0;
+      pixels.forEach(p => { if (p[ch] < min) min = p[ch]; if (p[ch] > max) max = p[ch]; });
+      return max - min;
+    });
+    const ch = ranges.indexOf(Math.max(...ranges));
+    pixels.sort((a, b) => a[ch] - b[ch]);
+    const mid = Math.floor(pixels.length / 2);
+    return [...medianCut(pixels.slice(0, mid), depth - 1), ...medianCut(pixels.slice(mid), depth - 1)];
+  }
+
+  const depth = Math.ceil(Math.log2(numColors));
+  let colors = medianCut(pixels, depth);
+  colors.sort((a, b) => b.count - a.count);
+  return colors.slice(0, numColors).map(c => {
+    const hex = '#' + [c.r, c.g, c.b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+    const lab = rgbToLab(c.r, c.g, c.b);
+    return { r: c.r, g: c.g, b: c.b, hex, lab };
+  });
+}
+
+// ─── GIF Parser ───
+
+function parseGif(buffer) {
+  const view = new DataView(buffer);
+  const sig = String.fromCharCode(view.getUint8(0), view.getUint8(1), view.getUint8(2));
+  if (sig !== 'GIF') return null;
+  const width = view.getUint16(6, true);
+  const height = view.getUint16(8, true);
+  const packed = view.getUint8(10);
+  const hasGCT = (packed >> 7) & 1;
+  const gctSize = hasGCT ? 3 * Math.pow(2, (packed & 7) + 1) : 0;
+  let pos = 13 + gctSize;
+  let frames = 0, totalDelay = 0, loops = -1;
+
+  while (pos < buffer.byteLength) {
+    const block = view.getUint8(pos);
+    if (block === 0x3B) break; // trailer
+    if (block === 0x21) { // extension
+      const label = view.getUint8(pos + 1);
+      if (label === 0xF9) { // GCE
+        const delay = view.getUint16(pos + 4, true) * 10; // ms
+        totalDelay += delay;
+        frames++;
+        pos += 8;
+      } else if (label === 0xFF) { // app extension
+        const blockSize = view.getUint8(pos + 2);
+        if (blockSize === 11) {
+          let appId = '';
+          for (let i = 0; i < 11; i++) appId += String.fromCharCode(view.getUint8(pos + 3 + i));
+          if (appId === 'NETSCAPE2.0') {
+            const subPos = pos + 14;
+            const subSize = view.getUint8(subPos);
+            if (subSize === 3 && view.getUint8(subPos + 1) === 1) {
+              loops = view.getUint16(subPos + 2, true); // 0 = infinite
+            }
+          }
+        }
+        pos += 2;
+        // skip sub-blocks
+        pos++;
+        while (pos < buffer.byteLength) {
+          const sz = view.getUint8(pos); pos++;
+          if (sz === 0) break;
+          pos += sz;
+        }
+      } else {
+        pos += 2;
+        while (pos < buffer.byteLength) {
+          const sz = view.getUint8(pos); pos++;
+          if (sz === 0) break;
+          pos += sz;
+        }
+      }
+    } else if (block === 0x2C) { // image descriptor
+      const lctPacked = view.getUint8(pos + 9);
+      const hasLCT = (lctPacked >> 7) & 1;
+      const lctSize = hasLCT ? 3 * Math.pow(2, (lctPacked & 7) + 1) : 0;
+      pos += 10 + lctSize;
+      pos++; // LZW min code size
+      while (pos < buffer.byteLength) {
+        const sz = view.getUint8(pos); pos++;
+        if (sz === 0) break;
+        pos += sz;
+      }
+    } else {
+      pos++;
+    }
+  }
+
+  const duration = totalDelay / 1000;
+  const fps = frames > 0 && duration > 0 ? Math.round(frames / duration) : 0;
+  const loopStr = loops === 0 ? '∞' : loops === -1 ? '1×' : loops + '×';
+
+  return { width, height, frames, duration, fps, loops, loopStr };
+}
+
+// ─── PSD Checks (same as validator) ───
+
+function analyzePsd(psd, fileName, fileSize) {
+  const metricas = [];
+  const w = psd.width, h = psd.height;
+
+  // E1 - Color profile
+  const profile = psd.imageResources?.iCCUntaggedProfile !== undefined ? 'Sem perfil' :
+    (psd.imageResources?.iCCProfile ? 'sRGB (ICC presente)' : 'Assume sRGB');
+  const colorMode = psd.colorMode;
+  const colorModeStr = ['Bitmap','Grayscale','Indexed','RGB','CMYK','','','Lab','','Duotone'][colorMode] || '?';
+  const isRgb = colorMode === 3;
+  metricas.push({ id: 'E1', nome: 'Modo de cor', medido: colorModeStr, ref: 'RGB', status: isRgb ? 'ok' : 'fora' });
+
+  // E2 - Bit depth
+  const bits = psd.bitsPerChannel || 8;
+  metricas.push({ id: 'E2', nome: 'Bit depth', medido: bits + ' bits/canal', ref: '8 bits', status: bits === 8 ? 'ok' : bits === 16 ? 'atencao' : 'fora' });
+
+  // E3 - DPI
+  const hRes = psd.imageResources?.resolutionInfo?.horizontalResolution || 72;
+  metricas.push({ id: 'E3', nome: 'Resolução', medido: Math.round(hRes) + ' DPI', ref: '72 DPI', status: Math.round(hRes) === 72 ? 'ok' : 'fora' });
+
+  // E4 - Format
+  const ext = fileName.split('.').pop().toUpperCase();
+  metricas.push({ id: 'E4', nome: 'Formato', medido: '.' + ext, ref: '.PSD', status: ext === 'PSD' ? 'ok' : 'fora' });
+
+  // Flatten layers
+  function flattenLayers(children, list = []) {
+    if (!children) return list;
+    for (const c of children) {
+      list.push(c);
+      if (c.children) flattenLayers(c.children, list);
+    }
+    return list;
+  }
+  const allLayers = flattenLayers(psd.children);
+  const groups = (psd.children || []).filter(c => c.children);
+
+  // E5 - Smart Objects
+  const soLayers = allLayers.filter(l => {
+    const n = (l.name || '').toLowerCase();
+    return n.includes('smart object') || n.includes('objeto inteligente') ||
+      l.placedLayer !== undefined || (l.additionalInformation || []).some(a => a.key === 'SoLd' || a.key === 'SoLE');
+  });
+  const soCount = soLayers.length;
+  metricas.push({ id: 'E5', nome: 'Smart Objects', medido: String(soCount), ref: '0', status: soCount === 0 ? 'ok' : 'fora' });
+
+  // E6 - Shape Layers (look for vector data indicators)
+  let shapeCount = 0;
+  allLayers.forEach(l => {
+    if (l.vectorMask || l.vectorStroke || l.vectorOrigination) shapeCount++;
+  });
+  metricas.push({ id: 'E6', nome: 'Shape Layers', medido: String(shapeCount), ref: '0', status: shapeCount === 0 ? 'ok' : 'fora' });
+
+  // E7 - Blend modes
+  const nonNormal = allLayers.filter(l => l.blendMode && l.blendMode !== 'normal' && !l.children);
+  metricas.push({ id: 'E7', nome: 'Blend Modes', medido: nonNormal.length === 0 ? 'Todos Normal' : nonNormal.length + ' não-Normal', ref: 'Normal', status: nonNormal.length === 0 ? 'ok' : 'fora' });
+
+  // E8 - Hidden layers
+  const hidden = allLayers.filter(l => l.hidden && !l.children);
+  metricas.push({ id: 'E8', nome: 'Camadas ocultas', medido: String(hidden.length), ref: '0', status: hidden.length === 0 ? 'ok' : 'fora' });
+
+  // E9 - Generic names
+  const genericPatterns = /^(layer|camada|copy|copiar|cópia|retângulo|rectangle|shape|grupo|group)\s*\d*$/i;
+  const generic = allLayers.filter(l => genericPatterns.test((l.name || '').trim()));
+  metricas.push({ id: 'E9', nome: 'Nomes genéricos', medido: String(generic.length), ref: '0', status: generic.length === 0 ? 'ok' : 'fora' });
+
+  // E10 - Steps
+  metricas.push({ id: 'E10', nome: 'Steps (grupos)', medido: groups.length + ' grupos', ref: '≥ 1', status: groups.length >= 1 ? 'ok' : 'fora' });
+
+  // E11 - Out of canvas
+  let outCount = 0;
+  allLayers.forEach(l => {
+    if (l.children) return;
+    if (l.left < 0 || l.top < 0 || (l.right && l.right > w) || (l.bottom && l.bottom > h)) outCount++;
+  });
+  metricas.push({ id: 'E11', nome: 'Fora do canvas', medido: String(outCount), ref: '0', status: outCount === 0 ? 'ok' : 'atencao' });
+
+  // E12 - Weight
+  const expectedMB = (w * h * 4 * allLayers.length * 0.4) / (1024 * 1024);
+  const realMB = fileSize / (1024 * 1024);
+  const ratio = expectedMB > 0 ? realMB / expectedMB : 0;
+  let weightStatus = 'ok';
+  if (ratio > 5) weightStatus = 'fora';
+  else if (ratio > 2.5) weightStatus = 'atencao';
+  metricas.push({
+    id: 'E12', nome: 'Peso', medido: realMB.toFixed(1) + ' MB (' + ratio.toFixed(1) + '×)',
+    ref: '≤ ' + (expectedMB * 2.5).toFixed(1) + ' MB',
+    status: weightStatus,
+    flood: { valor: ratio, limite: 5 },
+  });
+
+  // E13 - Filename convention
+  const namePattern = /^[A-Z0-9]+_[A-Z0-9]+_\d+x\d+/i;
+  const nameOk = namePattern.test(fileName.replace(/\.[^.]+$/, ''));
+  metricas.push({ id: 'E13', nome: 'Nomenclatura', medido: nameOk ? 'Segue padrão' : 'Fora do padrão', ref: 'Padrão', status: nameOk ? 'ok' : 'atencao' });
+
+  const hasFora = metricas.some(m => m.status === 'fora');
+  const resultado = hasFora ? 'REPROVADO' : 'APROVADO';
+
+  return { metricas, resultado, width: w, height: h, layers: allLayers.length };
+}
+
+// ─── Render Helpers ───
+
+function statusDotHtml(status) {
+  const labels = { ok: 'OK', atencao: 'ATENÇÃO', fora: 'FORA' };
+  return `<span class="status-dot ${status}"><span class="dot"></span>${labels[status]}</span>`;
+}
+
+function badgeHtml(text, status, small = false) {
+  const icons = { 'APROVADO': '✓', 'REPROVADO': '✕', 'COMPATÍVEL': '≈', 'INCOMPATÍVEL': '≠', 'APROVADO COM RESSALVAS': '◐' };
+  let cls = (text === 'APROVADO' || text === 'COMPATÍVEL') ? 'ok' : 'fail';
+  let extraStyle = '';
+  if (text === 'APROVADO COM RESSALVAS') {
+    cls = 'ok';
+    extraStyle = `style="color:#eab308;border-color:#eab308;background:#eab30811"`;
+  }
+  return `<span class="badge ${cls} ${small ? 'small' : ''}" ${extraStyle}><span>${icons[text] || ''}</span>${text}</span>`;
+}
+
+function floodBarHtml(valor, limite, status) {
+  const pct = Math.min((valor / limite) * 100, 100);
+  const overflow = valor > limite;
+  const color = `var(--${status === 'fora' ? 'fail' : status === 'atencao' ? 'warn' : 'ok'})`;
+  return `<div class="flood-bar"><div class="flood-track"><div class="flood-fill" style="width:${pct}%;background:linear-gradient(90deg,${color}66,${color});${overflow ? `box-shadow:0 0 8px ${color}66` : ''}"></div>${overflow ? `<div style="position:absolute;top:-2px;bottom:-2px;left:${Math.min((limite / valor) * 100, 98)}%;width:2px;background:var(--fail);border-radius:1px;box-shadow:0 0 4px var(--fail)"></div>` : ''}</div><div class="flood-labels"><span>0</span>${overflow ? `<span style="color:var(--fail);font-weight:600">${valor.toFixed(1)} (${Math.round((valor / limite) * 100)}%)</span>` : ''}<span>${limite}</span></div></div>`;
+}
+
+function zoneBarHtml(valor, limOk, limAtencao, limFora, showLabels = true, mini = false) {
+  const max = limFora * 1.2;
+  const pctOk = (limOk / max) * 100;
+  const pctAt = ((limAtencao - limOk) / max) * 100;
+  const pctFo = ((limFora - limAtencao) / max) * 100;
+  const pctOv = 100 - pctOk - pctAt - pctFo;
+  const mp = Math.min((valor / max) * 100, 99);
+  let mc = 'var(--ok)';
+  if (valor >= limAtencao) mc = 'var(--fail)';
+  else if (valor >= limOk) mc = 'var(--warn)';
+
+  return `<div class="zone-bar ${mini ? 'zone-mini' : ''}"><div class="zone-track"><div class="zone-ok" style="width:${pctOk}%;height:100%"></div><div class="zone-warn" style="width:${pctAt}%;height:100%"></div><div class="zone-fail" style="width:${pctFo}%;height:100%"></div><div class="zone-over" style="width:${pctOv}%;height:100%"></div><div class="zone-needle" style="left:${mp}%;background:${mc};box-shadow:0 0 6px ${mc}"></div></div>${showLabels && !mini ? `<div class="zone-labels"><span style="left:0;color:var(--ok)">0</span><span style="left:${pctOk}%;color:#22c55e88">${limOk}</span><span style="left:${pctOk + pctAt}%;color:#eab30888">${limAtencao}</span><span style="left:${pctOk + pctAt + pctFo}%;color:#ef444488">${limFora}</span></div>` : ''}</div>`;
+}
+
+function swatchHtml(hex, size = 28) {
+  return `<span class="swatch" style="width:${size}px;height:${size}px;display:inline-block;background:${hex}"></span>`;
+}
+
+// ─── State ───
+
+let laudoEntrada = null;
+let laudoSaida = null;
+
+function renderFlowBar() {
+  const flowBar = document.getElementById('flowBar');
+  const blockedMsg = document.getElementById('blockedMsg');
+  const dropPeca = document.getElementById('dropPeca');
+
+  if (!laudoEntrada) {
+    flowBar.classList.add('hidden');
+    blockedMsg.classList.add('hidden');
+    dropPeca.classList.remove('blocked');
+    return;
+  }
+
+  flowBar.classList.remove('hidden');
+  const psdOk = laudoEntrada.resultado === 'APROVADO';
+  const hasSaida = !!laudoSaida;
+  const hasConfronto = psdOk && hasSaida;
+  const saidaOk = hasSaida && laudoSaida.resultado === 'APROVADO';
+
+  // Block drop zone if PSD failed
+  if (!psdOk) {
+    dropPeca.classList.add('blocked');
+    blockedMsg.classList.remove('hidden');
+    blockedMsg.style.display = 'flex';
+    // Clear saída if existed
+    laudoSaida = null;
+  } else {
+    dropPeca.classList.remove('blocked');
+    blockedMsg.classList.add('hidden');
+    blockedMsg.style.display = 'none';
+  }
+
+  const steps = [
+    { label: 'DA sobe PSD', sub: psdOk ? 'Aprovado' : 'Reprovado', dotCls: psdOk ? 'ok' : 'fail', icon: psdOk ? '✓' : '✕', active: true },
+    { label: 'Motion produz', sub: psdOk ? 'Peça final' : 'Bloqueado', dotCls: psdOk ? (hasSaida ? 'active' : 'pending') : 'pending', icon: '2', active: psdOk },
+    { label: 'Motion sobe peça', sub: hasSaida ? (saidaOk ? 'Aprovado' : 'Reprovado') : 'Aguardando', dotCls: hasSaida ? (saidaOk ? 'ok' : 'fail') : 'pending', icon: hasSaida ? (saidaOk ? '✓' : '✕') : '3', active: hasSaida },
+    { label: 'Confronto', sub: hasConfronto ? 'Calculado' : 'Aguardando', dotCls: hasConfronto ? 'active bridge' : 'pending bridge', icon: hasConfronto ? '⇌' : '4', active: hasConfronto },
+    { label: hasConfronto ? 'QA valida' : 'QA', sub: hasConfronto ? 'Liberado' : 'Aguardando', dotCls: hasConfronto ? 'ok' : 'pending', icon: hasConfronto ? '✓' : '5', active: hasConfronto },
+  ];
+
+  // Override step 5 if confronto is incompatible
+  if (hasConfronto) {
+    const pe = laudoEntrada.paleta;
+    const ps = laudoSaida.paleta;
+    const n = Math.min(pe.length, ps.length);
+    let maxD = 0;
+    for (let i = 0; i < n; i++) { const d = deltaE2000(pe[i].lab, ps[i].lab); if (d > maxD) maxD = d; }
+    const isGif = laudoSaida.tipo === 'GIF';
+    const limFora = isGif ? 15 : 10;
+    const dimMatch = laudoEntrada.width === laudoSaida.width && laudoEntrada.height === laudoSaida.height;
+    const incompatible = maxD >= limFora || !dimMatch || !saidaOk;
+    if (incompatible) {
+      steps[3].sub = 'Incompatível';
+      steps[3].dotCls = 'fail bridge';
+      steps[3].icon = '≠';
+      steps[4].label = 'Motion corrige';
+      steps[4].sub = 'Bloqueado';
+      steps[4].dotCls = 'fail';
+      steps[4].icon = '✕';
+    }
+  }
+
+  let html = '';
+  steps.forEach((s, i) => {
+    const isFail = s.dotCls.includes('fail');
+    const isActive = s.active;
+    html += `<div class="flow-step"><div class="flow-dot ${s.dotCls}">${s.icon}</div><span class="flow-label ${isFail ? 'fail' : isActive ? 'active' : ''}">${s.label}</span><span class="flow-sub ${isFail ? 'fail' : isActive ? 'active' : ''}">${s.sub}</span></div>`;
+    if (i < steps.length - 1) {
+      const nextFail = steps[i+1].dotCls.includes('fail') || (!psdOk && i >= 0);
+      const lineActive = isActive && steps[i+1].active;
+      html += `<div class="flow-line ${nextFail && isActive ? 'fail' : lineActive ? 'active' : ''}"></div>`;
+    }
+  });
+  flowBar.innerHTML = html;
+}
+
+function renderAll() {
+  const resultsEl = document.getElementById('results');
+  const rowEl = document.getElementById('resultsRow');
+  const confrontoEl = document.getElementById('confrontoContainer');
+
+  renderFlowBar();
+
+  if (!laudoEntrada && !laudoSaida) {
+    resultsEl.classList.add('hidden');
+    return;
+  }
+  resultsEl.classList.remove('hidden');
+
+  let html = '';
+  if (laudoEntrada) html += renderLaudo(laudoEntrada, 'entrada');
+  if (laudoSaida && laudoEntrada && laudoEntrada.resultado === 'APROVADO') html += renderLaudo(laudoSaida, 'saida');
+  rowEl.innerHTML = html;
+
+  if (laudoEntrada && laudoSaida && laudoEntrada.resultado === 'APROVADO') {
+    confrontoEl.innerHTML = renderConfronto();
+  } else {
+    confrontoEl.innerHTML = '';
+  }
+}
+
+function renderLaudo(laudo, tipo) {
+  const isEntrada = tipo === 'entrada';
+  const label = isEntrada ? 'LAUDO DE ENTRADA' : 'LAUDO DE SAÍDA';
+  const badgeCls = laudo.resultado === 'APROVADO' ? 'ok' : 'fail';
+
+  let metricsHtml = '';
+  laudo.metricas.forEach(m => {
+    metricsHtml += `<div class="metric-row"><div class="grid"><span class="id">${m.id}</span><span class="nome">${m.nome}</span><span class="medido">${m.medido}</span><span class="ref">${m.ref}</span><span class="status">${statusDotHtml(m.status)}</span></div>${m.flood ? floodBarHtml(m.flood.valor, m.flood.limite, m.status) : ''}</div>`;
+  });
+
+  let paletaHtml = '';
+  if (laudo.paleta && laudo.paleta.length > 0) {
+    paletaHtml = '<div class="paleta">' + laudo.paleta.map(c =>
+      `<div class="paleta-item">${swatchHtml(c.hex, 32)}<span style="font-size:10px;font-family:var(--mono);color:var(--text-muted)">${c.hex}</span></div>`
+    ).join('') + '</div>';
+  }
+
+  const now = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  return `<div class="laudo-card"><div class="laudo-header"><div class="info"><svg viewBox="0 0 96 96" width="32" height="32"><rect width="96" height="96" rx="17.3" fill="#0d1117" stroke="#21262d" stroke-width="1"/><polygon points="28.6,66.7 49.5,14.4 61.4,14.4 45.0,48.7 67.4,48.7 40.5,81.6 28.6,81.6" fill="#2563eb"/><polygon points="45.0,48.7 67.4,48.7 40.5,81.6 55.5,81.6 74.9,48.7 61.4,14.4 49.5,14.4" fill="#1d4ed8"/></svg><div><div class="type">${label}</div><div class="name">${laudo.fileName}</div><div class="meta">${laudo.tipo} · ${laudo.width}×${laudo.height} · ${now}</div></div></div>${badgeHtml(laudo.resultado)}</div><div class="laudo-body"><div class="section-title">${isEntrada ? 'Verificações estruturais' : 'Métricas da peça'}</div><div class="metric-header"><span>#</span><span>Métrica</span><span>Medido</span><span>Referência</span><span>Resultado</span></div>${metricsHtml}<div style="margin-top:16px"><div class="section-title">Paleta dominante</div>${paletaHtml}</div></div></div>`;
+}
+
+function renderConfronto() {
+  if (!laudoEntrada || !laudoSaida) return '';
+  const pe = laudoEntrada.paleta;
+  const ps = laudoSaida.paleta;
+  const numColors = Math.min(pe.length, ps.length);
+  const isGif = laudoSaida.tipo === 'GIF';
+
+  // ─── Color deltas ───
+  const deltas = [];
+  for (let i = 0; i < numColors; i++) deltas.push(deltaE2000(pe[i].lab, ps[i].lab));
+  const avgDelta = deltas.length > 0 ? deltas.reduce((a, b) => a + b, 0) / deltas.length : 0;
+  const maxDelta = deltas.length > 0 ? Math.max(...deltas) : 0;
+  const limOk = isGif ? 5 : 3;
+  const limAtencao = isGif ? 10 : 6;
+  const limFora = isGif ? 15 : 10;
+
+  // ─── All confronto metrics ───
+  const allMetrics = [];
+  let sectionBreaks = {};
+
+  // Section 1: Conformidade dimensional
+  sectionBreaks['D'] = 'CONFORMIDADE DIMENSIONAL';
+  const dimMatch = laudoEntrada.width === laudoSaida.width && laudoEntrada.height === laudoSaida.height;
+  allMetrics.push({ id: 'D1', nome: 'Dimensões entrada × saída', medido: dimMatch ? `${laudoSaida.width}×${laudoSaida.height} = ${laudoEntrada.width}×${laudoEntrada.height}` : `${laudoSaida.width}×${laudoSaida.height} ≠ ${laudoEntrada.width}×${laudoEntrada.height}`, ref: 'Idênticas', status: dimMatch ? 'ok' : 'fora', section: 'D' });
+
+  // Steps × Frames
+  if (isGif && laudoSaida.gifInfo && laudoEntrada.steps > 0) {
+    const steps = laudoEntrada.steps;
+    const frames = laudoSaida.gifInfo.frames;
+    // Frames should be multiple of steps (each step = 1 cycle of frames)
+    const framesPerStep = frames > 0 && steps > 0 ? Math.round(frames / steps) : 0;
+    const stepsMatch = frames >= steps;
+    allMetrics.push({ id: 'D2', nome: 'Steps PSD × Frames GIF', medido: `${steps} steps → ${frames} frames (${framesPerStep}/step)`, ref: `frames ≥ steps`, status: stepsMatch ? 'ok' : 'atencao', section: 'D' });
+  }
+
+  // Section 2: Conformidade da peça
+  sectionBreaks['P'] = 'CONFORMIDADE DA PEÇA';
+  // Pull metrics from laudoSaida
+  laudoSaida.metricas.forEach(m => {
+    if (m.id === 'S1') return; // dimensões already in D1
+    allMetrics.push({ ...m, id: 'P' + m.id.slice(1), section: 'P' });
+  });
+
+  // Section 3: Fidelidade de cor
+  sectionBreaks['C'] = 'FIDELIDADE DE COR';
+  const avgStatus = avgDelta >= (isGif ? 10 : 6) ? 'fora' : avgDelta >= (isGif ? 5 : 3) ? 'atencao' : 'ok';
+  const maxStatus = maxDelta >= limFora ? 'fora' : maxDelta >= limOk ? 'atencao' : 'ok';
+  allMetrics.push({ id: 'C1', nome: 'ΔE médio (paleta)', medido: avgDelta.toFixed(1), ref: `< ${isGif ? 5 : 3} (${laudoSaida.tipo})`, status: avgStatus, zone: { valor: avgDelta, limOk: isGif ? 5 : 3, limAtencao: isGif ? 10 : 6, limFora: isGif ? 15 : 10 }, section: 'C' });
+  allMetrics.push({ id: 'C2', nome: 'ΔE pior cor', medido: maxDelta.toFixed(1), ref: `< ${limFora} (${laudoSaida.tipo})`, status: maxStatus, zone: { valor: maxDelta, limOk, limAtencao, limFora: isGif ? 20 : 15 }, section: 'C' });
+
+  // ─── Veredito final ───
+  const hasFora = allMetrics.some(m => m.status === 'fora');
+  const hasAtencao = allMetrics.some(m => m.status === 'atencao');
+  let result, cls;
+  if (hasFora) { result = 'REPROVADO'; cls = 'fail'; }
+  else if (hasAtencao) { result = 'APROVADO COM RESSALVAS'; cls = 'ok'; }
+  else { result = 'APROVADO'; cls = 'ok'; }
+
+  // ─── Render sections ───
+  let metricsHtml = '';
+  let currentSection = '';
+  allMetrics.forEach(m => {
+    if (m.section !== currentSection) {
+      currentSection = m.section;
+      metricsHtml += `<div class="section-title" style="margin-top:${m.section === 'D' ? '0' : '16'}px">${sectionBreaks[m.section]}</div>`;
+      metricsHtml += '<div class="metric-header"><span>#</span><span>Métrica</span><span>Medido</span><span>Referência</span><span>Resultado</span></div>';
+    }
+    metricsHtml += `<div class="metric-row"><div class="grid"><span class="id">${m.id}</span><span class="nome">${m.nome}</span><span class="medido">${m.medido}</span><span class="ref">${m.ref}</span><span class="status">${statusDotHtml(m.status)}</span></div>${m.flood ? `<div style="padding-left:36px;padding-right:80px;max-width:400px">${floodBarHtml(m.flood.valor, m.flood.limite, m.status)}</div>` : ''}${m.zone ? `<div style="padding-left:36px;padding-right:80px;max-width:400px">${zoneBarHtml(m.zone.valor, m.zone.limOk, m.zone.limAtencao, m.zone.limFora)}</div>` : ''}</div>`;
+  });
+
+  // ─── Color map ───
+  let colorMapHtml = '';
+  if (numColors > 0) {
+    colorMapHtml = `<div style="margin-top:16px"><div class="section-title">MAPEAMENTO COR A COR</div>`;
+    colorMapHtml += `<div class="color-map-header"><span></span><span style="text-align:center">PSD</span><span></span><span style="text-align:center">${laudoSaida.tipo}</span><span>DELTA</span><span>FAIXA</span><span style="text-align:right">STATUS</span></div>`;
+    for (let i = 0; i < numColors; i++) {
+      const d = deltas[i];
+      let st = 'ok';
+      if (d >= limAtencao) st = 'fora';
+      else if (d >= limOk) st = 'atencao';
+      colorMapHtml += `<div class="color-map-row"><span style="font-size:11px;color:var(--text-muted);font-weight:600">Cor ${i + 1}</span><div class="swatch-group">${swatchHtml(pe[i].hex)}  <span class="hex">${pe[i].hex}</span></div><span class="arrow">→</span><div class="swatch-group">${swatchHtml(ps[i].hex)} <span class="hex">${ps[i].hex}</span></div><span class="delta" style="color:var(--${st === 'fora' ? 'fail' : st === 'atencao' ? 'warn' : 'ok'})">ΔE ${d.toFixed(1)}</span><div>${zoneBarHtml(d, limOk, limAtencao, limFora, i === 0, true)}</div><span style="text-align:right">${statusDotHtml(st)}</span></div>`;
+    }
+    colorMapHtml += '</div>';
+  }
+
+  // ─── Summary counts ───
+  const countFora = allMetrics.filter(m => m.status === 'fora').length;
+  const countAtencao = allMetrics.filter(m => m.status === 'atencao').length;
+  const countOk = allMetrics.filter(m => m.status === 'ok').length;
+  const summaryHtml = `<div style="display:flex;gap:20px;margin-top:16px;padding:12px 16px;background:#161b22;border-radius:6px;font-size:12px;font-family:var(--mono)"><span style="color:var(--ok)">● ${countOk} OK</span><span style="color:var(--warn)">◐ ${countAtencao} Atenção</span><span style="color:var(--fail)">● ${countFora} Fora</span><span style="color:var(--text-dim);margin-left:auto">${allMetrics.length} verificações</span></div>`;
+
+  // ─── Bloqueio ───
+  const bloqueioHtml = hasFora ? `<div class="bloqueio"><div><div class="msg">⚠ VEREDITO: PEÇA NÃO LIBERADA PARA QA</div><div class="sub">${countFora} métrica${countFora > 1 ? 's' : ''} fora da faixa. Corrija e gere novo laudo.</div></div></div>` : '';
+
+  return `<div class="confronto-panel ${cls}"><div class="confronto-header ${cls}"><div style="display:flex;align-items:center;gap:12px"><div class="confronto-icon" style="background:var(--${cls})22;border:2px solid var(--${cls})66;color:var(--${cls})">${hasFora ? '≠' : '⇌'}</div><div><div style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--${cls});margin-bottom:2px">CONFRONTO — VEREDITO FINAL</div><div style="font-size:11px;color:var(--text-muted)">${laudoEntrada.fileName} (PSD) → ${laudoSaida.fileName} (${laudoSaida.tipo})</div></div></div>${badgeHtml(result, null, true)}</div><div class="confronto-body">${metricsHtml}${colorMapHtml}${summaryHtml}${bloqueioHtml}</div></div>`;
+}
+
+// ─── File Handlers ───
+
+async function handlePsd(file) {
+  if (!readPsd) { alert('Biblioteca ag-psd não carregada. Recarregue a página.'); return; }
+  const buffer = await file.arrayBuffer();
+  const psd = readPsd(new Uint8Array(buffer), { skipLayerImageData: true, skipThumbnail: true, skipCompositeImageData: false });
+  const analysis = analyzePsd(psd, file.name, file.size);
+
+  // Extract palette from composite image
+  let paleta = [];
+  if (psd.imageData) {
+    // imageData is a Uint8ClampedArray in RGBA format
+    paleta = extractPalette(psd.imageData);
+  } else {
+    // Fallback: try canvas with the composite
+    const canvas = document.createElement('canvas');
+    canvas.width = psd.width;
+    canvas.height = psd.height;
+    // If no composite data available, palette will be empty
+  }
+
+  laudoEntrada = {
+    fileName: file.name,
+    tipo: 'PSD',
+    width: analysis.width,
+    height: analysis.height,
+    steps: (psd.children || []).filter(c => c.children).length,
+    metricas: analysis.metricas,
+    resultado: analysis.resultado,
+    paleta,
+  };
+  renderAll();
+}
+
+async function handlePeca(file) {
+  const ext = file.name.split('.').pop().toUpperCase();
+  const isGif = ext === 'GIF';
+  const buffer = await file.arrayBuffer();
+
+  // Load image into canvas for palette
+  const blob = new Blob([buffer], { type: file.type });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
+  URL.revokeObjectURL(url);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const paleta = extractPalette(imageData);
+
+  const width = img.naturalWidth;
+  const height = img.naturalHeight;
+  const sizeMB = file.size / 1024; // KB
+
+  const metricas = [];
+  metricas.push({ id: 'S1', nome: 'Dimensões', medido: width + ' × ' + height, ref: laudoEntrada ? laudoEntrada.width + ' × ' + laudoEntrada.height : '—', status: laudoEntrada ? (width === laudoEntrada.width && height === laudoEntrada.height ? 'ok' : 'fora') : 'ok' });
+
+  const pesoKB = file.size / 1024;
+  // Limit based on format — rough defaults
+  const pesoLimite = isGif ? 300 : 200; // KB
+  const pesoStatus = pesoKB > pesoLimite * 1.5 ? 'fora' : pesoKB > pesoLimite ? 'atencao' : 'ok';
+  metricas.push({ id: 'S2', nome: 'Peso', medido: pesoKB.toFixed(0) + ' KB', ref: '≤ ' + pesoLimite + ' KB', status: pesoStatus, flood: { valor: pesoKB, limite: pesoLimite } });
+
+  let gifInfo = null;
+  if (isGif) {
+    gifInfo = parseGif(buffer);
+    if (gifInfo) {
+      metricas.push({ id: 'S3', nome: 'Duração', medido: gifInfo.duration.toFixed(1) + 's', ref: '≤ 30s', status: gifInfo.duration > 30 ? 'fora' : gifInfo.duration > 20 ? 'atencao' : 'ok', flood: { valor: gifInfo.duration, limite: 30 } });
+      metricas.push({ id: 'S4', nome: 'Loops', medido: gifInfo.loopStr, ref: '≤ 3×', status: gifInfo.loops === 0 || gifInfo.loops > 3 ? 'fora' : 'ok' });
+      metricas.push({ id: 'S5', nome: 'FPS', medido: String(gifInfo.fps), ref: '15–25', status: gifInfo.fps >= 15 && gifInfo.fps <= 25 ? 'ok' : 'atencao' });
+      metricas.push({ id: 'S6', nome: 'Frames', medido: String(gifInfo.frames), ref: '—', status: 'ok' });
+    }
+  }
+
+  const hasFora = metricas.some(m => m.status === 'fora');
+
+  laudoSaida = {
+    fileName: file.name,
+    tipo: ext,
+    width, height,
+    metricas,
+    resultado: hasFora ? 'REPROVADO' : 'APROVADO',
+    paleta,
+    gifInfo,
+  };
+  renderAll();
+}
+
+// ─── Drop Zone Setup ───
+
+function setupDrop(zoneId, inputId, handler) {
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      zone.classList.add('has-file');
+      zone.innerHTML = `<span class="label">${zoneId === 'dropPsd' ? 'LAUDO DE ENTRADA' : 'LAUDO DE SAÍDA'}</span><span class="filename">✓ ${file.name} (${(file.size / 1024).toFixed(0)} KB)</span><span class="hint">Clique para trocar</span><input type="file" accept="${zoneId === 'dropPsd' ? '.psd' : '.gif,.png'}" id="${inputId}" style="display:none">`;
+      document.getElementById(inputId).addEventListener('change', (ev) => {
+        if (ev.target.files[0]) handler(ev.target.files[0]);
+      });
+      handler(file);
+    }
+  });
+  input.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      zone.classList.add('has-file');
+      zone.innerHTML = `<span class="label">${zoneId === 'dropPsd' ? 'LAUDO DE ENTRADA' : 'LAUDO DE SAÍDA'}</span><span class="filename">✓ ${file.name} (${(file.size / 1024).toFixed(0)} KB)</span><span class="hint">Clique para trocar</span><input type="file" accept="${zoneId === 'dropPsd' ? '.psd' : '.gif,.png'}" id="${inputId}" style="display:none">`;
+      document.getElementById(inputId).addEventListener('change', (ev) => {
+        if (ev.target.files[0]) handler(ev.target.files[0]);
+      });
+      handler(file);
+    }
+  });
+}
+
+setupDrop('dropPsd', 'inputPsd', handlePsd);
+setupDrop('dropPeca', 'inputPeca', handlePeca);
+
+</script>
+</body>
+</html>
