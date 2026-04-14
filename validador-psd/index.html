@@ -9,250 +9,78 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0a;--card:#141414;--card2:#1a1a1a;--border:#2a2a2a;--t1:#f0f0f0;--t2:#888;--t3:#555;
---accent:#E85D30;--accent2:#FF7A4D;
---ok:#22C55E;--ok-bg:rgba(34,197,94,.1);--ok-border:rgba(34,197,94,.2);
---warn:#EAB308;--warn-bg:rgba(234,179,8,.1);--warn-border:rgba(234,179,8,.2);
---err:#EF4444;--err-bg:rgba(239,68,68,.1);--err-border:rgba(239,68,68,.2);
---info:#3B82F6;--info-bg:rgba(59,130,246,.1);--info-border:rgba(59,130,246,.2);
---radius:12px;--font:'Space Grotesk',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
-body{font-family:var(--font);background:var(--bg);color:var(--t1);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
-::selection{background:var(--accent);color:#fff}
-
-.wrap{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem}
-
-.brand{display:flex;align-items:center;gap:.75rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
-.brand-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.brand-text h1{font-size:1.15rem;font-weight:600;letter-spacing:-.3px}
-.brand-text p{font-size:.7rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}
-
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem}
-.section-title{font-size:.85rem;font-weight:600;margin-bottom:.75rem;letter-spacing:-.2px}
-
-.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
-.tag-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)}
-.tag-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
-.tag-err{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border)}
-.tag-info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-border)}
-
-.mode-bar{display:flex;gap:0;margin-bottom:.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;padding:4px}
-.mode-btn{flex:1;padding:.55rem;text-align:center;font-size:.8rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--t2);transition:all .15s;border-radius:8px;font-family:var(--font)}
-.mode-btn.active{background:var(--accent);color:#fff}
-.mode-btn:hover:not(.active){background:var(--card2);color:var(--t1)}
-.mode-desc{font-size:.7rem;color:var(--t3);margin-bottom:1.25rem;padding:0 .25rem}
-
-.drop{border:2px dashed var(--border);border-radius:var(--radius);padding:3rem 1.5rem;text-align:center;cursor:pointer;transition:all .25s;background:var(--card)}
-.drop:hover,.drop.over{border-color:var(--accent);background:rgba(232,93,48,.03)}
-.drop input{display:none}
-.drop svg{margin:0 auto .75rem;opacity:.4;transition:opacity .2s}
-.drop:hover svg{opacity:.7}
-.drop .main{font-size:.9rem;font-weight:500;margin-bottom:.25rem}
-.drop .hint{font-size:.7rem;color:var(--t3)}
-
-.result-banner{text-align:center;padding:1.25rem;border-radius:var(--radius);margin-bottom:.75rem;font-weight:700;font-size:1.1rem;letter-spacing:-.3px;border:1px solid}
-.result-ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}
-.result-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-border)}
-.result-err{background:var(--err-bg);color:var(--err);border-color:var(--err-border)}
-.result-sub{font-size:.75rem;font-weight:400;margin-top:.25rem;opacity:.8}
-
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.75rem}
-@media(max-width:500px){.metrics{grid-template-columns:repeat(2,1fr)}}
-.metric{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.75rem}
-.metric .label{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.metric .val{font-size:1.15rem;font-weight:600;letter-spacing:-.3px}
-
-.weight-bar{margin-bottom:.5rem}
-.weight-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.weight-fill{height:4px;border-radius:2px;transition:width .5s ease-out}
-.weight-info{font-size:.7rem;color:var(--t3);margin-top:6px}
-
-.check-row{display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.8rem}
-.check-row:last-child{border:none}
-.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.check-name{flex:1}
-.check-note{font-size:.65rem;color:var(--t3);max-width:220px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.violation{padding:.75rem;border-radius:8px;margin-bottom:.5rem;border:1px solid}
-.violation .v-head{display:flex;align-items:start;gap:.5rem}
-.violation .v-text{font-size:.8rem;flex:1}
-.violation .v-action{font-size:.7rem;color:var(--t2);margin-top:.35rem;padding-left:3.5rem}
-
-.tree{font-family:var(--mono);font-size:.7rem;line-height:1.8;color:var(--t2)}
-.tree .grp{color:var(--t1);font-weight:500}
-.tree .err-name{color:var(--err)}
-.tree .warn-name{color:var(--warn)}
-.tree .over-name{color:#F59E0B}
-.tree .flag{opacity:.5;font-style:italic}
-
-.footer{text-align:center;font-size:.65rem;color:var(--t3);padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:1rem}
-.footer a{color:var(--accent);text-decoration:none}
-.footer a:hover{text-decoration:underline}
-.hidden{display:none}
+*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0a0a;--card:#141414;--card2:#1a1a1a;--border:#2a2a2a;--t1:#f0f0f0;--t2:#888;--t3:#555;--accent:#E85D30;--ok:#22C55E;--ok-bg:rgba(34,197,94,.1);--ok-border:rgba(34,197,94,.2);--warn:#EAB308;--warn-bg:rgba(234,179,8,.1);--warn-border:rgba(234,179,8,.2);--err:#EF4444;--err-bg:rgba(239,68,68,.1);--err-border:rgba(239,68,68,.2);--info:#3B82F6;--info-bg:rgba(59,130,246,.1);--info-border:rgba(59,130,246,.2);--radius:12px;--font:'Space Grotesk',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}body{font-family:var(--font);background:var(--bg);color:var(--t1);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}::selection{background:var(--accent);color:#fff}.wrap{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem}.brand{display:flex;align-items:center;gap:.75rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}.brand-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}.brand-text h1{font-size:1.15rem;font-weight:600;letter-spacing:-.3px}.brand-text p{font-size:.7rem;color:var(--t3);letter-spacing:.05em;text-transform:uppercase}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem}.section-title{font-size:.85rem;font-weight:600;margin-bottom:.75rem;letter-spacing:-.2px}.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.02em;text-transform:uppercase}.tag-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)}.tag-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}.tag-err{background:var(--err-bg);color:var(--err);border:1px solid var(--err-border)}.tag-info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-border)}.controls{display:flex;gap:.5rem;margin-bottom:.5rem}@media(max-width:600px){.controls{flex-direction:column}}.ctrl-group{flex:1}.ctrl-label{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem;padding-left:.25rem}.mode-bar{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;padding:4px}.mode-btn{flex:1;padding:.5rem .25rem;text-align:center;font-size:.72rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--t2);transition:all .15s;border-radius:8px;font-family:var(--font);white-space:nowrap}.mode-btn.active{background:var(--accent);color:#fff}.mode-btn.active-blue{background:#2563eb;color:#fff}.mode-btn:hover:not(.active):not(.active-blue){background:var(--card2);color:var(--t1)}.mode-desc{font-size:.7rem;color:var(--t3);margin-bottom:1.25rem;padding:0 .25rem}.drop{border:2px dashed var(--border);border-radius:var(--radius);padding:3rem 1.5rem;text-align:center;cursor:pointer;transition:all .25s;background:var(--card)}.drop:hover,.drop.over{border-color:var(--accent);background:rgba(232,93,48,.03)}.drop input{display:none}.drop svg{margin:0 auto .75rem;opacity:.4;transition:opacity .2s}.drop:hover svg{opacity:.7}.drop .main{font-size:.9rem;font-weight:500;margin-bottom:.25rem}.drop .hint{font-size:.7rem;color:var(--t3)}.result-banner{text-align:center;padding:1.25rem;border-radius:var(--radius);margin-bottom:.75rem;font-weight:700;font-size:1.1rem;letter-spacing:-.3px;border:1px solid}.result-ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}.result-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-border)}.result-err{background:var(--err-bg);color:var(--err);border-color:var(--err-border)}.result-sub{font-size:.75rem;font-weight:400;margin-top:.25rem;opacity:.8}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:.75rem}@media(max-width:500px){.metrics{grid-template-columns:repeat(3,1fr)}}.metric{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.65rem}.metric .label{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}.metric .val{font-size:1rem;font-weight:600;letter-spacing:-.3px}.weight-bar{margin-bottom:.5rem}.weight-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}.weight-fill{height:4px;border-radius:2px;transition:width .5s ease-out}.weight-info{font-size:.7rem;color:var(--t3);margin-top:6px}.check-row{display:flex;align-items:center;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.8rem}.check-row:last-child{border:none}.check-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}.check-name{flex:1}.check-note{font-size:.65rem;color:var(--t3);max-width:220px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.violation{padding:.75rem;border-radius:8px;margin-bottom:.5rem;border:1px solid}.violation .v-head{display:flex;align-items:start;gap:.5rem}.violation .v-text{font-size:.8rem;flex:1}.violation .v-action{font-size:.7rem;color:var(--t2);margin-top:.35rem;padding-left:3.5rem}.tree{font-family:var(--mono);font-size:.7rem;line-height:1.8;color:var(--t2)}.tree .grp{color:var(--t1);font-weight:500}.tree .err-name{color:var(--err)}.tree .warn-name{color:var(--warn)}.tree .over-name{color:#F59E0B}.tree .flag{opacity:.5;font-style:italic}.footer{text-align:center;font-size:.65rem;color:var(--t3);padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:1rem}.footer a{color:var(--accent);text-decoration:none}.footer a:hover{text-decoration:underline}.hidden{display:none}.dest-tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="brand">
     <div class="brand-logo"><svg width="28" height="28" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg"><rect width="96" height="96" rx="17.3" fill="#0d1117"/><polygon points="28.6,66.7 49.5,14.4 61.4,14.4 45.0,48.7 67.4,48.7 40.5,81.6 28.6,81.6" fill="#2563eb"/><polygon points="45.0,48.7 67.4,48.7 40.5,81.6 55.5,81.6 74.9,48.7 61.4,14.4 49.5,14.4" fill="#1d4ed8"/></svg></div>
-    <div class="brand-text">
-      <h1>Rush · Validador PSD</h1>
-      <p>Conformidade automática de arquivos</p>
-    </div>
+    <div class="brand-text"><h1>Rush · Validador PSD</h1><p>Conformidade automática de arquivos</p></div>
   </div>
-
-  <div class="mode-bar">
-    <button class="mode-btn active" id="mode-master" onclick="setMode('master')">⬡ Master (agência → DA)</button>
-    <button class="mode-btn" id="mode-entrega" onclick="setMode('entrega')">⬢ Entrega (DA → Motion)</button>
+  <div class="controls">
+    <div class="ctrl-group"><div class="ctrl-label">Estágio</div><div class="mode-bar"><button class="mode-btn active" id="mode-master" onclick="setStage('master')">Master (agência → DA)</button><button class="mode-btn" id="mode-entrega" onclick="setStage('entrega')">Entrega (DA → Motion)</button></div></div>
+    <div class="ctrl-group"><div class="ctrl-label">Destino</div><div class="mode-bar"><button class="mode-btn active-blue" id="dest-auto" onclick="setDest('auto')">Auto</button><button class="mode-btn" id="dest-html5" onclick="setDest('html5')">HTML5</button><button class="mode-btn" id="dest-ooh" onclick="setDest('ooh')">OOH</button><button class="mode-btn" id="dest-social" onclick="setDest('social')">Social</button></div></div>
   </div>
-  <p class="mode-desc" id="mode-desc">Smart Objects e Shape Layers são aceitos no modo Master — o DA precisa deles para desdobrar formatos.</p>
-
-  <div class="drop" id="dropzone">
-    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    <p class="main" id="drop-text">Arraste o arquivo .PSD aqui</p>
-    <p class="hint">ou clique para selecionar · análise 100% local</p>
-    <input type="file" id="fileInput" accept=".psd">
-  </div>
-
+  <p class="mode-desc" id="mode-desc">Master + Auto: Smart Objects e Shapes aceitos. Destino inferido pela dimensão do canvas.</p>
+  <div class="drop" id="dropzone"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p class="main" id="drop-text">Arraste o arquivo .PSD aqui</p><p class="hint">ou clique para selecionar · análise 100% local</p><input type="file" id="fileInput" accept=".psd"></div>
   <div id="report" class="hidden"></div>
-
-  <div class="footer" id="footer-default">
-    Validação baseada nos manuais de recebimento PSD · Zero IA · 100% regras determinísticas<br>
-    <a href="https://www.voidda.com.br" target="_blank">voidda.com.br</a> · Rush-Sistem
-  </div>
+  <div class="footer" id="footer-default">Validação baseada nos manuais de recebimento PSD · Zero IA · 100% regras determinísticas<br><a href="https://www.voidda.com.br" target="_blank">voidda.com.br</a> · Rush-Sistem</div>
 </div>
-
 <script type="module">
-import { readPsd } from 'https://esm.sh/ag-psd@30.1.1';
-
-let currentMode = 'master';
-
-window.setMode = function(mode) {
-  currentMode = mode;
-  document.getElementById('mode-master').className = 'mode-btn' + (mode==='master'?' active':'');
-  document.getElementById('mode-entrega').className = 'mode-btn' + (mode==='entrega'?' active':'');
-  document.getElementById('mode-desc').textContent = mode === 'master'
-    ? 'Smart Objects e Shape Layers são aceitos no modo Master — o DA precisa deles para desdobrar formatos.'
-    : 'Todas as regras se aplicam. Smart Objects e Shape Layers devem estar rasterizados.';
-  if (window._lastFile) processFile(window._lastFile);
-};
-
-const SMART = [/smart\s*object/i, /objeto\s*inteligente/i];
-const GENERIC = [/^camada\s*\d+$/i, /^layer\s*\d+$/i, /^copy$/i, /copiar/i, /\bcopy\s*\d*$/i, /^ret[aâ]ngulo\s*\d*/i];
-const SHAPE = [/^ret[aâ]ngulo/i, /^ellipse/i, /^pol[ií]gono/i, /^shape/i, /^linha/i];
-
-function flat(layer,depth=0){const r=[];const n=layer.name||'(sem nome)';const ig=!!layer.children;let w=0,h=0,l=0,t=0,ri=0,b=0;if(layer.left!==undefined){w=layer.right-layer.left;h=layer.bottom-layer.top;l=layer.left;t=layer.top;ri=layer.right;b=layer.bottom}r.push({name:n,depth,isGroup:ig,hidden:!!layer.hidden,blendMode:layer.blendMode||'normal',w,h,left:l,top:t,right:ri,bottom:b});if(layer.children)layer.children.forEach(c=>r.push(...flat(c,depth+1)));return r}
-
-function est(w,h,layers){return w*h*4*layers*0.4/1e6}
-function fmt(mb){return mb<1?(mb*1000).toFixed(0)+' KB':mb.toFixed(1)+' MB'}
-
-function validate(psd,fileSize,mode){
-  const layers=[];if(psd.children)psd.children.forEach(c=>layers.push(...flat(c)));
-  const total=layers.length;const groups=layers.filter(l=>l.isGroup&&l.depth===0);
-  const violations=[];const checks=[];const isMaster=mode==='master';
-
-  const smart=layers.filter(l=>!l.isGroup&&SMART.some(p=>p.test(l.name)));
-  if(isMaster){checks.push({item:'Smart Objects',status:smart.length>0?'Info':'OK',note:smart.length>0?smart.length+' — aceito no Master':''})}
-  else{checks.push({item:'Smart Objects achatados',status:smart.length===0?'OK':'Reprovado',note:smart.length===0?'':smart.length+' encontrado(s)'});
-  if(smart.length>0)violations.push({item:smart.length+' Smart Object(s): '+smart.slice(0,3).map(s=>'\u201c'+s.name+'\u201d').join(', ')+(smart.length>3?' ...':''),severity:'Reprovado',action:'Rasterizar todas (bot\u00e3o direito > Rasterizar Camada)'})}
-
-  const generic=layers.filter(l=>!l.isGroup&&GENERIC.some(p=>p.test(l.name.trim())));
-  checks.push({item:'Nomes descritivos',status:generic.length===0?'OK':'Reprovado',note:generic.length===0?'':generic.length+': '+generic.slice(0,3).map(g=>'\u201c'+g.name+'\u201d').join(', ')});
-  if(generic.length>0)violations.push({item:generic.length+' nome(s) gen\u00e9rico(s): '+generic.slice(0,4).map(g=>'\u201c'+g.name+'\u201d').join(', '),severity:'Reprovado',action:'Renomear com prefixo funcional (bg_, txt_, cta_, logo_, product_, legal_, deco_)'})
-
-  const badBlend=layers.filter(l=>!l.isGroup&&l.blendMode!=='normal'&&l.blendMode!=='pass through');
-  checks.push({item:'Blend Mode Normal',status:badBlend.length===0?'OK':'Aten\u00e7\u00e3o',note:badBlend.length===0?'':badBlend.map(b=>'\u201c'+b.name+'\u201d: '+b.blendMode).join(', ')});
-  if(badBlend.length>0)violations.push({item:'Blend mode n\u00e3o-Normal em '+badBlend.length+' camada(s)',severity:'Aten\u00e7\u00e3o',action:'Proibido em HTML5/Social. Aceit\u00e1vel em OOH'})
-
-  const hidden=layers.filter(l=>l.hidden&&!l.isGroup);
-  checks.push({item:'Camadas ocultas',status:hidden.length===0?'OK':'Reprovado',note:hidden.length===0?'Nenhuma':hidden.length+' oculta(s)'});
-  if(hidden.length>0)violations.push({item:hidden.length+' camada(s) oculta(s)',severity:'Reprovado',action:'Deletar camadas desligadas'})
-
-  checks.push({item:'Steps em grupos',status:groups.length>0?'OK':'Aten\u00e7\u00e3o',note:groups.length>0?groups.length+' grupo(s)':'Sem grupos'});
-
-  const over=layers.filter(l=>!l.isGroup&&(l.w>psd.width*1.1||l.h>psd.height*1.1)&&l.w>0);
-  checks.push({item:'Camadas no canvas',status:over.length===0?'OK':'Aten\u00e7\u00e3o',note:over.length===0?'':over.length+' excede(m)'});
-  if(over.length>0)violations.push({item:over.length+' camada(s) excedem canvas: '+over.slice(0,2).map(o=>'\u201c'+o.name+'\u201d '+o.w+'\u00d7'+o.h).join(', '),severity:'Aten\u00e7\u00e3o',action:'Recortar (HTML5) ou documentar sangria (OOH)'})
-
-  const shapes=layers.filter(l=>!l.isGroup&&SHAPE.some(p=>p.test(l.name.trim())));
-  if(isMaster){checks.push({item:'Shape Layers',status:shapes.length>0?'Info':'OK',note:shapes.length>0?shapes.length+' — aceito no Master':''})}
-  else{checks.push({item:'Shapes rasterizados',status:shapes.length===0?'OK':'Aten\u00e7\u00e3o',note:shapes.length===0?'':shapes.length+' poss\u00edvel(is)'});
-  if(shapes.length>0)violations.push({item:shapes.length+' poss\u00edvel(is) Shape Layer(s)',severity:'Aten\u00e7\u00e3o',action:'Rasterizar Shape Layers (HTML5/Social)'})}
-
-  const fileMB=fileSize/1e6;const expected=est(psd.width,psd.height,total);const ratio=fileMB/expected;
-  let ws='OK';if(ratio>5)ws='Reprovado';else if(ratio>2.5)ws='Aten\u00e7\u00e3o';
-  checks.push({item:'Peso do arquivo',status:ws,note:fileMB.toFixed(1)+' MB (esperado: '+expected.toFixed(1)+' MB \u2014 '+ratio.toFixed(1)+'\u00d7)'});
-  if(ratio>5)violations.push({item:'Peso '+fileMB.toFixed(0)+' MB = '+ratio.toFixed(1)+'\u00d7 o esperado',severity:'Cr\u00edtico',action:'Smart Objects ou camadas n\u00e3o cropadas'});
-  else if(ratio>2.5)violations.push({item:'Peso '+fileMB.toFixed(1)+' MB = '+ratio.toFixed(1)+'\u00d7 o esperado',severity:'Aten\u00e7\u00e3o',action:'Verificar camadas desnecess\u00e1rias'})
-
-  const cc=violations.filter(v=>v.severity==='Reprovado'||v.severity==='Cr\u00edtico').length;
-  const wc=violations.filter(v=>v.severity==='Aten\u00e7\u00e3o').length;
-  let result='Aprovado',rc='ok';
-  if(cc>0){result='Reprovado';rc='err'}else if(wc>0){result='Aprovado com ressalvas';rc='warn'}
-  return{layers,total,groups:groups.length,checks,violations,result,rc,cc,wc,expected,ratio,fileMB,canvas:{w:psd.width,h:psd.height},mode}
-}
-
+import{readPsd}from'https://esm.sh/ag-psd@30';
+let cS='master',cD='auto';
+const descs={'master-auto':'Master + Auto: Smart Objects e Shapes aceitos. Destino inferido pela dimensão do canvas.','master-html5':'Master + HTML5: Smart Objects e Shapes aceitos. Regras de peso para digital.','master-ooh':'Master + OOH: Smart Objects e Shapes aceitos. Tolerância maior de peso.','master-social':'Master + Social: Smart Objects e Shapes aceitos. Regras de peso para social.','entrega-auto':'Entrega + Auto: todas as regras aplicadas conforme destino detectado.','entrega-html5':'Entrega + HTML5: Smart Objects e Shapes proibidos. Peso rigoroso (150 KB final).','entrega-ooh':'Entrega + OOH: Smart Objects, Shapes e Blend modes aceitos (After Effects suporta).','entrega-social':'Entrega + Social: Smart Objects e Shapes proibidos. Regras similares a HTML5.'};
+function upDesc(){document.getElementById('mode-desc').textContent=descs[cS+'-'+cD]||''}
+window.setStage=function(s){cS=s;document.getElementById('mode-master').className='mode-btn'+(s==='master'?' active':'');document.getElementById('mode-entrega').className='mode-btn'+(s==='entrega'?' active':'');upDesc();if(window._lf)processFile(window._lf)};
+window.setDest=function(d){cD=d;['auto','html5','ooh','social'].forEach(id=>{document.getElementById('dest-'+id).className='mode-btn'+(d===id?' active-blue':'')});upDesc();if(window._lf)processFile(window._lf)};
+const IAB=[[300,250],[728,90],[970,250],[970,90],[160,600],[300,600],[320,50],[320,100],[468,60],[336,280],[250,250],[200,200],[120,600],[300,1050],[970,150],[580,400],[320,480],[240,400]];
+const SOC=[[1080,1080],[1080,1920],[1200,628],[1200,675],[1080,1350],[1200,1200],[1500,500]];
+function detectDest(w,h){if(IAB.some(([a,b])=>a===w&&b===h))return'html5';if(SOC.some(([a,b])=>a===w&&b===h))return'social';if(w>1920||h>1920)return'ooh';if(w<=1080&&h<=1080)return'html5';return'social'}
+const SM=[/smart\s*object/i,/objeto\s*inteligente/i],GN=[/^camada\s*\d+$/i,/^layer\s*\d+$/i,/^copy$/i,/copiar/i,/\bcopy\s*\d*$/i,/^ret[aâ]ngulo\s*\d*/i],SH=[/^ret[aâ]ngulo/i,/^ellipse/i,/^pol[ií]gono/i,/^shape/i,/^linha/i];
+function flat(ly,d=0){const r=[];const n=ly.name||'(sem nome)',ig=!!ly.children;let w=0,h=0,l=0,t=0,ri=0,b=0;if(ly.left!==undefined){w=ly.right-ly.left;h=ly.bottom-ly.top;l=ly.left;t=ly.top;ri=ly.right;b=ly.bottom}r.push({name:n,depth:d,isGroup:ig,hidden:!!ly.hidden,blendMode:ly.blendMode||'normal',w,h,left:l,top:t,right:ri,bottom:b});if(ly.children)ly.children.forEach(c=>r.push(...flat(c,d+1)));return r}
+function est(w,h,n){return w*h*4*n*0.4/1e6}
+function validate(psd,fs,stage,dest){
+const layers=[];if(psd.children)psd.children.forEach(c=>layers.push(...flat(c)));const total=layers.length,groups=layers.filter(l=>l.isGroup&&l.depth===0),viol=[],checks=[];
+const rd=dest==='auto'?detectDest(psd.width,psd.height):dest,isMaster=stage==='master',isOOH=rd==='ooh',smOK=isMaster||isOOH,shOK=isMaster||isOOH,blOK=isOOH;
+const smart=layers.filter(l=>!l.isGroup&&SM.some(p=>p.test(l.name)));
+if(smOK){checks.push({item:'Smart Objects',status:smart.length>0?'Info':'OK',note:smart.length>0?smart.length+' — aceito '+(isMaster?'no Master':'em OOH'):''})}
+else{checks.push({item:'Smart Objects achatados',status:smart.length===0?'OK':'Reprovado',note:smart.length===0?'':smart.length+' encontrado(s)'});if(smart.length>0)viol.push({item:smart.length+' Smart Object(s): '+smart.slice(0,3).map(s=>'\u201c'+s.name+'\u201d').join(', ')+(smart.length>3?' ...':''),severity:'Reprovado',action:'Rasterizar (botão direito > Rasterizar Camada)'})}
+const generic=layers.filter(l=>!l.isGroup&&GN.some(p=>p.test(l.name.trim())));checks.push({item:'Nomes descritivos',status:generic.length===0?'OK':'Reprovado',note:generic.length===0?'':generic.length+': '+generic.slice(0,3).map(g=>'\u201c'+g.name+'\u201d').join(', ')});if(generic.length>0)viol.push({item:generic.length+' nome(s) genérico(s)',severity:'Reprovado',action:'Renomear com prefixo (bg_, txt_, cta_, logo_, product_, legal_, deco_)'});
+const badBl=layers.filter(l=>!l.isGroup&&l.blendMode!=='normal'&&l.blendMode!=='pass through');
+if(blOK){checks.push({item:'Blend Mode',status:badBl.length>0?'Info':'OK',note:badBl.length>0?badBl.length+' não-Normal — aceito em OOH':''})}
+else{checks.push({item:'Blend Mode Normal',status:badBl.length===0?'OK':'Atenção',note:badBl.length===0?'':badBl.map(b=>'\u201c'+b.name+'\u201d: '+b.blendMode).join(', ')});if(badBl.length>0)viol.push({item:'Blend mode não-Normal em '+badBl.length+' camada(s)',severity:'Atenção',action:'Proibido em HTML5/Social'})}
+const hidden=layers.filter(l=>l.hidden&&!l.isGroup);checks.push({item:'Camadas ocultas',status:hidden.length===0?'OK':'Reprovado',note:hidden.length===0?'Nenhuma':hidden.length+' oculta(s)'});if(hidden.length>0)viol.push({item:hidden.length+' camada(s) oculta(s)',severity:'Reprovado',action:'Deletar camadas desligadas'});
+checks.push({item:'Steps em grupos',status:groups.length>0?'OK':'Atenção',note:groups.length>0?groups.length+' grupo(s)':'Sem grupos'});
+const over=layers.filter(l=>!l.isGroup&&(l.w>psd.width*1.1||l.h>psd.height*1.1)&&l.w>0);
+if(isOOH){checks.push({item:'Camadas no canvas',status:over.length>0?'Info':'OK',note:over.length>0?over.length+' excedem — sangria aceita em OOH':''})}
+else{checks.push({item:'Camadas no canvas',status:over.length===0?'OK':'Atenção',note:over.length===0?'':over.length+' excede(m)'});if(over.length>0)viol.push({item:over.length+' camada(s) excedem canvas',severity:'Atenção',action:'Recortar ao canvas'})}
+const shapes=layers.filter(l=>!l.isGroup&&SH.some(p=>p.test(l.name.trim())));
+if(shOK){checks.push({item:'Shape Layers',status:shapes.length>0?'Info':'OK',note:shapes.length>0?shapes.length+' — aceito '+(isMaster?'no Master':'em OOH'):''})}
+else{checks.push({item:'Shapes rasterizados',status:shapes.length===0?'OK':'Atenção',note:shapes.length===0?'':shapes.length+' possível(is)');if(shapes.length>0)viol.push({item:shapes.length+' possível(is) Shape Layer(s)',severity:'Atenção',action:'Rasterizar para '+rd.toUpperCase()})}
+const fileMB=fs/1e6,expected=est(psd.width,psd.height,total),ratio=expected>0?fileMB/expected:1,aM=isOOH?4:2.5,rM=isOOH?8:5;
+let ws='OK';if(ratio>rM)ws='Reprovado';else if(ratio>aM)ws='Atenção';
+checks.push({item:'Peso do arquivo',status:ws,note:fileMB.toFixed(1)+' MB (esperado: '+expected.toFixed(1)+' MB — '+ratio.toFixed(1)+'×)'});
+if(ratio>rM)viol.push({item:'Peso '+fileMB.toFixed(0)+' MB = '+ratio.toFixed(1)+'× o esperado',severity:'Crítico',action:'Smart Objects ou camadas não cropadas'});
+else if(ratio>aM)viol.push({item:'Peso '+fileMB.toFixed(1)+' MB = '+ratio.toFixed(1)+'× o esperado',severity:'Atenção',action:'Verificar camadas desnecessárias'});
+const cc=viol.filter(v=>v.severity==='Reprovado'||v.severity==='Crítico').length,wc=viol.filter(v=>v.severity==='Atenção').length;
+let result='Aprovado',rc='ok';if(cc>0){result='Reprovado';rc='err'}else if(wc>0){result='Aprovado com ressalvas';rc='warn'}
+return{layers,total,groups:groups.length,checks,violations:viol,result,rc,cc,wc,expected,ratio,fileMB,canvas:{w:psd.width,h:psd.height},stage,dest:rd,destAuto:dest==='auto',aM,rM}}
 function render(r){
-  const modeLabel=r.mode==='master'?'Master (ag\u00eancia \u2192 DA)':'Entrega (DA \u2192 Motion)';
-  let h=`<div class="result-banner result-${r.rc}">${r.result}<div class="result-sub">${r.cc} cr\u00edtica(s) \u00b7 ${r.wc} aten\u00e7\u00e3o \u00b7 Modo: ${modeLabel}</div></div>`;
-
-  h+=`<div class="card"><div class="metrics">
-    <div class="metric"><div class="label">Canvas</div><div class="val">${r.canvas.w}\u00d7${r.canvas.h}</div></div>
-    <div class="metric"><div class="label">Camadas</div><div class="val">${r.total}</div></div>
-    <div class="metric"><div class="label">Steps</div><div class="val">${r.groups}</div></div>
-    <div class="metric"><div class="label">Peso</div><div class="val">${r.fileMB.toFixed(1)} MB</div></div>
-  </div>
-  <div class="weight-bar"><div class="weight-track"><div class="weight-fill" style="width:${Math.min(100,(1/r.ratio)*100)}%;background:${r.ratio<=2.5?'var(--ok)':r.ratio<=5?'var(--warn)':'var(--err)'}"></div></div>
-  <div class="weight-info">Esperado: ${r.expected.toFixed(1)} MB \u00b7 Real: ${r.fileMB.toFixed(1)} MB \u00b7 ${r.ratio.toFixed(1)}\u00d7${r.ratio<=2.5?' \u2014 OK':r.ratio<=5?' \u2014 acima':' \u2014 cr\u00edtico'}</div></div></div>`;
-
-  h+=`<div class="card"><div class="section-title">Checklist</div>`;
-  r.checks.forEach(ch=>{const isOk=ch.status==='OK'||ch.status==='Info';const isErr=ch.status==='Reprovado'||ch.status==='Cr\u00edtico';
-  const ibg=isOk?'var(--ok-bg)':isErr?'var(--err-bg)':'var(--warn-bg)';
-  const svg=isOk?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'
-  :isErr?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-  :'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="3" stroke-linecap="round"><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16" r="0.5" fill="var(--warn)"/></svg>';
-  const tc=isOk?'tag-ok':isErr?'tag-err':ch.status==='Info'?'tag-info':'tag-warn';
-  h+=`<div class="check-row"><div class="check-icon" style="background:${ibg}">${svg}</div><span class="check-name">${ch.item}</span><span class="tag ${tc}">${ch.status}</span><span class="check-note">${ch.note||''}</span></div>`});
-  h+='</div>';
-
-  if(r.violations.length>0){h+=`<div class="card"><div class="section-title">N\u00e3o conformidades</div>`;
-  r.violations.forEach(v=>{const ie=v.severity==='Reprovado'||v.severity==='Cr\u00edtico';
-  h+=`<div class="violation" style="background:${ie?'var(--err-bg)':'var(--warn-bg)'};border-color:${ie?'var(--err-border)':'var(--warn-border)'}"><div class="v-head"><span class="tag ${ie?'tag-err':'tag-warn'}">${v.severity}</span><span class="v-text">${v.item}</span></div><div class="v-action">${v.action}</div></div>`});
-  h+='</div>'}
-
-  h+=`<div class="card"><div class="section-title">Estrutura de camadas</div><div class="tree">`;
-  r.layers.forEach(l=>{const ind='&nbsp;&nbsp;'.repeat(l.depth);const ico=l.isGroup?'&#9660; ':'&#9643; ';
-  const sz=l.w>0?` <span class="flag">(${l.w}\u00d7${l.h})</span>`:'';
-  const isSm=SMART.some(p=>p.test(l.name));const isGen=GENERIC.some(p=>p.test(l.name.trim()));
-  const isOv=!l.isGroup&&l.w>0&&(l.w>r.canvas.w*1.1||l.h>r.canvas.h*1.1);
-  let cls=l.isGroup?'grp':'';if(isSm&&r.mode==='entrega')cls='err-name';else if(isGen)cls='warn-name';else if(isOv)cls='over-name';
-  let fl='';if(l.hidden)fl+=' <span class="flag">[oculta]</span>';
-  if(isSm)fl+=r.mode==='entrega'?' <span class="flag">\u2190 Smart Object</span>':' <span class="flag">\u2190 Smart Object (OK no Master)</span>';
-  if(isOv)fl+=' <span class="flag">\u2190 excede canvas</span>';
-  h+=`<div>${ind}${ico}<span class="${cls}">${l.name}</span>${sz}${fl}</div>`});
-  h+='</div></div>';
-
-  h+=`<div class="footer">Rush-Sistem \u00b7 ag-psd \u00b7 Zero IA \u00b7 ${new Date().toLocaleDateString('pt-BR')}<br><a href="https://www.voidda.com.br">voidda.com.br</a></div>`;
-
-  document.getElementById('report').innerHTML=h;document.getElementById('report').className='';document.getElementById('footer-default').className='hidden';
-}
-
-async function processFile(file){
-  if(!file||!file.name.toLowerCase().endsWith('.psd')){alert('Selecione um arquivo .PSD');return}
-  window._lastFile=file;document.getElementById('drop-text').textContent='Analisando \u201c'+file.name+'\u201d...';
-  try{const buf=await file.arrayBuffer();const psd=readPsd(new Uint8Array(buf),{skipLayerImageData:true,skipCompositeImageData:true});
-  const result=validate(psd,file.size,currentMode);render(result);
-  document.getElementById('drop-text').textContent=file.name+' \u2014 arraste outro para comparar'}
-  catch(e){alert('Erro ao ler PSD: '+e.message);document.getElementById('drop-text').textContent='Arraste o arquivo .PSD aqui'}
-}
-
-const dz=document.getElementById('dropzone');const fi=document.getElementById('fileInput');
-dz.addEventListener('click',()=>fi.click());
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
-dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])processFile(e.dataTransfer.files[0])});
-fi.addEventListener('change',e=>{if(e.target.files[0])processFile(e.target.files[0])});
+const dL={html5:'HTML5 / Digital',ooh:'OOH / Vídeo',social:'Social / Stories'},dC={html5:'#3B82F6',ooh:'#22C55E',social:'#EAB308'},dB={html5:'rgba(59,130,246,.1)',ooh:'rgba(34,197,94,.1)',social:'rgba(234,179,8,.1)'};
+const sl=r.stage==='master'?'Master':'Entrega',dl=dL[r.dest],dc=dC[r.dest],db=dB[r.dest];
+let h=`<div class="result-banner result-${r.rc}">${r.result}<div class="result-sub">${r.cc} crítica(s) · ${r.wc} atenção · ${sl} · <span class="dest-tag" style="background:${db};color:${dc}">${dl}${r.destAuto?' (auto)':''}</span></div></div>`;
+h+=`<div class="card"><div class="metrics"><div class="metric"><div class="label">Canvas</div><div class="val">${r.canvas.w}×${r.canvas.h}</div></div><div class="metric"><div class="label">Camadas</div><div class="val">${r.total}</div></div><div class="metric"><div class="label">Steps</div><div class="val">${r.groups}</div></div><div class="metric"><div class="label">Peso</div><div class="val">${r.fileMB.toFixed(1)} MB</div></div><div class="metric"><div class="label">Destino</div><div class="val" style="color:${dc}">${r.dest.toUpperCase()}</div></div></div>`;
+h+=`<div class="weight-bar"><div class="weight-track"><div class="weight-fill" style="width:${Math.min(100,(1/r.ratio)*100)}%;background:${r.ratio<=r.aM?'var(--ok)':r.ratio<=r.rM?'var(--warn)':'var(--err)'}"></div></div><div class="weight-info">Esperado: ${r.expected.toFixed(1)} MB · Real: ${r.fileMB.toFixed(1)} MB · ${r.ratio.toFixed(1)}×${r.ratio<=r.aM?' — OK':r.ratio<=r.rM?' — acima':' — crítico'}${r.dest==='ooh'?' (limites OOH: alerta '+r.aM+'×, rejeição '+r.rM+'×)':''}</div></div></div>`;
+h+=`<div class="card"><div class="section-title">Checklist</div>`;
+r.checks.forEach(ch=>{const isOk=ch.status==='OK'||ch.status==='Info',isErr=ch.status==='Reprovado'||ch.status==='Crítico';const ibg=isOk?'var(--ok-bg)':isErr?'var(--err-bg)':'var(--warn-bg)';const sv=isOk?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>':isErr?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>':'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="3" stroke-linecap="round"><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16" r="0.5" fill="var(--warn)"/></svg>';const tc=isOk?'tag-ok':isErr?'tag-err':ch.status==='Info'?'tag-info':'tag-warn';h+=`<div class="check-row"><div class="check-icon" style="background:${ibg}">${sv}</div><span class="check-name">${ch.item}</span><span class="tag ${tc}">${ch.status}</span><span class="check-note">${ch.note||''}</span></div>`});h+='</div>';
+if(r.violations.length>0){h+=`<div class="card"><div class="section-title">Não conformidades</div>`;r.violations.forEach(v=>{const ie=v.severity==='Reprovado'||v.severity==='Crítico';h+=`<div class="violation" style="background:${ie?'var(--err-bg)':'var(--warn-bg)'};border-color:${ie?'var(--err-border)':'var(--warn-border)'}"><div class="v-head"><span class="tag ${ie?'tag-err':'tag-warn'}">${v.severity}</span><span class="v-text">${v.item}</span></div><div class="v-action">${v.action}</div></div>`});h+='</div>'}
+h+=`<div class="card"><div class="section-title">Estrutura de camadas</div><div class="tree">`;
+r.layers.forEach(l=>{const ind='&nbsp;&nbsp;'.repeat(l.depth),ico=l.isGroup?'&#9660; ':'&#9643; ',sz=l.w>0?` <span class="flag">(${l.w}×${l.h})</span>`:'';const isSm=SM.some(p=>p.test(l.name)),isGen=GN.some(p=>p.test(l.name.trim())),isOv=!l.isGroup&&l.w>0&&(l.w>r.canvas.w*1.1||l.h>r.canvas.h*1.1),smErr=isSm&&r.stage==='entrega'&&r.dest!=='ooh';let cls=l.isGroup?'grp':'';if(smErr)cls='err-name';else if(isGen)cls='warn-name';else if(isOv&&r.dest!=='ooh')cls='over-name';let fl='';if(l.hidden)fl+=' <span class="flag">[oculta]</span>';if(isSm)fl+=smErr?' <span class="flag">← Smart Object</span>':' <span class="flag">← Smart Object (OK)</span>';if(isOv)fl+=r.dest==='ooh'?' <span class="flag">← sangria (OK)</span>':' <span class="flag">← excede canvas</span>';h+=`<div>${ind}${ico}<span class="${cls}">${l.name}</span>${sz}${fl}</div>`});
+h+='</div></div>';h+=`<div class="footer">Rush-Sistem · ag-psd · Zero IA · ${new Date().toLocaleDateString('pt-BR')}<br><a href="https://www.voidda.com.br">voidda.com.br</a></div>`;
+document.getElementById('report').innerHTML=h;document.getElementById('report').className='';document.getElementById('footer-default').className='hidden'}
+async function processFile(file){if(!file||!file.name.toLowerCase().endsWith('.psd')){alert('Selecione um arquivo .PSD');return}window._lf=file;document.getElementById('drop-text').textContent='Analisando \u201c'+file.name+'\u201d...';try{const buf=await file.arrayBuffer();const psd=readPsd(new Uint8Array(buf),{skipLayerImageData:true,skipCompositeImageData:true});render(validate(psd,file.size,cS,cD));document.getElementById('drop-text').textContent=file.name+' — arraste outro para comparar'}catch(e){alert('Erro ao ler PSD: '+e.message);document.getElementById('drop-text').textContent='Arraste o arquivo .PSD aqui'}}
+const dz=document.getElementById('dropzone'),fi=document.getElementById('fileInput');dz.addEventListener('click',()=>fi.click());dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});dz.addEventListener('dragleave',()=>dz.classList.remove('over'));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])processFile(e.dataTransfer.files[0])});fi.addEventListener('change',e=>{if(e.target.files[0])processFile(e.target.files[0])});
 </script>
 </body>
 </html>
