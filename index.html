@@ -335,7 +335,7 @@
         <a href="#tecnico">Controle técnico</a>
         <a href="#modulos">Módulos</a>
         <a href="#resultado">Diagnóstico</a>
-        <a href="#contato" class="btn btn-secondary">EN</a>
+        <button class="btn btn-secondary" id="lang-toggle" onclick="toggleLang()" style="min-width:42px;padding:10px 16px;font-weight:700;letter-spacing:.05em">EN</button>
       </div>
     </div>
   </nav>
@@ -1067,6 +1067,33 @@
         ]
       ];
 
+
+      var groupsEN=[
+        [
+          {q:"How many spreadsheets does your operation need to function today?",r:"RUSH replaces spreadsheets with a single flow: request, production, delivery.",multi:["None","1 to 3","4 to 10","Lost count"],scores:[1,0,0,0]},
+          {q:"How many pieces are on your production line right now?",r:"Live kanban with count by status, priority, and owner."},
+          {q:"What is the status of each piece \u2014 and who is responsible right now?",r:"Dashboard by role: each professional sees only what is theirs."}
+        ],
+        [
+          {q:"When the client asks for more formats mid-job \u2014 do you have a formal record?",r:"Editable request with history + new breakdown in the same scope."},
+          {q:"Is the budget approved by the agency documented in an indisputable way?",r:"Budget Proposal: immutable PDF, frozen, with registered approval."},
+          {q:"Do you know who on the team is overloaded and who is idle right now?",r:"Capacity view by professional, queue, and priority."}
+        ],
+        [
+          {q:"How many revisions did the PSD have before reaching Motion?",r:"Version history and traceability by activity."},
+          {q:"Have you ever delivered a piece with wrong resolution, hidden layers, or CMYK profile?",r:"PSD Validator with 14 automatic checks before the factory starts."},
+          {q:"Can you guarantee the color of the final piece matched the original PSD?",r:"Technical Report with automatic \u0394E2000 comparison \u2014 color gate."}
+        ],
+        [
+          {q:"When the agency asks for a status update \u2014 can you answer immediately?",r:"Agency portal with real-time status. Zero phone calls."},
+          {q:"When the client says it wasn\u2019t what they asked for \u2014 can you prove what was approved?",r:"Complete history: Request \u2192 Approved proposal \u2192 versioned deliveries."},
+          {q:"Can you show the complete flow of your operation in 30 seconds?",r:"Request \u2192 Breakdown \u2192 Proposal \u2192 Jobs \u2192 Factory \u2192 QA \u2192 Delivery \u2014 all visible."}
+        ]
+      ];
+      var quizLabelsEN=['visibility','process','quality','delivery'];
+      var quizLabelsPT=['visibilidade','processo','qualidade','entrega'];
+      var simEN='Yes, I can';var naoEN='No, I can\u2019t';
+
       var state=groups.map(function(){return{cur:0,ans:[],done:false}});
       var totalAnswered=0;
 
@@ -1076,12 +1103,12 @@
         var dots=document.getElementById('qi-dots-'+g);
         dots.innerHTML=qs.map(function(_,i){return '<div class="qi-dot'+(i<s.cur?' done':'')+(i===s.cur?' active':'')+'"></div>'}).join('');
         var qEl=document.getElementById('qi-q-'+g);
-        qEl.textContent=qs[s.cur].q;
+        var activeGroups=currentLang==='en'?groupsEN:groups;qEl.textContent=activeGroups[g][s.cur].q;
         var btnEl=document.getElementById('qi-btn-'+g);
         if(qs[s.cur].multi){
-          btnEl.innerHTML=qs[s.cur].multi.map(function(opt,i){return '<button class="qi-btn" onclick="qiMulti('+g+','+i+')">'+opt+'</button>'}).join('');
+          var am=currentLang==='en'?groupsEN[g][s.cur].multi:qs[s.cur].multi;btnEl.innerHTML=am.map(function(opt,i){return '<button class="qi-btn" onclick="qiMulti('+g+','+i+')">'+opt+'</button>'}).join('');
         } else {
-          btnEl.innerHTML='<button class="qi-btn sim" onclick="qiAns('+g+',true)">Sim, consigo</button><button class="qi-btn nao" onclick="qiAns('+g+',false)">N\u00e3o consigo</button>';
+          var sl=currentLang==='en'?simEN:'Sim, consigo';var nl=currentLang==='en'?naoEN:'N\u00e3o consigo';btnEl.innerHTML='<button class="qi-btn sim" onclick="qiAns('+g+',true)">'+sl+'</button><button class="qi-btn nao" onclick="qiAns('+g+',false)">'+nl+'</button>';
         }
         qEl.classList.add('qi-fade');
       }
@@ -1197,6 +1224,10 @@
         setTimeout(function(){document.getElementById('resultado').scrollIntoView({behavior:'smooth',block:'start'})},400);
       }
 
+
+      window.rerenderQuiz=function(){
+        for(var g=0;g<4;g++){if(!state[g].done)renderBlock(g)}
+      };
       for(var g=0;g<4;g++)renderBlock(g);
       updateCounter();
     })();
@@ -1219,11 +1250,45 @@
         {icon:"\u2637",name:"Analytics",cat:"futuro",desc:"produtividade e custo por pe\u00e7a"}
       ];
 
+
+      var featuresEN=[
+        {icon:"\u2261",name:"Request",cat:"coordination"},
+        {icon:"\u2234",name:"Breakdown",cat:"coordination"},
+        {icon:"\u25a1",name:"Budget Proposal",cat:"coordination"},
+        {icon:"\u25a6",name:"Job Kanban",cat:"production"},
+        {icon:"\u2b50",name:"Role dashboards",cat:"production"},
+        {icon:"\u26a1",name:"Smart assignment",cat:"production"},
+        {icon:"\u2713",name:"PSD Validator",cat:"quality"},
+        {icon:"\u0394",name:"Technical Report \u0394E",cat:"quality"},
+        {icon:"\u229a",name:"Automatic gate",cat:"quality"},
+        {icon:"\u2192",name:"Agency portal",cat:"delivery"},
+        {icon:"\u2630",name:"Delivery history",cat:"delivery"},
+        {icon:"\u2735",name:"Multi-tenant",cat:"scale"},
+        {icon:"\u2699",name:"Automation pipeline",cat:"future"},
+        {icon:"\u2637",name:"Analytics",cat:"future"}
+      ];
+      var catMessagesEN={
+        "coordination":"Scope and budget control is your priority. It\u2019s where everything starts \u2014 and where most lose control.",
+        "production":"The production line caught your attention. Makes sense \u2014 it\u2019s where chaos usually lives.",
+        "quality":"Technical control is what interests you. You know the human eye doesn\u2019t scale.",
+        "delivery":"Client relationship is your priority. When the agency stops chasing, everyone breathes.",
+        "scale":"You\u2019re already thinking about scale. Multi-tenant means growing without rebuilding.",
+        "future":"Automation and analytics \u2014 you want the next step. So do we."
+      };
+      var catPainsEN={
+        "coordination":["Scope changes and nobody records it","Budget contested later","Pricing based on guesswork"],
+        "production":["Don\u2019t know who\u2019s idle","Jobs without clear owners","Priority based on who shouts loudest"],
+        "quality":["Bad PSD goes unnoticed","Wrong color only caught at the end","Rework treated as normal"],
+        "delivery":["Agency asks and you have no answer","Wrong version delivered","No approval history"],
+        "scale":["System can\u2019t handle a second client","Rebuild everything to grow"],
+        "future":["Manual asset extraction","No productivity data"]
+      };
+
       var selected=[];
       var grid=document.getElementById('picks-grid');
-      grid.innerHTML=features.map(function(f,i){
-        return '<div class="pick" data-idx="'+i+'" onclick="togglePick('+i+')"><span class="pick-icon">'+f.icon+'</span>'+f.name+'</div>';
-      }).join('');
+      function renderPicksGrid(){var ff=currentLang==='en'?featuresEN:features;grid.innerHTML=ff.map(function(f,i){return '<div class="pick'+(selected.indexOf(i)>-1?' selected':'')+'" data-idx="'+i+'" onclick="togglePick('+i+')"><span class="pick-icon">'+f.icon+'</span>'+f.name+'</div>'}).join('')}
+      renderPicksGrid();
+      window.rerenderPicks=function(){renderPicksGrid();updatePicks()};
 
       var catMessages={
         "coordena\u00e7\u00e3o":"Controle de escopo e or\u00e7amento \u00e9 prioridade pra voc\u00ea. \u00c9 onde tudo come\u00e7a \u2014 e onde a maioria perde o controle.",
@@ -1287,7 +1352,7 @@
         var cats={};
         selected.forEach(function(i){var c=features[i].cat;cats[c]=(cats[c]||0)+1});
         var topCat=Object.keys(cats).sort(function(a,b){return cats[b]-cats[a]})[0];
-        var msg=catMessages[topCat]||'Interessante escolha.';
+        var msgs=currentLang==='en'?catMessagesEN:catMessages;var msg=msgs[topCat]||'Interessante escolha.';
 
         var names=selected.map(function(i){return features[i].name});
         var intro=selected.length===1?'Voc\u00ea escolheu <strong>'+names[0]+'</strong>.':'Voc\u00ea escolheu <strong>'+selected.length+' capacidades</strong>.';
@@ -1302,7 +1367,7 @@
 
         var painEl=document.getElementById('picks-pain');
         var pains=[];
-        Object.keys(cats).forEach(function(c){if(catPains[c])pains=pains.concat(catPains[c].slice(0,2))});
+        Object.keys(cats).forEach(function(c){var cp=currentLang==='en'?catPainsEN:catPains;if(cp[c])pains=pains.concat(cp[c].slice(0,2))});
         if(pains.length>0){
           painEl.innerHTML='<div style="font:600 10px/1 var(--mono);color:#9fb0d9;letter-spacing:.1em;text-transform:uppercase;width:100%;text-align:center;margin-bottom:6px">Dores que voc\u00ea provavelmente conhece:</div>'+pains.map(function(p){return '<span class="pain-tag">'+p+'</span>'}).join('');
         } else {
@@ -1310,6 +1375,321 @@
         }
       }
     })();
+    var currentLang='pt';
+    var ptCache={};
+
+    var translations={
+      // NAV
+      '.nav-links a:nth-child(1)':{en:'Problem'},
+      '.nav-links a:nth-child(2)':{en:'Flow'},
+      '.nav-links a:nth-child(3)':{en:'Factory'},
+      '.nav-links a:nth-child(4)':{en:'Quality control'},
+      '.nav-links a:nth-child(5)':{en:'Modules'},
+      '.nav-links a:nth-child(6)':{en:'Diagnosis'},
+
+      // HERO
+      '#top h1':{en:'Stop running on guesswork.'},
+      '#top .eyebrow':{en:'<span class="dot"></span> creative operations in real time',html:true},
+      '#top .hero-copy > p:nth-of-type(1)':{en:'The problem is not your team. It\u2019s your workflow. <span class="rush-name">RUSH</span> organizes request \u2192 production \u2192 delivery without noise.',html:true},
+      '#top .hero-copy > p:nth-of-type(2)':{en:'<span class="rush-name">RUSH</span> organizes the core that usually breaks: request, breakdown, budget, jobs, factory, validation and delivery.<br><br>Without it, you scale chaos. With it, you scale operations.',html:true},
+      '#top .hero-actions .btn-primary':{en:'See the real flow'},
+      '#top .hero-actions .btn-secondary':{en:'Explore the technical report'},
+      '#top .hero-note div:last-child':{en:'<span class="rush-name">RUSH</span> is a product by <strong>VOIDDA</strong>. Built for post-production companies that need real control over their operational workflow.',html:true},
+      '#top .hero-pill:nth-child(1)':{en:'Request \u2192 Breakdown \u2192 Proposal \u2192 Jobs'},
+      '#top .hero-pill:nth-child(2)':{en:'AD \u2192 Motion \u2192 Dev \u2192 Final \u2192 QA'},
+      '#top .hero-pill:nth-child(3)':{en:'Report + technical comparison + automatic gate'},
+
+      // O QUE MUDA
+      '#wow .label':{en:'what changes in practice'},
+      '#wow h2':{en:'Before: you put out fires. After: you control the flow.'},
+      '#wow .section-head p':{en:'A direct example of impact. The same job in two scenarios.'},
+      '#wow .module:nth-child(1) small':{en:'without rush'},
+      '#wow .module:nth-child(1) h3':{en:'Operational chaos'},
+      '#wow .module:nth-child(2) small':{en:'with rush'},
+      '#wow .module:nth-child(2) h3':{en:'Controlled operation'},
+      '#wow .module:nth-child(3) small':{en:'impact'},
+      '#wow .module:nth-child(3) h3':{en:'Direct result'},
+
+      // PROBLEMA
+      '#problema .label':{en:'the real problem'},
+      '#problema h2':{en:'The bottleneck isn\u2019t in finance. It\u2019s in the core of operations.'},
+      '#problema .section-head p':{en:'Every production company starts with talent and dedication. The ones that grew did it because they controlled the flow. The ones that stayed big maintained that control even as complexity doubled. The ones that didn\u2019t, scaled chaos.'},
+      '#problema .sticker.red':{en:'deadline burning'},
+      '#problema .sticker.yellow':{en:'nobody sees everything'},
+      '#problema .chaos-item:nth-child(1) strong':{en:'No consolidated view'},
+      '#problema .chaos-item:nth-child(1) p':{en:'The coordinator can\u2019t see the entire flow, so they react late. This kills margin, deadlines, and trust.'},
+      '#problema .chaos-item:nth-child(2) strong':{en:'Rework treated as normal'},
+      '#problema .chaos-item:nth-child(2) p':{en:'Without a technical gate, bad work is only caught when it has already contaminated the next stages.'},
+      '#problema .chaos-item:nth-child(3) strong':{en:'The client asks in the dark'},
+      '#problema .chaos-item:nth-child(3) p':{en:'Without a portal and reliable status, the production company responds on the fly and loses authority.'},
+      '#problema .chaos-item:nth-child(4) strong':{en:'Competitors attack the gaps'},
+      '#problema .chaos-item:nth-child(4) p':{en:'<span class="rush-name">RUSH</span> was designed to cover the gap between budget, factory, and delivery \u2014 exactly where chaos usually lives.',html:true},
+
+      // FLUXO
+      '#fluxo .label':{en:'the rush flow'},
+      '#fluxo h2':{en:'From briefing to delivery, without losing control.'},
+      '#fluxo .section-head p':{en:'It\u2019s not a pretty dashboard. It\u2019s real operational visibility: what came in, what became scope, what\u2019s running, and what was delivered \u2014 without interpretation.'},
+      '#fluxo .step-card:nth-child(1) .step-tag':{en:'01 \u00b7 entry'},
+      '#fluxo .step-card:nth-child(1) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Request',html:true},
+      '#fluxo .step-card:nth-child(1) p':{en:'The scope law. Client, campaign, deadline, context \u2014 everything the work inherits from here on.'},
+      '#fluxo .step-card:nth-child(2) .step-tag':{en:'02 \u00b7 calculation'},
+      '#fluxo .step-card:nth-child(2) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M4 7l16 10M4 17l6-4"/></svg>Breakdown',html:true},
+      '#fluxo .step-card:nth-child(2) p':{en:'Piece count, complexity, time, cost, and deadline. The pricing engine lives here.'},
+      '#fluxo .step-card:nth-child(3) .step-tag':{en:'03 \u00b7 contract'},
+      '#fluxo .step-card:nth-child(3) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v3h3"/></svg>Proposal',html:true},
+      '#fluxo .step-card:nth-child(3) p':{en:'Immutable snapshot for approval. What was promised becomes a frozen document.'},
+      '#fluxo .step-card:nth-child(4) .step-tag':{en:'04 \u00b7 production'},
+      '#fluxo .step-card:nth-child(4) p':{en:'Work units are created with status, owners, urgency, and relation to what was approved.'},
+      '#fluxo .step-card:nth-child(5) .step-tag':{en:'05 \u00b7 factory'},
+      '#fluxo .step-card:nth-child(5) h3':{en:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4.7a7 7 0 0 0-1.7-1L14 2h-4l-.8 2.7a7 7 0 0 0-1.7 1L5.1 5l-2 3.5L5 10a7 7 0 0 0 0 2l-1.9 1.5 2 3.5 2.4-.7a7 7 0 0 0 1.7 1L10 22h4l.8-2.7a7 7 0 0 0 1.7-1l2.4.7 2-3.5L18.9 13c.1-.3.1-.7.1-1z"/></svg>Factory',html:true},
+      '#fluxo .step-card:nth-child(5) p':{en:'AD, Motion, Dev, Final and QA working in clear sequence, each in their own panel and role.'},
+      '#fluxo .step-card:nth-child(6) .step-tag':{en:'06 \u00b7 quality'},
+      '#fluxo .step-card:nth-child(6) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/></svg>Technical gate',html:true},
+      '#fluxo .step-card:nth-child(6) p':{en:'Report, comparison, tolerance, and blocking. Bad work doesn\u2019t advance just because someone "thought it was fine."'},
+      '#fluxo .step-card:nth-child(7) .step-tag':{en:'07 \u00b7 output'},
+      '#fluxo .step-card:nth-child(7) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l14-7-7 14-2-5-5-2z"/></svg>Delivery',html:true},
+      '#fluxo .step-card:nth-child(7) p':{en:'History, versioning, traceability, and external visibility for the agency to follow in real time.'},
+      '#fluxo .impact h4':{en:'Every production company that scaled had one thing in common: operational control.'},
+      '#fluxo .impact p':{en:'It\u2019s not about bureaucracy. It\u2019s about growing without losing control of deadlines, quality, ownership, versioning, and hidden rework costs.'},
+      '#fluxo .metric-card:nth-child(1) span':{en:'the real gain'},
+      '#fluxo .metric-card:nth-child(1) strong':{en:'Less noise in the core'},
+      '#fluxo .metric-card:nth-child(1) p':{en:'Request, budget, factory, and delivery stop living on separate islands.'},
+      '#fluxo .metric-card:nth-child(2) span':{en:'in practice'},
+      '#fluxo .metric-card:nth-child(2) strong':{en:'Every stage has an owner'},
+      '#fluxo .metric-card:nth-child(2) p':{en:'Who receives, who produces, who validates, and who delivers are clear without relying on memory or WhatsApp.'},
+      '#fluxo .metric-card:nth-child(3) span':{en:'result'},
+      '#fluxo .metric-card:nth-child(3) strong':{en:'Less expensive rework'},
+      '#fluxo .metric-card:nth-child(3) p':{en:'Errors are caught before contaminating the entire production sequence.'},
+
+      // PROVA VISUAL
+      '#prova .label':{en:'visual proof'},
+      '#prova h2':{en:'How it looks on screen (realistic example)'},
+      '#prova .section-head p':{en:'A daily snapshot: job queue, clear owners and status \u2014 without interpretation.'},
+
+      // FABRICA
+      '#fabrica .label':{en:'the factory'},
+      '#fabrica h2':{en:'Every stage has an owner. Every owner has context.'},
+      '#fabrica .section-head p':{en:'The production line works in sequence: each professional receives what they need, does their part, and passes it forward with full traceability.'},
+      '#fabrica .role.da small':{en:'qualified entry'},
+      '#fabrica .role.da h3':{en:'AD'},
+      '#fabrica .role.da p':{en:'Receives the artwork, validates structure, identifies risks, and prevents a malformed PSD from contaminating the entire operation.'},
+      '#fabrica .role.motion small':{en:'visual production'},
+      '#fabrica .role.motion h3':{en:'Motion'},
+      '#fabrica .role.motion p':{en:'Animates what already passed technical scrutiny. Motion enters to produce, not to discover hidden problems.'},
+      '#fabrica .role.dev small':{en:'interactive assembly'},
+      '#fabrica .role.dev h3':{en:'Dev'},
+      '#fabrica .role.dev p':{en:'HTML5, clicktag, file size, compatibility, and technical packaging for programmatic and digital media.'},
+      '#fabrica .role.finish small':{en:'controlled output'},
+      '#fabrica .role.finish h3':{en:'Final + QA'},
+      '#fabrica .role.finish p':{en:'Final review, technical comparison, automatic gate, and registered delivery with version, date, and authorship.'},
+
+      // CONTROLE TECNICO
+      '#tecnico .label':{en:'quality control'},
+      '#tecnico h2':{en:'Without quality control, your operation becomes opinion.'},
+      '#tecnico .section-head p':{en:'Without objective measurement, quality becomes debate. <span class="rush-name">RUSH</span> turns validation into technical data \u2014 and that changes how the company works and negotiates.',html:true},
+      '#tecnico .gate:nth-child(1) strong':{en:'Entry report'},
+      '#tecnico .gate:nth-child(1) p':{en:'Color profile, resolution, layer structure, file size, and PSD integrity before the factory starts working.'},
+      '#tecnico .gate:nth-child(2) strong':{en:'Automatic comparison'},
+      '#tecnico .gate:nth-child(2) p':{en:'Comparison between reference and final output using objective logic. This reduces rework and protects perceived quality.'},
+      '#tecnico .gate:nth-child(3) strong':{en:'Real gate'},
+      '#tecnico .gate:nth-child(3) p':{en:'If it\u2019s outside tolerance, the piece doesn\u2019t advance. This is the kind of rigor that separates a real system from a decorative checklist.'},
+      '#tecnico .gate:nth-child(4) strong':{en:'Why this matters in practice'},
+      '#tecnico .gate:nth-child(4) p':{en:'Without objective measurement, the problem becomes subjective debate. With technical comparison, the company gains arguments, standards, and confidence to block what\u2019s outside spec.'},
+
+      // MODULOS
+      '#modulos .label':{en:'system modules'},
+      '#modulos h2':{en:'More than management. An entire operational stack.'},
+      '#modulos .section-head p':{en:'Each module solves a specific part of the flow. Together, they eliminate guesswork between budget, production, and delivery.'},
+
+      // ONDE DOI
+      '#interesse .label':{en:'where does it hurt?'},
+      '#interesse h2':{en:'Point to what bothers you most in your operation.'},
+      '#interesse .section-head p':{en:'Select and see what changes. Your message will be ready for our team.'},
+
+      // RESULTADO
+      '#resultado .label':{en:'your diagnosis'},
+      '#resultado h2':{en:'Challenge result'},
+      '#resultado .section-head p':{en:'Based on your 12 answers.'},
+      '#quiz-final-placeholder':{en:'Answer the 4 challenge blocks spread across the page to see your full diagnosis.'},
+
+      // FECHAMENTO
+      '#contato .label':{en:'closing'},
+      '#contato h2':{en:'If you don\u2019t control the flow, the flow controls you.'},
+      '#contato .cta-box > div:first-child > p':{en:'<span class="rush-name">RUSH</span> was built to cover what the market usually leaves behind: the real operation between budget, creation, production, validation, and delivery. In any language, in any market.',html:true},
+      '#contato .btn-primary':{en:'See where the perspective shifts'},
+      // HERO STAGE
+      '.stage-title':{en:'ACTIVE PRODUCTION LINE'},
+      '.stage-badge':{en:'multi-stage \u00b7 live operation'},
+      '.job:nth-child(3) small':{en:'JOB-041'},
+      '.job:nth-child(3) strong':{en:'Retail campaign \u00b7 2 formats'},
+      '.job:nth-child(3) span':{en:'Motion \u00b7 urgent'},
+      '.job:nth-child(4) small':{en:'JOB-058'},
+      '.job:nth-child(4) strong':{en:'Social pack \u00b7 feed + stories'},
+      '.job:nth-child(4) span':{en:'Internal QA'},
+      '.job:nth-child(5) small':{en:'JOB-063'},
+      '.job:nth-child(5) strong':{en:'Programmatic HTML5 \u00b7 final'},
+      '.job:nth-child(5) span':{en:'Dev + final'},
+      '.node.orange:not(.down) span':{en:'REQUEST'},
+      '.nodes .node.blue.down span':{en:'BREAKDOWN'},
+      '.node.violet:not(.down) span':{en:'PROPOSAL'},
+      '.nodes .node.orange.down span':{en:'MOTION'},
+      '.node.blue:not(.down) span':{en:'DEV'},
+      '.node.green.down span':{en:'QA'},
+
+      // WOW - list items
+      '#wow .module:nth-child(1) li:nth-child(1)':{en:'\u2014 scope changes mid-project'},
+      '#wow .module:nth-child(1) li:nth-child(2)':{en:'\u2014 rework at finalization'},
+      '#wow .module:nth-child(1) li:nth-child(3)':{en:'\u2014 subjective client disputes'},
+      '#wow .module:nth-child(2) li:nth-child(1)':{en:'\u2014 scope frozen in proposal'},
+      '#wow .module:nth-child(2) li:nth-child(2)':{en:'\u2014 technical gate blocks errors'},
+      '#wow .module:nth-child(2) li:nth-child(3)':{en:'\u2014 traceable and defensible delivery'},
+      '#wow .module:nth-child(3) li:nth-child(1)':{en:'\u2014 reduced rework'},
+      '#wow .module:nth-child(3) li:nth-child(2)':{en:'\u2014 less operational noise'},
+      '#wow .module:nth-child(3) li:nth-child(3)':{en:'\u2014 real deadline predictability'},
+
+      // PROBLEMA - papers
+      '#problema .paper.one h3':{en:'WhatsApp'},
+      '#problema .paper.one p':{en:'"Can you upload two more formats today?"<br><br>The scope changed, but nobody updated the request.',html:true},
+      '#problema .paper.one small':{en:'operational chaos'},
+      '#problema .paper.two h3':{en:'Spreadsheet'},
+      '#problema .paper.two p':{en:'Columns, tabs, manual control, and no real view of who is overloaded or idle.'},
+      '#problema .paper.two small':{en:'improvised control'},
+      '#problema .paper.three h3':{en:'Wrong file'},
+      '#problema .paper.three p':{en:'Bad artwork enters, passes stages without checks, and rework explodes at the end.'},
+      '#problema .paper.three small':{en:'invisible cost'},
+
+      // PROVA VISUAL - mock
+      '#prova .mock-top strong':{en:'Production queue \u00b7 RUSH'},
+      '#prova .mock-side div:nth-child(1)':{en:'Motion Dashboard'},
+      '#prova .mock-side div:nth-child(2)':{en:'Active jobs'},
+      '#prova .mock-side div:nth-child(3)':{en:'Queue by priority'},
+      '#prova .mock-side div:nth-child(4)':{en:'Validation / QA'},
+      '#prova .job-card:nth-child(1) strong':{en:'Retail Campaign 300x600'},
+      '#prova .job-card:nth-child(1) span':{en:'Motion \u00b7 Deadline: today \u00b7 high priority'},
+      '#prova .job-card:nth-child(1) .job-status':{en:'IN MOTION'},
+      '#prova .job-card:nth-child(2) strong':{en:'HTML5 Banner Black Friday'},
+      '#prova .job-card:nth-child(2) span':{en:'Error: weight above limit \u00b7 180kb'},
+      '#prova .job-card:nth-child(2) .job-status':{en:'BLOCKED'},
+      '#prova .job-card:nth-child(3) strong':{en:'Programmatic HTML5'},
+      '#prova .job-card:nth-child(3) span':{en:'Dev \u00b7 Clicktag validated'},
+      '#prova .job-card:nth-child(3) .job-status':{en:'IN DEV'},
+      '#prova .job-card:nth-child(4) strong':{en:'Social Pack Stories'},
+      '#prova .job-card:nth-child(4) span':{en:'QA \u00b7 Final review'},
+      '#prova .job-card:nth-child(4) .job-status':{en:'IN QA'},
+
+      // FABRICA - output tags
+      '#fabrica .role.da .out span:nth-child(1)':{en:'Approved PSD'},
+      '#fabrica .role.da .out span:nth-child(2)':{en:'Entry report'},
+      '#fabrica .role.da .out span:nth-child(3)':{en:'technical triage'},
+      '#fabrica .role.motion .out span:nth-child(1)':{en:'GIF / PNG / video'},
+      '#fabrica .role.motion .out span:nth-child(2)':{en:'queue by priority'},
+      '#fabrica .role.motion .out span:nth-child(3)':{en:'clear variations'},
+      '#fabrica .role.dev .out span:nth-child(1)':{en:'Final HTML5'},
+      '#fabrica .role.dev .out span:nth-child(2)':{en:'rules by channel'},
+      '#fabrica .role.dev .out span:nth-child(3)':{en:'controlled weight'},
+      '#fabrica .role.finish .out span:nth-child(1)':{en:'\u0394E comparison'},
+      '#fabrica .role.finish .out span:nth-child(2)':{en:'approval status'},
+      '#fabrica .role.finish .out span:nth-child(3)':{en:'traceable delivery'},
+
+      // TECNICO - laudo mock
+      '#tecnico .lp-tag:nth-of-type(1)':{en:'<span class="lp-dot" style="background:#5b7cff"></span> Entry \u00b7 PSD',html:true},
+      '.laudo-panel:nth-child(2) .lp-tag':{en:'<span class="lp-dot" style="background:#ff6a3d"></span> Output \u00b7 GIF',html:true},
+      '.laudo-panel:nth-child(1) .lp-row:nth-child(2) .lp-label':{en:'Color profile'},
+      '.laudo-panel:nth-child(1) .lp-row:nth-child(3) .lp-label':{en:'Dimensions'},
+      '.laudo-panel:nth-child(1) .lp-row:nth-child(4) .lp-label':{en:'Resolution'},
+      '.laudo-panel:nth-child(1) .lp-row:nth-child(5) .lp-label':{en:'Hidden layers'},
+      '.laudo-panel:nth-child(1) .lp-row:nth-child(7) .lp-label':{en:'Weight'},
+      '.laudo-panel:nth-child(2) .lp-row:nth-child(2) .lp-label':{en:'Dimensions'},
+      '.laudo-panel:nth-child(2) .lp-row:nth-child(3) .lp-label':{en:'Weight'},
+      '.laudo-panel:nth-child(2) .lp-row:nth-child(6) .lp-label':{en:'Duration'},
+      '.de-result strong':{en:'Comparison: APPROVED'},
+      '.de-result p':{en:'\u0394E average 4.2 \u00b7 worst color 9.1 \u2014 within GIF tolerance'},
+      '#tecnico .tech-top strong':{en:'ENTRY REPORT \u00d7 OUTPUT REPORT'},
+
+      // MODULOS - 6 cards
+      '#modulos .module:nth-child(1) small':{en:'coordination'},
+      '#modulos .module:nth-child(1) h3':{en:'Request + Breakdown + Proposal'},
+      '#modulos .module:nth-child(1) p':{en:'The trio that defines scope, price, deadline, and approved commitment with the agency.'},
+      '#modulos .module:nth-child(1) li:nth-child(1)':{en:'\u2014 editable and permanent request'},
+      '#modulos .module:nth-child(1) li:nth-child(2)':{en:'\u2014 multiple breakdowns per request'},
+      '#modulos .module:nth-child(1) li:nth-child(3)':{en:'\u2014 frozen proposal for approval'},
+      '#modulos .module:nth-child(2) small':{en:'production'},
+      '#modulos .module:nth-child(2) h3':{en:'Jobs + Factory'},
+      '#modulos .module:nth-child(2) p':{en:'Live kanban, role-based assignment, and clear view of who is producing what.'},
+      '#modulos .module:nth-child(2) li:nth-child(1)':{en:'\u2014 dashboards by role'},
+      '#modulos .module:nth-child(2) li:nth-child(2)':{en:'\u2014 priority, queue, and urgency'},
+      '#modulos .module:nth-child(2) li:nth-child(3)':{en:'\u2014 traceable operational chain'},
+      '#modulos .module:nth-child(3) small':{en:'quality'},
+      '#modulos .module:nth-child(3) h3':{en:'Validator + Report + Gate'},
+      '#modulos .module:nth-child(3) p':{en:'Where <span class="rush-name">RUSH</span> distances itself from traditional administrative competitors.',html:true},
+      '#modulos .module:nth-child(3) li:nth-child(1)':{en:'\u2014 structural PSD validation'},
+      '#modulos .module:nth-child(3) li:nth-child(2)':{en:'\u2014 output comparison'},
+      '#modulos .module:nth-child(3) li:nth-child(3)':{en:'\u2014 tolerance-based blocking'},
+      '#modulos .module:nth-child(4) small':{en:'client'},
+      '#modulos .module:nth-child(4) h3':{en:'Agency portal'},
+      '#modulos .module:nth-child(4) p':{en:'Real-time status without calls, without email, and without the coordinator putting out fires every time.'},
+      '#modulos .module:nth-child(4) li:nth-child(1)':{en:'\u2014 external progress view'},
+      '#modulos .module:nth-child(4) li:nth-child(2)':{en:'\u2014 delivery history'},
+      '#modulos .module:nth-child(4) li:nth-child(3)':{en:'\u2014 less communication noise'},
+      '#modulos .module:nth-child(5) small':{en:'future vision'},
+      '#modulos .module:nth-child(5) h3':{en:'Pipeline automation'},
+      '#modulos .module:nth-child(5) p':{en:'PSD to extraction, assembly, HTML5 and delivery. The future ambition is already part of the system design.'},
+      '#modulos .module:nth-child(5) li:nth-child(1)':{en:'\u2014 asset extraction'},
+      '#modulos .module:nth-child(5) li:nth-child(2)':{en:'\u2014 assisted banner building'},
+      '#modulos .module:nth-child(5) li:nth-child(3)':{en:'\u2014 productivity analytics'},
+      '#modulos .module:nth-child(6) small':{en:'scale'},
+      '#modulos .module:nth-child(6) h3':{en:'Multi-tenant'},
+      '#modulos .module:nth-child(6) p':{en:'Starts in the pilot operation, but the architecture points to multiple companies, clients, and configurations.'},
+      '#modulos .module:nth-child(6) li:nth-child(1)':{en:'\u2014 isolation per company'},
+      '#modulos .module:nth-child(6) li:nth-child(2)':{en:'\u2014 configuration per operation'},
+      '#modulos .module:nth-child(6) li:nth-child(3)':{en:'\u2014 product with global reach'},
+
+      // QUIZ BLOCK LABELS
+      '#quiz-block-0 .qi-label':{en:'challenge \u00b7 visibility'},
+      '#quiz-block-1 .qi-label':{en:'challenge \u00b7 process'},
+      '#quiz-block-2 .qi-label':{en:'challenge \u00b7 quality'},
+      '#quiz-block-3 .qi-label':{en:'challenge \u00b7 delivery'},
+      '#qi-done-0':{en:'\u26a1 Block complete',html:true},
+      '#qi-done-1':{en:'\u26a1 Block complete',html:true},
+      '#qi-done-2':{en:'\u26a1 Block complete',html:true},
+      '#qi-done-3':{en:'\u26a1 Block complete',html:true},
+
+      // PICKS
+      '.picks-sub':{en:'Presentation focused on what interests you \u2014 with one of our technical specialists.'},
+      '#picks-wa':{en:'\u26a1 Schedule via WhatsApp',html:true},
+      '.picks-cta-sec':{en:'I prefer email'},
+
+      // CTA / CLOSING
+      '#contato .cta-note:nth-child(1)':{en:'<strong style="display:block;margin-bottom:8px">VOIDDA \u00b7 legal data and contact</strong>VOIDDA SERVICOS SOB DEMANDA PARA INTERNET LTDA<br>CNPJ 40.644.576/0001-06<br>WhatsApp (11) 97500-9521',html:true},
+      '#contato .cta-note:nth-child(2)':{en:'<strong style="display:block;margin-bottom:8px"><span class="rush-name">RUSH</span> inside VOIDDA</strong>For those growing: the operational control that large companies built over years, available from the first job. For those already big: the system that ensures control isn\u2019t lost when operations scale.',html:true},
+
+      // FOOTER
+      '.footer-legal:nth-child(1) div:nth-child(1)':{en:'<strong class="rush-name">RUSH</strong> \u00b7 product for post-production operational flow',html:true},
+      '.footer-legal:nth-child(2) div:nth-child(3)':{en:'Signed by <strong>VOIDDA</strong>',html:true},
+    };
+
+    function toggleLang(){
+      currentLang=currentLang==='pt'?'en':'pt';
+      document.getElementById('lang-toggle').textContent=currentLang==='pt'?'EN':'PT';
+      document.documentElement.lang=currentLang==='pt'?'pt-BR':'en';
+
+      Object.keys(translations).forEach(function(sel){
+        var el=document.querySelector(sel);
+        if(!el)return;
+        if(!ptCache[sel])ptCache[sel]=el.innerHTML;
+        if(currentLang==='en'){
+          if(translations[sel].html)el.innerHTML=translations[sel].en;
+          else el.textContent=translations[sel].en;
+        }else{
+          el.innerHTML=ptCache[sel];
+        }
+      });
+
+      // Re-render quiz blocks and picks in current language
+      if(typeof rerenderQuiz==='function')rerenderQuiz();
+      if(typeof rerenderPicks==='function')rerenderPicks();
+    }
+
   </script>
 </body>
 </html>
