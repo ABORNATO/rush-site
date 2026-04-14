@@ -285,6 +285,24 @@
     .qf-cta{margin-top:24px;text-align:center}
     .qf-cta a{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--orange),#ff7e59);color:white;font:700 15px/1 var(--font);text-decoration:none;box-shadow:0 12px 30px rgba(255,106,61,.22);transition:.2s}
     .qf-cta a:hover{transform:translateY(-2px)}
+
+    .picks-box{max-width:780px;margin:0 auto}
+    .picks-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+    .pick{padding:12px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font:600 13px/1.2 var(--font);color:#cfd8ee;cursor:pointer;transition:.2s;user-select:none}
+    .pick:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
+    .pick.selected{background:rgba(91,124,255,.15);border-color:rgba(91,124,255,.4);color:var(--blue2)}
+    .pick .pick-icon{margin-right:6px;font-size:14px}
+    .picks-result{text-align:center;margin-top:28px;padding:28px;border-radius:28px;background:linear-gradient(135deg,rgba(91,124,255,.1),rgba(91,124,255,.04));border:1px solid rgba(91,124,255,.2)}
+    .picks-msg{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:16px;color:var(--text);line-height:1.35}
+    .picks-cta{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:999px;background:linear-gradient(135deg,var(--orange),#ff7e59);color:white;font:700 15px/1 var(--font);text-decoration:none;box-shadow:0 12px 30px rgba(255,106,61,.22);transition:.2s}
+    .picks-cta:hover{transform:translateY(-2px)}
+    .picks-sub{margin-top:14px;font-size:13px;color:#9fb0d9;line-height:1.5}
+    .picks-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:4px}
+    .picks-cta-sec{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#cfd8ee;font:600 14px/1 var(--font);text-decoration:none;transition:.2s}
+    .picks-cta-sec:hover{background:rgba(255,255,255,.08)}
+    .picks-pain{margin-top:18px;text-align:left;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    .pain-tag{padding:8px 14px;border-radius:999px;font:600 11px/1.2 var(--mono);color:#ffb39e;background:rgba(255,106,61,.1);border:1px solid rgba(255,106,61,.2)}
+    .picks-fade{animation:qifade .3s ease}
   </style>
 </head>
 <body>
@@ -317,8 +335,8 @@
         <a href="#tecnico">Controle técnico</a>
         <a href="#modulos">Módulos</a>
         <a href="#resultado">Diagnóstico</a>
-        <a href="#contato" class="btn btn-secondary">Ver visão</a>
-        <a href="#contato" class="btn btn-primary">Pedir demo</a>
+        <a href="#contato" class="btn btn-secondary">EN</a>
+        <a href="#interesse" class="btn btn-primary">Agendar apresentação</a>
       </div>
     </div>
   </nav>
@@ -432,7 +450,7 @@
           <div class="label">o problema real</div>
           <h2>O gargalo não está no financeiro. Está no miolo da operação.</h2>
         </div>
-        <p>Planilha, e-mail, WhatsApp, pasta perdida, prazo estourado, versão errada, cliente cobrando. Esse é o ambiente real da produtora pequena quando o fluxo cresce e ninguém enxerga a cadeia inteira.</p>
+        <p>Planilha, e-mail, WhatsApp, pasta perdida, prazo estourado, versão errada, cliente cobrando. Toda produtora começa com talento e dedicação. As que cresceram fizeram isso porque controlaram o fluxo. As que continuam grandes, mantêm esse controle mesmo quando a complexidade dobra. As que não controlaram, escalaram o caos.</p>
       </div>
 
       <div class="chaos-board">
@@ -553,7 +571,7 @@
 
         <div class="flow-side reveal" style="transition-delay:.08s">
           <div class="impact">
-            <h4>Para produtora pequena, previsibilidade é margem.</h4>
+            <h4>Toda produtora que escalou tinha uma coisa em comum: controle operacional.</h4>
             <p>Não é sobre burocracia. É sobre conseguir crescer sem perder controle de prazo, qualidade, responsável, versão e custo escondido de retrabalho.</p>
           </div>
           <div class="metric-stack">
@@ -915,9 +933,34 @@
           <ul>
             <li>— isolação por produtora</li>
             <li>— configuração por operação</li>
-            <li>— produto com alcance nacional</li>
+            <li>— produto com alcance global</li>
           </ul>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="interesse">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <div class="label">o que te chamou atenção?</div>
+          <h2>Qual dessas capacidades mais te interessa?</h2>
+        </div>
+        <p>Selecione o que faz mais sentido pra sua operação. Sem compromisso — é só curiosidade mesmo.</p>
+      </div>
+
+      <div class="picks-box reveal" id="picks-box">
+        <div class="picks-grid" id="picks-grid"></div>
+        <div class="picks-result" id="picks-result" style="display:none">
+          <div class="picks-msg" id="picks-msg"></div>
+          <div class="picks-actions">
+            <a class="picks-cta" id="picks-wa" href="#" target="_blank" rel="noopener noreferrer">⚡ Agendar pelo WhatsApp</a>
+            <a class="picks-cta-sec" id="picks-email" href="#">Prefiro e-mail</a>
+          </div>
+          <div class="picks-sub">Apresentação focada no que te interessa — com um de nossos especialistas técnicos.</div>
+          <div class="picks-pain" id="picks-pain"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -941,7 +984,7 @@
         </div>
         <div id="qf-gaps"></div>
         <div class="qf-cta">
-          <a href="mailto:atendimento@voidda.com.br">Falar com a Voidda sobre o RUSH</a>
+          <a id="qf-wa" href="https://wa.me/5511975009521" target="_blank" rel="noopener noreferrer">Veja onde a perspectiva muda</a>
         </div>
       </div>
       <div id="quiz-final-placeholder" class="reveal" style="text-align:center;padding:40px 0;color:#9fb0d9;font-size:15px">
@@ -956,15 +999,16 @@
         <div>
           <div class="label">fechamento</div>
           <h2>Se você não controlar o fluxo, o fluxo controla você.</h2>
-          <p>O <span class="rush-name">RUSH</span> nasce para cobrir o que o mercado normalmente deixa no meio do caminho: a operação real entre orçamento, criação, produção, validação e entrega.</p>
+          <p>O <span class="rush-name">RUSH</span> nasce para cobrir o que o mercado normalmente deixa no meio do caminho: a operação real entre orçamento, criação, produção, validação e entrega. Em qualquer idioma, em qualquer mercado.</p>
           <div class="hero-actions" style="margin-top:26px">
-            <a class="btn btn-primary" href="mailto:atendimento@voidda.com.br">Solicitar apresentação</a>
+            <a class="btn btn-primary" href="https://wa.me/5511975009521?text=Ol%C3%A1%2C%20vi%20o%20RUSH%20e%20gostaria%20de%20agendar%20uma%20apresenta%C3%A7%C3%A3o." target="_blank" rel="noopener noreferrer">Veja onde a perspectiva muda</a>
             <a class="btn btn-secondary" href="#top">Voltar ao topo</a>
+            <p style="margin-top:14px;font-size:14px;color:#9fb0d9;max-width:400px">Apresentação modular do produto com um de nossos especialistas técnicos.</p>
           </div>
         </div>
         <div class="cta-side">
           <div class="cta-note"><strong style="display:block;margin-bottom:8px">VOIDDA · dados legais e contato</strong>VOIDDA SERVICOS SOB DEMANDA PARA INTERNET LTDA<br>CNPJ 40.644.576/0001-06<br>WhatsApp (11) 97500-9521</div>
-          <div class="cta-note"><strong style="display:block;margin-bottom:8px"><span class="rush-name">RUSH</span> dentro da VOIDDA</strong>Produto focado em organizar o fluxo operacional de produtoras criativas pequenas, do pedido à entrega, sem deixar o miolo da fábrica no improviso.</div>
+          <div class="cta-note"><strong style="display:block;margin-bottom:8px"><span class="rush-name">RUSH</span> dentro da VOIDDA</strong>Para quem está crescendo: o controle que as grandes construíram ao longo de anos, disponível desde o primeiro job. Para quem já é grande: o sistema que garante que o controle não se perca quando a operação escala.</div>
         </div>
       </div>
     </div>
@@ -1146,11 +1190,126 @@
         }
         document.getElementById('qf-gaps').innerHTML=h;
 
+        var waLines=['Olá, fiz o diagnóstico no site do RUSH.','Resultado: '+sim+' de '+total+' sob controle.'];
+        if(nos.length){var gaps=nos.slice(0,4).map(function(i){return allQ[i].q.replace('?','')});waLines.push('Lacunas: '+gaps.join('; ')+'.')}
+        waLines.push('Gostaria de agendar uma apresentação focada nesses pontos.');
+        document.getElementById('qf-wa').href='https://wa.me/5511975009521?text='+encodeURIComponent(waLines.join('\n'));
+
         setTimeout(function(){document.getElementById('resultado').scrollIntoView({behavior:'smooth',block:'start'})},400);
       }
 
       for(var g=0;g<4;g++)renderBlock(g);
       updateCounter();
+    })();
+
+    (function(){
+      var features=[
+        {icon:"\u2261",name:"Pedido",cat:"coordena\u00e7\u00e3o",desc:"escopo edit\u00e1vel e permanente"},
+        {icon:"\u2234",name:"Decupagem",cat:"coordena\u00e7\u00e3o",desc:"motor de precifica\u00e7\u00e3o"},
+        {icon:"\u25a1",name:"Carta de Or\u00e7amento",cat:"coordena\u00e7\u00e3o",desc:"PDF imut\u00e1vel para aprova\u00e7\u00e3o"},
+        {icon:"\u25a6",name:"Kanban de Jobs",cat:"produ\u00e7\u00e3o",desc:"vis\u00e3o ao vivo da esteira"},
+        {icon:"\u2b50",name:"Dashboards por papel",cat:"produ\u00e7\u00e3o",desc:"cada profissional v\u00ea o que \u00e9 seu"},
+        {icon:"\u26a1",name:"Atribui\u00e7\u00e3o inteligente",cat:"produ\u00e7\u00e3o",desc:"capacidade e prioridade"},
+        {icon:"\u2713",name:"Validador PSD",cat:"qualidade",desc:"14 checks autom\u00e1ticos"},
+        {icon:"\u0394",name:"Laudo T\u00e9cnico \u0394E",cat:"qualidade",desc:"confronto de cor cient\u00edfico"},
+        {icon:"\u229a",name:"Gate autom\u00e1tico",cat:"qualidade",desc:"pe\u00e7a errada n\u00e3o avan\u00e7a"},
+        {icon:"\u2192",name:"Portal da ag\u00eancia",cat:"entrega",desc:"status em tempo real"},
+        {icon:"\u2630",name:"Hist\u00f3rico de entregas",cat:"entrega",desc:"vers\u00e3o, data, autoria"},
+        {icon:"\u2735",name:"Multi-tenant",cat:"escala",desc:"m\u00faltiplas produtoras"},
+        {icon:"\u2699",name:"Pipeline de automa\u00e7\u00e3o",cat:"futuro",desc:"PSD \u2192 extra\u00e7\u00e3o \u2192 HTML5"},
+        {icon:"\u2637",name:"Analytics",cat:"futuro",desc:"produtividade e custo por pe\u00e7a"}
+      ];
+
+      var selected=[];
+      var grid=document.getElementById('picks-grid');
+      grid.innerHTML=features.map(function(f,i){
+        return '<div class="pick" data-idx="'+i+'" onclick="togglePick('+i+')"><span class="pick-icon">'+f.icon+'</span>'+f.name+'</div>';
+      }).join('');
+
+      var catMessages={
+        "coordena\u00e7\u00e3o":"Controle de escopo e or\u00e7amento \u00e9 prioridade pra voc\u00ea. \u00c9 onde tudo come\u00e7a \u2014 e onde a maioria perde o controle.",
+        "produ\u00e7\u00e3o":"A vis\u00e3o da esteira te chamou aten\u00e7\u00e3o. Faz sentido \u2014 \u00e9 onde o caos costuma morar.",
+        "qualidade":"Controle t\u00e9cnico \u00e9 o que te interessa. Voc\u00ea sabe que olho humano n\u00e3o escala.",
+        "entrega":"Relacionamento com o cliente \u00e9 prioridade. Quando a ag\u00eancia para de cobrar, todo mundo respira.",
+        "escala":"Voc\u00ea j\u00e1 pensa em escala. Multi-tenant significa crescer sem reconstruir.",
+        "futuro":"Automa\u00e7\u00e3o e analytics \u2014 voc\u00ea quer o pr\u00f3ximo passo. N\u00f3s tamb\u00e9m."
+      };
+
+      var catPains={
+        "coordena\u00e7\u00e3o":["Escopo muda e ningu\u00e9m registra","Or\u00e7amento contestado depois","Pre\u00e7o na base do chute"],
+        "produ\u00e7\u00e3o":["N\u00e3o sabe quem est\u00e1 ocioso","Jobs sem dono claro","Prioridade na base do grito"],
+        "qualidade":["PSD ruim passa despercebido","Cor errada s\u00f3 percebida no final","Retrabalho tratado como normal"],
+        "entrega":["Ag\u00eancia cobra e voc\u00ea n\u00e3o tem resposta","Vers\u00e3o errada entregue","Sem hist\u00f3rico de aprova\u00e7\u00e3o"],
+        "escala":["Sistema n\u00e3o aguenta segundo cliente","Reconstruir tudo pra crescer"],
+        "futuro":["Extra\u00e7\u00e3o manual de assets","Sem dados de produtividade"]
+      };
+
+      window.togglePick=function(idx){
+        var el=document.querySelector('.pick[data-idx="'+idx+'"]');
+        var pos=selected.indexOf(idx);
+        if(pos>-1){selected.splice(pos,1);el.classList.remove('selected')}
+        else{selected.push(idx);el.classList.add('selected')}
+        updatePicks();
+      };
+
+      function getQuizData(){
+        try{
+          var counter=document.getElementById('qc-text');
+          if(!counter)return null;
+          var txt=counter.textContent;
+          var match=txt.match(/(\d+)\s*\/\s*(\d+)/);
+          if(!match||parseInt(match[1])<12)return null;
+          var label=document.getElementById('qf-bar-label');
+          return label?label.textContent:null;
+        }catch(e){return null}
+      }
+
+      function buildMessage(){
+        var names=selected.map(function(i){return features[i].name});
+        var cats={};
+        selected.forEach(function(i){var c=features[i].cat;cats[c]=(cats[c]||0)+1});
+        var topCats=Object.keys(cats).sort(function(a,b){return cats[b]-cats[a]});
+
+        var lines=["Ol\u00e1, fiz o diagn\u00f3stico no site do RUSH."];
+        var quiz=getQuizData();
+        if(quiz)lines.push("Meu resultado: "+quiz+".");
+        lines.push("Me interessei por: "+names.join(", ")+".");
+        if(topCats.length>0)lines.push("\u00c1rea de maior interesse: "+topCats[0]+".");
+        lines.push("Gostaria de agendar uma apresenta\u00e7\u00e3o focada nesses pontos.");
+        return lines.join("\n");
+      }
+
+      function updatePicks(){
+        var res=document.getElementById('picks-result');
+        if(selected.length===0){res.style.display='none';return}
+        res.style.display='block';
+        res.classList.add('picks-fade');
+
+        var cats={};
+        selected.forEach(function(i){var c=features[i].cat;cats[c]=(cats[c]||0)+1});
+        var topCat=Object.keys(cats).sort(function(a,b){return cats[b]-cats[a]})[0];
+        var msg=catMessages[topCat]||'Interessante escolha.';
+
+        var names=selected.map(function(i){return features[i].name});
+        var intro=selected.length===1?'Voc\u00ea escolheu <strong>'+names[0]+'</strong>.':'Voc\u00ea escolheu <strong>'+selected.length+' capacidades</strong>.';
+        document.getElementById('picks-msg').innerHTML=intro+' '+msg;
+
+        var waMsg=encodeURIComponent(buildMessage());
+        document.getElementById('picks-wa').href='https://wa.me/5511975009521?text='+waMsg;
+
+        var emailSubject=encodeURIComponent('RUSH \u2014 Interesse em: '+names.slice(0,3).join(', '));
+        var emailBody=encodeURIComponent(buildMessage());
+        document.getElementById('picks-email').href='mailto:atendimento@voidda.com.br?subject='+emailSubject+'&body='+emailBody;
+
+        var painEl=document.getElementById('picks-pain');
+        var pains=[];
+        Object.keys(cats).forEach(function(c){if(catPains[c])pains=pains.concat(catPains[c].slice(0,2))});
+        if(pains.length>0){
+          painEl.innerHTML='<div style="font:600 10px/1 var(--mono);color:#9fb0d9;letter-spacing:.1em;text-transform:uppercase;width:100%;text-align:center;margin-bottom:6px">Dores que voc\u00ea provavelmente conhece:</div>'+pains.map(function(p){return '<span class="pain-tag">'+p+'</span>'}).join('');
+        } else {
+          painEl.innerHTML='';
+        }
+      }
     })();
   </script>
 </body>
