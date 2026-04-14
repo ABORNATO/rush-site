@@ -1606,7 +1606,7 @@ footer {
         </div>
       </a>
       <div class="footer-links">
-        <a href="/cdn-cgi/l/email-protection#ff9e8b9a919b96929a918b90bf8990969b9b9ed19c9092d19d8d"><span class="__cf_email__" data-cfemail="3c5d485952585551595248537c4a535558585d125f5351125e4e">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#86e7f2e3e8e2efebe3e8f2e9c6f0e9efe2e2e7a8e5e9eba8e4f4"><span class="__cf_email__" data-cfemail="2746534249434e4a424953486751484e4343460944484a094555">[email&#160;protected]</span></a>
         <a href="#">Política de privacidade</a>
         <a href="https://voidda.com.br">voidda.com.br</a>
       </div>
@@ -1637,24 +1637,11 @@ footer {
         </div>
         <div class="modal-opt-text">
           <div class="modal-opt-title">Email</div>
-          <div class="modal-opt-sub"><span class="__cf_email__" data-cfemail="80e1f4e5eee4e9ede5eef4efc0f6efe9e4e4e1aee3efedaee2f2">[email&#160;protected]</span></div>
+          <div class="modal-opt-sub"><span class="__cf_email__" data-cfemail="e18095848f85888c848f958ea1978e88858580cf828e8ccf8393">[email&#160;protected]</span></div>
         </div>
       </a>
     </div>
-    <p class="modal-note">Acesso por convite — vagas limitadas para o beta.</p>
-  </div>
-</div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
-/* NAV MOBILE */
-function toggleNav(){
-  document.getElementById('navMobile').classList.toggle('open');
-}
-
-/* MODAL */
-function openModal(){
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow='hidden';
+    <ody.style.overflow='hidden';
 }
 function closeModal(){
   document.getElementById('modal').classList.remove('open');
@@ -1679,4 +1666,21 @@ function filterFeat(phase, btn){
     let next = g.nextElementSibling;
     let hasVisible = false;
     while(next && !next.classList.contains('feat-group')){
-      if(!next.classList.conta
+      if(!next.classList.contains('hide')) hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    g.style.display = hasVisible ? '' : 'none';
+  });
+}
+
+/* SCROLL REVEAL */
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+
+</body>
+</html>
