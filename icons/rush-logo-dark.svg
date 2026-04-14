@@ -1,0 +1,7 @@
+<svg width="280" height="90" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="0,70 28,0 44,0 22,46 52,46 16,90 0,90" fill="#2563eb"/>
+  <polygon points="22,46 52,46 16,90 36,90 62,46 44,0 28,0" fill="#1d4ed8"/>
+  <rect x="72" y="58" width="200" height="2" rx="1" fill="#1e2330"/>
+  <text x="72" y="46" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="42" font-weight="700" fill="#ffffff" letter-spacing="-1">rush</text>
+  <text x="73" y="75" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="400" fill="#4b5563" letter-spacing="3">BY VOIDDA</text>
+</svg>
