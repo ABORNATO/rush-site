@@ -55,6 +55,22 @@ nav{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.85);backdrop-filt
 .hero{min-height:90vh;display:flex;align-items:center;justify-content:center;padding:80px 0 60px;position:relative;overflow:hidden}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,black 30%,transparent 80%);opacity:.3}
 .hero-glow{position:absolute;top:10%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,#2563eb22 0%,transparent 70%);pointer-events:none}
+.hero-mock-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-42%);width:1100px;opacity:0.15;pointer-events:none;filter:blur(1px)}
+.hero-mock-bg .hm-bar{height:48px;background:var(--card);border:1px solid var(--border);border-radius:8px 8px 0 0;display:flex;align-items:center;padding:0 16px;gap:8px}
+.hero-mock-bg .hm-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
+.hero-mock-bg .hm-body{display:flex;background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;min-height:400px}
+.hero-mock-bg .hm-side{width:180px;background:var(--card);border-right:1px solid var(--border);padding:16px}
+.hero-mock-bg .hm-nav{height:10px;background:var(--border);border-radius:4px;margin-bottom:10px}
+.hero-mock-bg .hm-nav.active{background:var(--blue3)}
+.hero-mock-bg .hm-cols{display:flex;gap:12px;flex:1;padding:16px}
+.hero-mock-bg .hm-col{flex:1;display:flex;flex-direction:column;gap:8px}
+.hero-mock-bg .hm-col-head{height:10px;background:var(--border);border-radius:4px;width:60%;margin-bottom:4px}
+.hero-mock-bg .hm-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.hero-mock-bg .hm-line{height:8px;background:var(--border);border-radius:3px}
+.hero-mock-bg .hm-line.short{width:60%}
+.hero-mock-bg .hm-line.blue{background:var(--blue3);width:40%}
+.hero-mock-bg .hm-tag{display:inline-block;width:48px;height:14px;border-radius:10px;background:#ef444422;border:1px solid #ef444433}
+.hero-mock-bg .hm-tag.green{background:#22c55e22;border-color:#22c55e33}
 .hero-content{position:relative;z-index:2;text-align:center}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--glow);border:1px solid var(--blue3);border-radius:100px;padding:6px 18px 6px 14px;font-family:var(--f-mono);font-size:13px;color:var(--accent);margin-bottom:32px}
 .hero-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
@@ -246,6 +262,41 @@ footer a{color:var(--text2);text-decoration:none}
 <section class="hero">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
+  <div class="hero-mock-bg">
+    <div class="hm-bar"><div class="hm-dot"></div><div class="hm-dot"></div><div class="hm-dot"></div></div>
+    <div class="hm-body">
+      <div class="hm-side">
+        <div class="hm-nav active"></div>
+        <div class="hm-nav"></div>
+        <div class="hm-nav"></div>
+        <div style="height:20px"></div>
+        <div class="hm-nav"></div>
+        <div class="hm-nav"></div>
+      </div>
+      <div class="hm-cols">
+        <div class="hm-col">
+          <div class="hm-col-head"></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div><div class="hm-tag"></div></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div><div class="hm-line blue"></div></div>
+        </div>
+        <div class="hm-col">
+          <div class="hm-col-head"></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div><div class="hm-tag"></div></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line blue"></div></div>
+        </div>
+        <div class="hm-col">
+          <div class="hm-col-head"></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div><div class="hm-tag green"></div></div>
+        </div>
+        <div class="hm-col">
+          <div class="hm-col-head"></div>
+          <div class="hm-card"><div class="hm-line"></div><div class="hm-line short"></div><div class="hm-tag green"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="container">
     <div class="hero-content">
       <div class="hero-badge"><div class="hero-badge-dot"></div>v0.9 &middot; Beta ativo com dados reais</div>
@@ -803,7 +854,15 @@ footer a{color:var(--text2);text-decoration:none}
 <!-- FOOTER -->
 <footer>
   <div class="container">
-    <strong>rush</strong> BY VOIDDA &nbsp;&middot;&nbsp; <a href="mailto:atendimento@voidda.com.br">atendimento@voidda.com.br</a> &nbsp;&middot;&nbsp; &copy; 2026 Voidda. Todos os direitos reservados.
+    <div style="margin-bottom:12px">
+      <strong style="font-family:var(--f-display);color:var(--text)">rush</strong> BY VOIDDA
+    </div>
+    <div style="font-size:12px;color:var(--text3);line-height:1.8">
+      VOIDDA SERVICOS SOB DEMANDA PARA INTERNET LTDA &middot; CNPJ 40.644.576/0001-06<br>
+      <a href="https://wa.me/5511975009521" target="_blank" style="color:var(--accent);text-decoration:none">WhatsApp: (11) 97500-9521</a> &middot; Mande uma mensagem, respondemos r&aacute;pido.<br>
+      <a href="mailto:atendimento@voidda.com.br" style="color:var(--text2);text-decoration:none">atendimento@voidda.com.br</a>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--text3)">&copy; 2026 Voidda. Todos os direitos reservados.</div>
   </div>
 </footer>
 
@@ -813,8 +872,8 @@ footer a{color:var(--text2);text-decoration:none}
     <button class="modal-close" onclick="closeModal()">&times;</button>
     <h3>Fale com a gente</h3>
     <p>Escolha como prefere entrar em contato. Respondemos rápido.</p>
-    <a href="https://wa.me/5515991234567" target="_blank" class="modal-link">
-      <div><strong>WhatsApp</strong><small>Resposta rápida, conversa direta</small></div>
+    <a href="https://wa.me/5511975009521" target="_blank" class="modal-link">
+      <div><strong>WhatsApp</strong><small>(11) 97500-9521 &middot; Resposta r&aacute;pida</small></div>
     </a>
     <a href="mailto:atendimento@voidda.com.br" class="modal-link">
       <div><strong>Email</strong><small>atendimento@voidda.com.br</small></div>
