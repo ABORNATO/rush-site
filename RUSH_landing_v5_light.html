@@ -165,28 +165,27 @@
     /* === FAN DECK ANIMATION === */
     .fan-deck .step-card{
       opacity:0;
-      transform-origin:50% 100%;
-      transition:transform 1.1s ease, opacity .6s ease;
+      transition:transform 1s cubic-bezier(.22,1,.36,1), opacity .6s ease;
+      transform-origin:center bottom;
     }
-    /* Initial: all cards stacked at center-bottom, closed fan */
-    .fan-deck .step-card:nth-child(1){transform:translateX(510px) translateY(120px) rotate(12deg) scale(.82)}
-    .fan-deck .step-card:nth-child(2){transform:translateX(340px) translateY(120px) rotate(8deg) scale(.85)}
-    .fan-deck .step-card:nth-child(3){transform:translateX(170px) translateY(120px) rotate(4deg) scale(.88)}
-    .fan-deck .step-card:nth-child(4){transform:translateX(0)     translateY(120px) rotate(0deg) scale(.90)}
-    .fan-deck .step-card:nth-child(5){transform:translateX(-170px) translateY(120px) rotate(-4deg) scale(.88)}
-    .fan-deck .step-card:nth-child(6){transform:translateX(-340px) translateY(120px) rotate(-8deg) scale(.85)}
-    .fan-deck .step-card:nth-child(7){transform:translateX(-510px) translateY(120px) rotate(-12deg) scale(.82)}
-    /* Stagger: center first, edges last */
-    .fan-deck .step-card:nth-child(4){transition-delay:.05s}
-    .fan-deck .step-card:nth-child(3),.fan-deck .step-card:nth-child(5){transition-delay:.15s}
-    .fan-deck .step-card:nth-child(2),.fan-deck .step-card:nth-child(6){transition-delay:.28s}
-    .fan-deck .step-card:nth-child(1),.fan-deck .step-card:nth-child(7){transition-delay:.42s}
-    /* Fanned open: each card at its grid position */
+    .fan-deck .step-card:nth-child(1){transform:translateX(420%) rotate(-14deg) scale(.88)}
+    .fan-deck .step-card:nth-child(2){transform:translateX(280%) rotate(-9deg) scale(.90)}
+    .fan-deck .step-card:nth-child(3){transform:translateX(140%) rotate(-5deg) scale(.92)}
+    .fan-deck .step-card:nth-child(4){transform:translateX(0) rotate(0deg) scale(.94)}
+    .fan-deck .step-card:nth-child(5){transform:translateX(-140%) rotate(5deg) scale(.92)}
+    .fan-deck .step-card:nth-child(6){transform:translateX(-280%) rotate(9deg) scale(.90)}
+    .fan-deck .step-card:nth-child(7){transform:translateX(-420%) rotate(14deg) scale(.88)}
+    /* Stagger from center outward */
+    .fan-deck .step-card:nth-child(4){transition-delay:.1s}
+    .fan-deck .step-card:nth-child(3),.fan-deck .step-card:nth-child(5){transition-delay:.2s}
+    .fan-deck .step-card:nth-child(2),.fan-deck .step-card:nth-child(6){transition-delay:.35s}
+    .fan-deck .step-card:nth-child(1),.fan-deck .step-card:nth-child(7){transition-delay:.5s}
+    /* Fanned state */
     .fan-deck.fanned .step-card{
       opacity:1;
-      transform:translateX(0) translateY(0) rotate(0deg) scale(1);
+      transform:translateX(0) rotate(0deg) scale(1);
     }
-    .fan-deck .step-card:after{opacity:0;transition:opacity .3s ease .9s}
+    .fan-deck .step-card:after{opacity:0;transition:opacity .4s ease .8s}
     .fan-deck.fanned .step-card:after{opacity:1}
     .flow-side{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
     .impact{padding:26px;border-radius:28px;background:linear-gradient(135deg,rgba(255,90,43,.06),rgba(255,90,43,.02));border:1px solid rgba(255,90,43,.12)}
@@ -586,8 +585,8 @@
 
       <div class="flow-scene">
         <div class="pipeline-map reveal">
-          <style>.i{width:18px;height:18px;vertical-align:-3px;margin-right:6px;stroke:currentColor;fill:none;stroke-width:1.8}</style>
           <div class="pipeline-rail fan-deck">
+            <style>.i{width:18px;height:18px;vertical-align:-3px;margin-right:6px;stroke:currentColor;fill:none;stroke-width:1.8}</style>
             <article class="step-card orange"><div class="step-tag">01 · entrada</div><h3><svg class="i" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"></path></svg>Pedido</h3><p>O escopo-lei. Cliente, campanha, prazo, contexto e tudo que o trabalho herda dali para frente.</p></article>
             <article class="step-card blue"><div class="step-tag">02 · cálculo</div><h3><svg class="i" viewBox="0 0 24 24"><path d="M4 7l16 10M4 17l6-4"></path></svg>Decupagem</h3><p>Quebra de peças, complexidade, tempo, custo e prazo. A inteligência de precificação vive aqui.</p></article>
             <article class="step-card violet"><div class="step-tag">03 · contrato</div><h3><svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"></path><path d="M15 3v3h3"></path></svg>Carta</h3><p>Snapshot imutável para aprovação. O que foi prometido vira documento congelado.</p></article>
@@ -1263,224 +1262,70 @@
     var ptCache={};
 
     var translations={
-      // NAV
       '.nav-links a:nth-child(1)':{en:'Problem'},
       '.nav-links a:nth-child(2)':{en:'Flow'},
       '.nav-links a:nth-child(3)':{en:'Factory'},
       '.nav-links a:nth-child(4)':{en:'Quality control'},
       '.nav-links a:nth-child(5)':{en:'Modules'},
       '.nav-links a:nth-child(6)':{en:'Diagnosis'},
-
-      // HERO
       '#top h1':{en:'Stop running on guesswork.'},
       '#top .eyebrow':{en:'<span class="dot"></span> creative operations in real time',html:true},
       '#top .hero-copy > p:nth-of-type(1)':{en:'The problem is not your team. It\u2019s your workflow. <span class="rush-name">RUSH</span> organizes request \u2192 production \u2192 delivery without noise.',html:true},
       '#top .hero-copy > p:nth-of-type(2)':{en:'<span class="rush-name">RUSH</span> organizes the core that usually breaks: request, breakdown, budget, jobs, factory, validation and delivery.<br><br>Without it, you scale chaos. With it, you scale operations.',html:true},
       '#top .hero-actions .btn-primary':{en:'See the real flow'},
       '#top .hero-actions .btn-secondary':{en:'Explore the technical report'},
+      '.opening-text':{en:'<span class="rush-name">RUSH</span> is a product by <strong>VOIDDA</strong>. Built for post-production companies that need real control over their operational workflow.',html:true},
+      '.opening-sub':{en:'From briefing intake to final delivery \u2014 the system that organizes the operational core of creative production companies.'},
       '#top .hero-pill:nth-child(1)':{en:'Request \u2192 Breakdown \u2192 Proposal \u2192 Jobs'},
       '#top .hero-pill:nth-child(2)':{en:'DA \u2192 Motion \u2192 Dev \u2192 Final \u2192 QA'},
       '#top .hero-pill:nth-child(3)':{en:'Report + technical comparison + automatic gate'},
       '.stage-title':{en:'Active production line'},
       '.stage-badge':{en:'multi-stage \u00b7 live operation'},
-
-      // OPENING DEF
-      '.opening-text':{en:'<span class="rush-name">RUSH</span> is a product by <strong>VOIDDA</strong>. Built for post-production companies that need real control over their operational workflow.',html:true},
-      '.opening-sub':{en:'From briefing intake to final delivery \u2014 the system that organizes the operational core of creative production companies.'},
-
-      // WOW
       '#wow .label':{en:'what changes in practice'},
       '#wow h2':{en:'Before: you put out fires. After: you control the flow.'},
       '#wow .section-head p':{en:'A direct impact example. The same job in two scenarios.'},
       '#wow .module:nth-child(1) small':{en:'without rush'},
       '#wow .module:nth-child(1) h3':{en:'Operational chaos'},
-      '#wow .module:nth-child(1) li:nth-child(1)':{en:'\u2014 request changes mid-job'},
-      '#wow .module:nth-child(1) li:nth-child(2)':{en:'\u2014 rework at finalization'},
-      '#wow .module:nth-child(1) li:nth-child(3)':{en:'\u2014 subjective client discussions'},
       '#wow .module:nth-child(2) small':{en:'with rush'},
       '#wow .module:nth-child(2) h3':{en:'Controlled operation'},
-      '#wow .module:nth-child(2) li:nth-child(1)':{en:'\u2014 scope frozen in the proposal'},
-      '#wow .module:nth-child(2) li:nth-child(2)':{en:'\u2014 technical gate blocks errors'},
-      '#wow .module:nth-child(2) li:nth-child(3)':{en:'\u2014 traceable and defensible delivery'},
       '#wow .module:nth-child(3) small':{en:'impact'},
       '#wow .module:nth-child(3) h3':{en:'Direct result'},
-      '#wow .module:nth-child(3) li:nth-child(1)':{en:'\u2014 reduced rework'},
-      '#wow .module:nth-child(3) li:nth-child(2)':{en:'\u2014 less operational noise'},
-      '#wow .module:nth-child(3) li:nth-child(3)':{en:'\u2014 real deadline predictability'},
-
-      // PROBLEMA
       '#problema .label':{en:'the real problem'},
       '#problema h2':{en:'The bottleneck isn\u2019t in finance. It\u2019s in the core of operations.'},
-      '#problema .section-head p':{en:'Spreadsheets, email, WhatsApp, lost folders, blown deadlines, wrong versions, clients demanding answers. Every production company starts with talent and dedication. The ones that grew did so because they controlled their flow. The ones that stayed big maintained that control even when complexity doubled. The ones that didn\u2019t, scaled chaos.'},
-      '.sticker.red':{en:'deadline blowing'},
-      '.sticker.yellow':{en:'nobody sees it all'},
-      '.paper.one h3':{en:'WhatsApp'},
-      '.paper.one p':{en:'\u201cCan you upload two more formats today?\u201d<br><br>The request changed, but nobody updated the scope.',html:true},
-      '.paper.one small':{en:'operational chaos'},
-      '.paper.two h3':{en:'Spreadsheet'},
-      '.paper.two p':{en:'Columns, tabs, manual control and no real visibility into who is overloaded or idle.'},
-      '.paper.two small':{en:'improvised control'},
-      '.paper.three h3':{en:'Wrong file'},
-      '.paper.three p':{en:'Bad artwork gets in, passes stages unchecked, and rework explodes at the end.'},
-      '.paper.three small':{en:'invisible cost'},
-      '.chaos-item:nth-child(1) strong':{en:'No consolidated view'},
-      '.chaos-item:nth-child(1) p':{en:'The coordinator can\u2019t see the full flow, so they react late. This kills margin, deadlines and trust.'},
-      '.chaos-item:nth-child(2) strong':{en:'Rework is treated as normal'},
-      '.chaos-item:nth-child(2) p':{en:'Without a technical gate, the bad piece is only noticed when it has already contaminated the next stages.'},
-      '.chaos-item:nth-child(3) strong':{en:'The client demands answers in the dark'},
-      '.chaos-item:nth-child(3) p':{en:'Without a portal and reliable status, the production company responds on the fly and loses authority.'},
-      '.chaos-item:nth-child(4) strong':{en:'Competitors attack the edges'},
-      '.chaos-item:nth-child(4) p':{en:'<span class="rush-name">RUSH</span> was designed to cover the gap between budget, factory and delivery \u2014 exactly where chaos usually lives.',html:true},
-
-      // FLUXO
       '#fluxo .label':{en:'the rush flow'},
       '#fluxo h2':{en:'From briefing to delivery, without losing control.'},
-      '#fluxo .section-head p':{en:'It\u2019s not a pretty dashboard. It\u2019s real operational visibility: what came in, what became scope, what\u2019s running and what was delivered \u2014 no interpretation.'},
-      '.step-card:nth-child(1) .step-tag':{en:'01 \u00b7 entry'},
-      '.step-card:nth-child(1) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"></path></svg>Request',html:true},
-      '.step-card:nth-child(1) p':{en:'The scope law. Client, campaign, deadline, context and everything the work inherits from there on.'},
-      '.step-card:nth-child(2) .step-tag':{en:'02 \u00b7 calculation'},
-      '.step-card:nth-child(2) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M4 7l16 10M4 17l6-4"></path></svg>Breakdown',html:true},
-      '.step-card:nth-child(2) p':{en:'Piece breakdown, complexity, time, cost and deadline. The pricing intelligence lives here.'},
-      '.step-card:nth-child(3) .step-tag':{en:'03 \u00b7 contract'},
-      '.step-card:nth-child(3) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"></path><path d="M15 3v3h3"></path></svg>Proposal',html:true},
-      '.step-card:nth-child(3) p':{en:'Immutable snapshot for approval. What was promised becomes a frozen document.'},
-      '.step-card:nth-child(4) .step-tag':{en:'04 \u00b7 production'},
-      '.step-card:nth-child(4) p':{en:'Work units are born with status, owners, urgency and relation to what was approved.'},
-      '.step-card:nth-child(5) .step-tag':{en:'05 \u00b7 factory'},
-      '.step-card:nth-child(5) h3':{en:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4.7a7 7 0 0 0-1.7-1L14 2h-4l-.8 2.7a7 7 0 0 0-1.7 1L5.1 5l-2 3.5L5 10a7 7 0 0 0 0 2l-1.9 1.5 2 3.5 2.4-.7a7 7 0 0 0 1.7 1L10 22h4l.8-2.7a7 7 0 0 0 1.7-1l2.4.7 2-3.5L18.9 13c.1-.3.1-.7.1-1z"></path></svg>Factory',html:true},
-      '.step-card:nth-child(5) p':{en:'DA, Motion, Dev, Final and QA working in clear sequence, each in their panel and role.'},
-      '.step-card:nth-child(6) .step-tag':{en:'06 \u00b7 quality'},
-      '.step-card:nth-child(6) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"></path></svg>Technical gate',html:true},
-      '.step-card:nth-child(6) p':{en:'Report, comparison, tolerance and blocking. The wrong piece doesn\u2019t move just because someone \u201cthought it was ok\u201d.'},
-      '.step-card:nth-child(7) .step-tag':{en:'07 \u00b7 output'},
-      '.step-card:nth-child(7) h3':{en:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l14-7-7 14-2-5-5-2z"></path></svg>Delivery',html:true},
-      '.step-card:nth-child(7) p':{en:'History, versioning, traceability and external visibility for the agency to follow in real time.'},
-      '.impact h4':{en:'Every production company that scaled had one thing in common: operational control.'},
-      '.impact p':{en:'It\u2019s not about bureaucracy. It\u2019s about being able to grow without losing control of deadlines, quality, responsibility, versioning and hidden rework costs.'},
-      '.metric-card:nth-child(1) span':{en:'the real gain'},
-      '.metric-card:nth-child(1) strong':{en:'Less noise in the core'},
-      '.metric-card:nth-child(1) p':{en:'Request, budget, factory and delivery stop living on separate islands.'},
-      '.metric-card:nth-child(2) span':{en:'in practice'},
-      '.metric-card:nth-child(2) strong':{en:'Every stage has an owner'},
-      '.metric-card:nth-child(2) p':{en:'Who receives, who produces, who validates and who delivers become clear without depending on memory or WhatsApp.'},
-      '.metric-card:nth-child(3) span':{en:'result'},
-      '.metric-card:nth-child(3) strong':{en:'Less expensive rework'},
-      '.metric-card:nth-child(3) p':{en:'The error is caught before contaminating the entire production sequence.'},
-
-      // PROVA VISUAL
       '#prova .label':{en:'visual proof'},
       '#prova h2':{en:'How it looks on screen (realistic example)'},
-      '#prova .section-head p':{en:'A day-to-day snapshot: job queue, owners and clear status \u2014 no interpretation needed.'},
-      '.mock-top strong':{en:'Production queue \u00b7 <span class="rush-name">RUSH</span>',html:true},
-      '.mock-side div:nth-child(1)':{en:'Motion Dashboard'},
-      '.mock-side div:nth-child(2)':{en:'Active jobs'},
-      '.mock-side div:nth-child(3)':{en:'Queue by priority'},
-      '.mock-side div:nth-child(4)':{en:'Validation / QA'},
-      '.mock-main .job-card:nth-child(1) .job-left strong':{en:'Retail Campaign 300x600'},
-      '.mock-main .job-card:nth-child(1) .job-left span':{en:'Motion \u00b7 Deadline: today \u00b7 high priority'},
-      '.mock-main .job-card:nth-child(2) .job-left strong':{en:'HTML5 Banner Black Friday'},
-      '.mock-main .job-card:nth-child(2) .job-left span':{en:'Error: weight above limit \u00b7 180kb'},
-      '.mock-main .job-card:nth-child(2) .job-status':{en:'BLOCKED'},
-      '.mock-main .job-card:nth-child(3) .job-left strong':{en:'HTML5 Programmatic'},
-      '.mock-main .job-card:nth-child(3) .job-left span':{en:'Dev \u00b7 Clicktag validated'},
-      '.mock-main .job-card:nth-child(4) .job-left strong':{en:'Social Pack Stories'},
-      '.mock-main .job-card:nth-child(4) .job-left span':{en:'QA \u00b7 Final review'},
-
-      // FABRICA
       '#fabrica .label':{en:'the factory'},
       '#fabrica h2':{en:'Every stage has an owner. Every owner has context.'},
-      '#fabrica .section-head p':{en:'The production line works in sequence: each professional receives what they need, does their part and passes it forward with complete traceability.'},
-      '.role.da small':{en:'qualified entry'},
-      '.role.da p':{en:'Receives the artwork, validates structure, identifies risks and prevents a malformed PSD from contaminating the entire operation.'},
-      '.role.da .out span:nth-child(1)':{en:'Approved PSD'},
-      '.role.da .out span:nth-child(2)':{en:'Entry report'},
-      '.role.da .out span:nth-child(3)':{en:'technical triage'},
-      '.role.motion small':{en:'visual production'},
-      '.role.motion p':{en:'Animates what already passed technical scrutiny. Motion enters to produce, not to discover hidden problems.'},
-      '.role.motion .out span:nth-child(1)':{en:'GIF / PNG / video'},
-      '.role.motion .out span:nth-child(2)':{en:'priority queue'},
-      '.role.motion .out span:nth-child(3)':{en:'clear breakdowns'},
-      '.role.dev small':{en:'interactive assembly'},
-      '.role.dev p':{en:'HTML5, clicktag, weight, compatibility and technical packaging for programmatic and digital media.'},
-      '.role.dev .out span:nth-child(1)':{en:'Final HTML5'},
-      '.role.dev .out span:nth-child(2)':{en:'rules per channel'},
-      '.role.dev .out span:nth-child(3)':{en:'controlled weight'},
-      '.role.finish small':{en:'controlled output'},
-      '.role.finish h3':{en:'Final + QA'},
-      '.role.finish p':{en:'Final review, technical comparison, automatic gate and registered delivery with version, date and authorship.'},
-      '.role.finish .out span:nth-child(1)':{en:'\u0394E Comparison'},
-      '.role.finish .out span:nth-child(2)':{en:'approval status'},
-      '.role.finish .out span:nth-child(3)':{en:'traceable delivery'},
-
-      // CONTROLE TECNICO
       '#tecnico .label':{en:'quality control'},
       '#tecnico h2':{en:'Without technical control, your operation becomes opinion.'},
-      '#tecnico .section-head p':{en:'Without objective measurement, quality becomes a debate. <span class="rush-name">RUSH</span> transforms validation into technical data \u2014 and that changes how the production company works and negotiates.',html:true},
-      '#tecnico .tech-top strong':{en:'ENTRY REPORT \u00d7 OUTPUT REPORT'},
-      '.laudo-panel:nth-child(1) .lp-tag':{en:'<span class="lp-dot" style="background:#3b5eff"></span> Entry \u00b7 PSD',html:true},
-      '.laudo-panel:nth-child(2) .lp-tag':{en:'<span class="lp-dot" style="background:#ff5a2b"></span> Output \u00b7 GIF',html:true},
-      '.laudo-panel:nth-child(1) .lp-row:nth-child(2) .lp-label':{en:'Color profile'},
-      '.laudo-panel:nth-child(1) .lp-row:nth-child(3) .lp-label':{en:'Dimensions'},
-      '.laudo-panel:nth-child(1) .lp-row:nth-child(4) .lp-label':{en:'Resolution'},
-      '.laudo-panel:nth-child(1) .lp-row:nth-child(5) .lp-label':{en:'Hidden layers'},
-      '.laudo-panel:nth-child(1) .lp-row:nth-child(7) .lp-label':{en:'Weight'},
-      '.laudo-panel:nth-child(2) .lp-row:nth-child(2) .lp-label':{en:'Dimensions'},
-      '.laudo-panel:nth-child(2) .lp-row:nth-child(3) .lp-label':{en:'Weight'},
-      '.laudo-panel:nth-child(2) .lp-row:nth-child(6) .lp-label':{en:'Duration'},
-      '.de-result strong':{en:'Comparison: APPROVED'},
-      '.de-result p':{en:'\u0394E average 4.2 \u00b7 worst color 9.1 \u2014 within GIF tolerance'},
-      '.gate:nth-child(1) strong':{en:'Entry report'},
-      '.gate:nth-child(1) p':{en:'Color profile, resolution, layer structure, weight and PSD integrity before the factory starts working.'},
-      '.gate:nth-child(2) strong':{en:'Automatic comparison'},
-      '.gate:nth-child(2) p':{en:'Comparison between reference and final output using objective logic. This reduces rework and protects perceived quality.'},
-      '.gate:nth-child(3) strong':{en:'Real gate'},
-      '.gate:nth-child(3) p':{en:'If it\u2019s outside tolerance, the piece doesn\u2019t advance. This is the kind of rigor that separates a serious system from a decorative checklist.'},
-      '.gate:nth-child(4) strong':{en:'Why this matters in practice'},
-      '.gate:nth-child(4) p':{en:'Without objective measurement, the problem becomes a subjective discussion. With technical comparison, the production company gains argument, standard and confidence to block what\u2019s outside expectations.'},
-
-      // MODULOS
       '#modulos .label':{en:'system modules'},
       '#modulos h2':{en:'More than management. An entire operational stack.'},
-      '#modulos .section-head p':{en:'Each module solves a specific part of the flow. Together, they eliminate improvisation between budget, production and delivery.'},
+      '#interesse .label':{en:'where does it hurt?'},
+      '#interesse h2':{en:'Point to what bothers you most in your operation.'},
+      '#resultado .label':{en:'your diagnosis'},
+      '#resultado h2':{en:'Challenge result'},
+      '#contato .label':{en:'closing'},
+      '#contato h2':{en:'If you don\u2019t control the flow, the flow controls you.'},
+      '#contato .cta-box > div > p':{en:'<span class="rush-name">RUSH</span> was born to cover what the market usually leaves in the middle of the road: the real operation between budget, creation, production, validation and delivery. In any language, in any market.',html:true},
+      '#contato .hero-actions .btn-primary':{en:'See where the perspective changes'},
+      '#contato .hero-actions .btn-secondary':{en:'Back to top'},
+      '#tecnico .tech-top strong':{en:'ENTRY REPORT \u00d7 OUTPUT REPORT'},
       '#modulos .module:nth-child(1) small':{en:'coordination'},
       '#modulos .module:nth-child(1) h3':{en:'Request + Breakdown + Proposal'},
-      '#modulos .module:nth-child(1) p':{en:'The trio that defines scope, price, deadline and approved commitment with the agency.'},
-      '#modulos .module:nth-child(1) li:nth-child(1)':{en:'\u2014 editable and permanent request'},
-      '#modulos .module:nth-child(1) li:nth-child(2)':{en:'\u2014 multiple breakdowns per request'},
-      '#modulos .module:nth-child(1) li:nth-child(3)':{en:'\u2014 frozen proposal for approval'},
       '#modulos .module:nth-child(2) small':{en:'production'},
       '#modulos .module:nth-child(2) h3':{en:'Jobs + Factory'},
-      '#modulos .module:nth-child(2) p':{en:'Live kanban, role-based assignment, and clear view of who is producing what.'},
-      '#modulos .module:nth-child(2) li:nth-child(1)':{en:'\u2014 dashboards by role'},
-      '#modulos .module:nth-child(2) li:nth-child(2)':{en:'\u2014 priority, queue, and urgency'},
-      '#modulos .module:nth-child(2) li:nth-child(3)':{en:'\u2014 traceable operational chain'},
       '#modulos .module:nth-child(3) small':{en:'quality'},
       '#modulos .module:nth-child(3) h3':{en:'Validator + Report + Gate'},
-      '#modulos .module:nth-child(3) p':{en:'Where <span class="rush-name">RUSH</span> distances itself from traditional administrative competitors.',html:true},
-      '#modulos .module:nth-child(3) li:nth-child(1)':{en:'\u2014 structural PSD validation'},
-      '#modulos .module:nth-child(3) li:nth-child(2)':{en:'\u2014 output comparison'},
-      '#modulos .module:nth-child(3) li:nth-child(3)':{en:'\u2014 tolerance-based blocking'},
       '#modulos .module:nth-child(4) small':{en:'client'},
       '#modulos .module:nth-child(4) h3':{en:'Agency portal'},
-      '#modulos .module:nth-child(4) p':{en:'Real-time status without calls, without email, and without the coordinator putting out fires every time.'},
-      '#modulos .module:nth-child(4) li:nth-child(1)':{en:'\u2014 external progress view'},
-      '#modulos .module:nth-child(4) li:nth-child(2)':{en:'\u2014 delivery history'},
-      '#modulos .module:nth-child(4) li:nth-child(3)':{en:'\u2014 less communication noise'},
       '#modulos .module:nth-child(5) small':{en:'future vision'},
       '#modulos .module:nth-child(5) h3':{en:'Pipeline automation'},
-      '#modulos .module:nth-child(5) p':{en:'PSD to extraction, assembly, HTML5 and delivery. The future ambition is already part of the system design.'},
-      '#modulos .module:nth-child(5) li:nth-child(1)':{en:'\u2014 asset extraction'},
-      '#modulos .module:nth-child(5) li:nth-child(2)':{en:'\u2014 assisted banner building'},
-      '#modulos .module:nth-child(5) li:nth-child(3)':{en:'\u2014 productivity analytics'},
       '#modulos .module:nth-child(6) small':{en:'scale'},
       '#modulos .module:nth-child(6) h3':{en:'Multi-tenant'},
-      '#modulos .module:nth-child(6) p':{en:'Starts in the pilot operation, but the architecture points to multiple companies, clients, and configurations.'},
-      '#modulos .module:nth-child(6) li:nth-child(1)':{en:'\u2014 isolation per company'},
-      '#modulos .module:nth-child(6) li:nth-child(2)':{en:'\u2014 configuration per operation'},
-      '#modulos .module:nth-child(6) li:nth-child(3)':{en:'\u2014 product with global reach'},
-
-      // QUIZ
+      '.de-result strong':{en:'Comparison: APPROVED'},
+      '.de-result p':{en:'\u0394E average 4.2 \u00b7 worst color 9.1 \u2014 within GIF tolerance'},
       '#quiz-block-0 .qi-label':{en:'challenge \u00b7 visibility'},
       '#quiz-block-1 .qi-label':{en:'challenge \u00b7 process'},
       '#quiz-block-2 .qi-label':{en:'challenge \u00b7 quality'},
@@ -1489,32 +1334,11 @@
       '#qi-done-1':{en:'\u26a1 Block complete',html:true},
       '#qi-done-2':{en:'\u26a1 Block complete',html:true},
       '#qi-done-3':{en:'\u26a1 Block complete',html:true},
-
-      // INTERESSE / PICKS
-      '#interesse .label':{en:'where does it hurt?'},
-      '#interesse h2':{en:'Point to what bothers you most in your operation.'},
-      '#interesse .section-head p':{en:'Select and see what changes. At the end, your message is ready for our team.'},
       '.picks-sub':{en:'Presentation focused on what interests you \u2014 with one of our technical specialists.'},
       '#picks-wa':{en:'\u26a1 Schedule via WhatsApp',html:true},
       '.picks-cta-sec':{en:'I prefer email'},
-
-      // RESULTADO
-      '#resultado .label':{en:'your diagnosis'},
-      '#resultado h2':{en:'Challenge result'},
-      '#resultado .section-head p':{en:'Based on your 12 answers.'},
-      '#quiz-final-placeholder':{en:'Answer the 4 challenge blocks spread across the page to see your complete diagnosis.'},
-
-      // CONTATO / CTA
-      '#contato .label':{en:'closing'},
-      '#contato h2':{en:'If you don\u2019t control the flow, the flow controls you.'},
-      '#contato .cta-box > div > p':{en:'<span class="rush-name">RUSH</span> was born to cover what the market usually leaves in the middle of the road: the real operation between budget, creation, production, validation and delivery. In any language, in any market.',html:true},
-      '#contato .hero-actions .btn-primary':{en:'See where the perspective changes'},
-      '#contato .hero-actions .btn-secondary':{en:'Back to top'},
-      '#contato .hero-actions p':{en:'Modular product presentation with one of our technical specialists.'},
       '#contato .cta-note:nth-child(1)':{en:'<strong style="display:block;margin-bottom:8px">VOIDDA \u00b7 legal data and contact</strong>VOIDDA SERVICOS SOB DEMANDA PARA INTERNET LTDA<br>CNPJ 40.644.576/0001-06<br>WhatsApp (11) 97500-9521',html:true},
       '#contato .cta-note:nth-child(2)':{en:'<strong style="display:block;margin-bottom:8px"><span class="rush-name">RUSH</span> inside VOIDDA</strong>For those growing: the operational control that large companies built over years, available from the first job. For those already big: the system that ensures control isn\u2019t lost when operations scale.',html:true},
-
-      // FOOTER
       '.footer-legal:nth-child(1) div:nth-child(1)':{en:'<strong class="rush-name">RUSH</strong> \u00b7 product for post-production operational flow',html:true},
       '.footer-legal:nth-child(2) div:nth-child(3)':{en:'Signed by <strong>VOIDDA</strong>',html:true},
     };

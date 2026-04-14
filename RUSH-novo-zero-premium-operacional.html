@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RUSH — reconstrução total</title>
+  <meta name="description" content="RUSH fecha o miolo operacional entre orçamento, criação, produção, validação e entrega." />
+  <style>
+    :root{
+      --bg:#f4f6f8;
+      --bg2:#eef2f6;
+      --card:#ffffff;
+      --line:#d6dfe8;
+      --line2:#c7d3df;
+      --text:#16202b;
+      --text2:#334557;
+      --text3:#5d6f82;
+      --blue:#8faed0;
+      --blue2:#617992;
+      --blue3:#dbe7f3;
+      --orange:#ff8752;
+      --violet:#8d82ef;
+      --green:#71d8b4;
+      --shadow:0 22px 70px rgba(31,47,66,.08);
+      --shadow-soft:0 10px 30px rgba(31,47,66,.05);
+      --radius:30px;
+      --max:1240px;
+      --space:320px;
+      --space-mobile:170px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      --sans:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      --travel:calc(100vw + 520px);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(143,174,208,.16), transparent 25%),
+        radial-gradient(circle at 100% 12%, rgba(143,174,208,.08), transparent 24%),
+        linear-gradient(180deg,#fbfcfd 0%, var(--bg) 100%);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    .container{width:min(var(--max), calc(100% - 40px)); margin:0 auto}
+    .section{padding-top:var(--space)}
+    .narrow{max-width:780px}
+    .wide{max-width:1040px}
+
+    nav{
+      position:sticky; top:0; z-index:100;
+      background:rgba(250,252,254,.82);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(93,111,130,.10);
+    }
+    .nav-inner{
+      min-height:78px;
+      display:flex; align-items:center; justify-content:space-between; gap:20px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:14px;
+      color:inherit; text-decoration:none;
+    }
+    .brand-mark{
+      width:44px; height:44px; border-radius:14px;
+      background:linear-gradient(135deg,#3f79e4,#8fb3ff);
+      box-shadow:0 14px 28px rgba(63,121,228,.18);
+      position:relative; flex:0 0 auto;
+    }
+    .brand-mark:before{
+      content:"";
+      position:absolute; inset:8px 11px;
+      background:#fff;
+      clip-path:polygon(0 100%, 34% 0, 66% 0, 43% 54%, 82% 54%, 18% 100%);
+    }
+    .brand-copy small{
+      display:block;
+      font:700 11px/1 var(--mono);
+      letter-spacing:.15em;
+      color:var(--text3);
+      margin-bottom:5px;
+    }
+    .brand-copy strong{
+      display:block;
+      font-size:18px;
+      line-height:1;
+      letter-spacing:-.02em;
+      color:var(--blue2);
+    }
+    .nav-links{display:flex; align-items:center; gap:26px}
+    .nav-links a{font-size:14px; color:var(--text3); text-decoration:none}
+    .lang{
+      width:42px; height:42px; border-radius:999px;
+      display:grid; place-items:center;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      font-weight:700;
+      flex:0 0 auto;
+    }
+
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:11px 18px;
+      border-radius:999px;
+      border:1px solid rgba(93,111,130,.14);
+      background:rgba(255,255,255,.72);
+      color:var(--blue2);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+    .eyebrow .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:var(--blue);
+      box-shadow:0 0 0 4px rgba(143,174,208,.14);
+    }
+
+    h1{
+      font-size:clamp(66px, 9vw, 132px);
+      line-height:.88;
+      letter-spacing:-.075em;
+      max-width:920px;
+    }
+    h2{
+      font-size:clamp(42px, 5.5vw, 78px);
+      line-height:.94;
+      letter-spacing:-.06em;
+    }
+    h3{
+      font-size:32px;
+      line-height:1.02;
+      letter-spacing:-.05em;
+    }
+    .label{
+      display:block;
+      margin-bottom:18px;
+      color:var(--blue2);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+    .hero-stack{display:grid; gap:34px}
+    .lead{
+      max-width:780px;
+      color:var(--text2);
+      font-size:19px;
+      line-height:1.62;
+    }
+    .body{
+      max-width:840px;
+      color:var(--text3);
+      font-size:21px;
+      line-height:1.72;
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.94), rgba(248,250,252,.98));
+      border:1px solid rgba(93,111,130,.12);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .thesis-panel{
+      padding:42px;
+      display:grid;
+      gap:28px;
+      max-width:980px;
+    }
+    .thesis-lines{
+      display:grid;
+      gap:16px;
+    }
+    .thesis-line{
+      padding:18px 20px;
+      border-radius:20px;
+      background:#fff;
+      border:1px solid rgba(93,111,130,.10);
+      box-shadow:var(--shadow-soft);
+      color:var(--text2);
+      font-size:18px;
+      line-height:1.62;
+    }
+    .actions{display:flex; flex-wrap:wrap; gap:14px}
+    .btn{
+      min-height:56px;
+      padding:0 28px;
+      border-radius:999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      font-weight:700; text-decoration:none;
+      transition:.2s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      background:linear-gradient(135deg,#a5c6e6,#8faed0);
+      color:#183149;
+    }
+    .btn-secondary{
+      background:#fff;
+      border:1px solid var(--line);
+      color:var(--text);
+    }
+    .pill-row{display:flex; flex-wrap:wrap; gap:12px}
+    .pill{
+      padding:12px 16px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--line);
+      color:var(--blue2);
+      font:700 12px/1.2 var(--mono);
+    }
+
+    .fracture-grid{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:24px;
+    }
+    .fracture-collage{
+      min-height:560px;
+      position:relative;
+      border-radius:28px;
+      overflow:hidden;
+      background:linear-gradient(180deg,#f8fafc 0%, #f2f5f8 100%);
+      border:1px solid rgba(93,111,130,.10);
+    }
+    .paper{
+      position:absolute;
+      width:236px;
+      padding:18px 18px 20px;
+      border-radius:18px;
+      box-shadow:0 18px 50px rgba(33,49,69,.08);
+    }
+    .paper h3{font-size:24px; margin-bottom:10px}
+    .paper p{color:var(--text2); font-size:13px; line-height:1.5}
+    .paper small{
+      display:block; margin-top:14px;
+      color:var(--text3);
+      font:700 10px/1 var(--mono);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .p1{top:42px; left:34px; transform:rotate(-7deg); background:#f5f1e8}
+    .p2{top:134px; right:30px; transform:rotate(8deg); background:#dde8f8}
+    .p3{bottom:56px; left:94px; transform:rotate(-4deg); background:#ffe8df}
+    .sticker{
+      position:absolute;
+      padding:9px 12px;
+      border-radius:999px;
+      font:700 11px/1 var(--mono);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .sticker.red{
+      top:22px; right:22px;
+      background:rgba(234,92,92,.08);
+      border:1px solid rgba(234,92,92,.14);
+      color:#c25353;
+    }
+    .sticker.blue{
+      right:26px; bottom:26px;
+      background:rgba(143,174,208,.10);
+      border:1px solid rgba(143,174,208,.16);
+      color:var(--blue2);
+    }
+    .thread{
+      position:absolute;
+      border-top:2px dashed rgba(93,111,130,.14);
+      transform-origin:left center;
+    }
+    .t1{top:152px; left:214px; width:182px; transform:rotate(12deg)}
+    .t2{top:300px; left:242px; width:212px; transform:rotate(-14deg)}
+    .t3{top:388px; left:88px; width:116px; transform:rotate(-42deg)}
+
+    .fracture-list{display:grid; gap:16px}
+    .fracture-item{
+      background:#fff;
+      border:1px solid rgba(93,111,130,.12);
+      border-radius:24px;
+      padding:26px;
+      box-shadow:var(--shadow-soft);
+    }
+    .fracture-item strong{
+      display:block;
+      font-size:30px;
+      line-height:1.03;
+      letter-spacing:-.045em;
+      margin-bottom:10px;
+    }
+    .fracture-item p{
+      color:var(--text3);
+      font-size:16px;
+      line-height:1.68;
+    }
+
+    .operation-panel{overflow:hidden}
+    .operation-top{
+      padding:20px 24px;
+      display:flex; justify-content:space-between; align-items:center; gap:20px;
+      border-bottom:1px solid rgba(93,111,130,.10);
+      background:rgba(255,255,255,.86);
+    }
+    .operation-title{
+      color:var(--text);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .operation-badge{
+      padding:8px 14px;
+      border-radius:999px;
+      background:rgba(143,174,208,.10);
+      border:1px solid rgba(143,174,208,.22);
+      color:var(--blue2);
+      font:700 11px/1 var(--mono);
+      letter-spacing:.06em;
+    }
+    .operation-stage{
+      position:relative;
+      height:370px;
+      padding:24px;
+      overflow:hidden;
+      background:linear-gradient(180deg,#fbfcfe 0%, #f3f7fa 100%);
+    }
+    .belt{
+      position:absolute;
+      left:24px; right:24px; top:50%;
+      transform:translateY(-50%);
+      height:116px;
+      border-radius:24px;
+      border:1px solid rgba(93,111,130,.08);
+      background:linear-gradient(180deg, rgba(247,249,252,.98), rgba(239,243,247,.98));
+      overflow:hidden;
+    }
+    .belt:before,.belt:after{
+      content:"";
+      position:absolute; inset:0;
+      background:repeating-linear-gradient(90deg, transparent 0 58px, rgba(93,111,130,.05) 58px 60px);
+      animation:track 14s linear infinite;
+    }
+    .belt:after{transform:translateX(30px); opacity:.5}
+    @keyframes track{from{transform:translateX(0)}to{transform:translateX(120px)}}
+
+    .nodes{
+      position:absolute; inset:0;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0 78px;
+      pointer-events:none;
+    }
+    .node{
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      transform:translateY(-80px);
+    }
+    .node.down{transform:translateY(80px)}
+    .node-dot{
+      width:18px; height:18px;
+      border-radius:50%;
+      background:#fff;
+      border:2px solid rgba(93,111,130,.16);
+      box-shadow:0 0 0 7px rgba(93,111,130,.04);
+    }
+    .node span{
+      color:var(--text3);
+      font:700 10px/1.2 var(--mono);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      text-align:center;
+    }
+    .orange .node-dot{background:rgba(255,135,82,.14); border-color:rgba(255,135,82,.38)}
+    .blue .node-dot{background:rgba(143,174,208,.16); border-color:rgba(143,174,208,.44)}
+    .violet .node-dot{background:rgba(141,130,239,.14); border-color:rgba(141,130,239,.40)}
+    .green .node-dot{background:rgba(113,216,180,.16); border-color:rgba(113,216,180,.40)}
+
+    .job{
+      position:absolute;
+      width:186px; height:78px;
+      border-radius:18px;
+      padding:10px 12px;
+      display:flex; flex-direction:column; justify-content:space-between;
+      color:#fff;
+      box-shadow:0 10px 26px rgba(35,49,69,.14);
+      left:0;
+      animation:jobmove 16s linear infinite;
+    }
+    .job small{
+      font:700 9px/1 var(--mono);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      opacity:.92;
+    }
+    .job strong{
+      font-size:12px;
+      line-height:1.18;
+      letter-spacing:-.01em;
+    }
+    .job span{font-size:10px; opacity:.92}
+    .job.j1{top:18%; transform:translateX(-240px); background:linear-gradient(135deg,#ff8752,#ff9d66)}
+    .job.j2{top:42%; transform:translateX(-280px); background:linear-gradient(135deg,#6d86ff,#8ca2ff); animation-delay:-5s}
+    .job.j3{top:66%; transform:translateX(-260px); background:linear-gradient(135deg,#69dab1,#82e4c1); animation-delay:-10s}
+    @keyframes jobmove{
+      from{transform:translateX(-300px)}
+      to{transform:translateX(var(--travel))}
+    }
+
+    .flow-panel{padding:38px}
+    .flow-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:14px;
+    }
+    .flow-card{
+      min-height:196px;
+      position:relative;
+      border-radius:22px;
+      padding:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #f8fafc 100%);
+      border:1px solid rgba(93,111,130,.10);
+      box-shadow:var(--shadow-soft);
+    }
+    .flow-card:after{
+      content:"";
+      position:absolute; top:34px; right:-14px;
+      width:28px; height:2px;
+      background:linear-gradient(90deg, rgba(93,111,130,.16), rgba(93,111,130,.04));
+    }
+    .flow-card:last-child:after{display:none}
+    .flow-tag{
+      display:block;
+      margin-bottom:10px;
+      color:var(--blue2);
+      font:700 9px/1 var(--mono);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .flow-card h3{
+      font-size:20px;
+      margin-bottom:10px;
+    }
+    .flow-card p{
+      color:var(--text3);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .roles-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:20px;
+    }
+    .role-card{
+      background:#fff;
+      border:1px solid rgba(93,111,130,.12);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow-soft);
+    }
+    .role-icon{
+      width:58px; height:58px; border-radius:50%;
+      display:grid; place-items:center;
+      margin-bottom:18px;
+      font:700 14px/1 var(--mono);
+    }
+    .ri-da{background:rgba(143,174,208,.14); color:var(--blue2)}
+    .ri-mo{background:rgba(255,135,82,.14); color:#c76a43}
+    .ri-dev{background:rgba(141,130,239,.14); color:#675cc1}
+    .ri-qa{background:rgba(113,216,180,.14); color:#3d9c7b}
+    .role-card h3{font-size:32px; margin-bottom:10px}
+    .role-card p{
+      color:var(--text3);
+      font-size:15px;
+      line-height:1.7;
+    }
+    .tag-row{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:16px;
+    }
+    .tag{
+      padding:9px 12px;
+      border-radius:14px;
+      background:var(--bg2);
+      border:1px solid var(--line);
+      color:var(--blue2);
+      font:700 11px/1 var(--mono);
+    }
+
+    .proof-panel{padding:38px}
+    .proof-screen{
+      background:linear-gradient(180deg,#fff 0%, #f7fafc 100%);
+      border:1px solid rgba(93,111,130,.12);
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:var(--shadow-soft);
+    }
+    .proof-top{
+      display:flex; align-items:center; gap:12px;
+      padding:16px 18px;
+      border-bottom:1px solid rgba(93,111,130,.10);
+      background:rgba(255,255,255,.88);
+    }
+    .dots{display:flex; gap:6px}
+    .dots span{width:10px; height:10px; border-radius:50%}
+    .dots span:nth-child(1){background:#ff5f57}
+    .dots span:nth-child(2){background:#febc2e}
+    .dots span:nth-child(3){background:#28c840}
+    .proof-top strong{
+      color:var(--text2);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .proof-body{padding:20px}
+    .proof-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .proof-card{
+      background:var(--bg2);
+      border:1px solid rgba(93,111,130,.10);
+      border-radius:18px;
+      padding:16px;
+    }
+    .proof-tag{
+      color:var(--blue2);
+      font:700 10px/1 var(--mono);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      display:flex; align-items:center; gap:8px;
+      margin-bottom:14px;
+    }
+    .proof-dot{width:8px; height:8px; border-radius:50%}
+    .proof-row{
+      display:flex; justify-content:space-between; align-items:center;
+      padding:8px 0;
+      border-bottom:1px solid rgba(93,111,130,.08);
+      font-size:12px;
+    }
+    .proof-row:last-child{border-bottom:none}
+    .proof-label{color:var(--text3); font-family:var(--mono)}
+    .proof-val{color:var(--text); font-weight:700; font-family:var(--mono)}
+    .ok{color:#447b61}
+    .warn{color:#8b6b32}
+
+    .result-card{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:16px;
+      align-items:center;
+      padding:18px;
+      border-radius:18px;
+      background:rgba(113,216,180,.10);
+      border:1px solid rgba(113,216,180,.18);
+    }
+    .result-badge{
+      width:58px; height:58px;
+      border-radius:16px;
+      display:grid; place-items:center;
+      background:rgba(113,216,180,.14);
+      border:1px solid rgba(113,216,180,.22);
+      color:#3d9c7b;
+      font:800 18px/1 var(--sans);
+    }
+    .result-card strong{
+      display:block;
+      font-size:20px;
+      letter-spacing:-.03em;
+      margin-bottom:6px;
+    }
+    .result-card p{
+      color:var(--text3);
+      font-size:13px;
+      line-height:1.58;
+    }
+    .result-colors{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:12px;
+    }
+    .pair{
+      display:flex; align-items:center; gap:6px;
+      color:var(--text3);
+      font:700 10px/1 var(--mono);
+    }
+    .sw{
+      width:18px; height:18px;
+      border-radius:6px;
+      border:1px solid rgba(93,111,130,.14);
+    }
+
+    .decision-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+    }
+    .decision-card{
+      background:#fff;
+      border:1px solid rgba(93,111,130,.12);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow-soft);
+    }
+    .decision-card h3{font-size:32px; margin-bottom:12px}
+    .decision-card p{
+      color:var(--text3);
+      font-size:16px;
+      line-height:1.7;
+    }
+    .question-list{
+      display:grid; gap:12px;
+      margin-top:16px;
+    }
+    .question{
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--bg2);
+      border:1px solid var(--line);
+      color:var(--text2);
+      font-size:15px;
+      line-height:1.6;
+    }
+
+    .closing-grid{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:24px;
+    }
+    .closing-card{
+      background:#fff;
+      border:1px solid rgba(93,111,130,.12);
+      border-radius:24px;
+      padding:30px;
+      box-shadow:var(--shadow-soft);
+    }
+    .closing-card p{
+      color:var(--text3);
+      font-size:18px;
+      line-height:1.74;
+    }
+    .small{
+      font-size:14px !important;
+    }
+    .footer{
+      padding:120px 0 70px;
+      text-align:center;
+      color:var(--text3);
+      font-size:14px;
+    }
+
+    @media (max-width:1180px){
+      :root{--space:240px}
+      .fracture-grid,.decision-grid,.closing-grid{grid-template-columns:1fr}
+      .flow-grid{grid-template-columns:repeat(4,1fr)}
+      .flow-card:nth-child(4):after{display:none}
+      .roles-grid{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media (max-width:860px){
+      :root{--space:var(--space-mobile)}
+      .nav-links a{display:none}
+      .operation-stage{height:320px}
+      .nodes{padding:0 22px}
+      .node{transform:translateY(-64px)}
+      .node.down{transform:translateY(64px)}
+      .job{width:164px; height:72px}
+      .flow-grid,.roles-grid,.proof-grid{grid-template-columns:1fr}
+      .flow-card:after{display:none}
+    }
+
+    @media (max-width:640px){
+      .container{width:min(var(--max), calc(100% - 24px))}
+      h1{font-size:58px}
+      h2{font-size:44px}
+      .lead{font-size:17px}
+      .body{font-size:18px}
+      .thesis-panel,.flow-panel,.proof-panel{padding:22px}
+      .actions{flex-direction:column}
+      .btn{width:100%}
+      .operation-top{flex-direction:column; align-items:flex-start}
+      .nodes{padding:0 10px}
+      .node span{font-size:9px}
+      .fracture-collage{
+        min-height:auto;
+        display:flex; flex-direction:column; gap:16px;
+        padding:16px;
+      }
+      .paper{
+        position:relative !important;
+        width:100%;
+        top:auto !important; right:auto !important; bottom:auto !important; left:auto !important;
+        transform:none !important;
+      }
+      .thread,.sticker{display:none}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="#top">
+        <div class="brand-mark"></div>
+        <div class="brand-copy">
+          <small>BY VOIDDA</small>
+          <strong>RUSH</strong>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="#fratura">Buraco</a>
+        <a href="#sistema">Sistema</a>
+        <a href="#fabrica">Fábrica</a>
+        <a href="#prova">Prova</a>
+        <a href="#fecho">Fecho</a>
+        <div class="lang">EN</div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section" id="top" style="padding-top:86px">
+    <div class="container">
+      <div class="hero-stack">
+        <div class="eyebrow"><span class="dot"></span> operação criativa em tempo real</div>
+        <h1>RUSH fecha o miolo operacional que o mercado deixa solto.</h1>
+        <p class="lead">Não é ferramenta para “organizar tarefa”. Não é software para parecer moderno. É sistema para travar pedido, decupagem, carta, jobs, fábrica, validação e entrega dentro de um fluxo único.</p>
+        <p class="body">O problema nunca esteve só no comercial, no financeiro ou no atendimento. O buraco está entre o que foi vendido, o que foi aprovado, o que entrou na fábrica, o que passou no técnico e o que saiu para a agência. É aí que prazo estoura, retrabalho vira normal e autoridade se perde.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tese">
+    <div class="container">
+      <div class="thesis-panel panel">
+        <span class="label">tese</span>
+        <h2>Sem controle no miolo, crescer só amplia o caos.</h2>
+        <div class="thesis-lines">
+          <div class="thesis-line">O RUSH nasce para cobrir o que normalmente fica no meio do caminho: a operação real entre orçamento, criação, produção, validação e entrega.</div>
+          <div class="thesis-line">Não é dashboard bonito. É visibilidade operacional real: o que entrou, o que virou escopo, o que está rodando, o que está travado e o que foi entregue.</div>
+          <div class="thesis-line">O ganho não é estético. É redução de ruído, menos retrabalho, mais previsibilidade e mais autoridade diante de agência e cliente.</div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="#sistema">Ver como o sistema fecha isso</a>
+          <a class="btn btn-secondary" href="#prova">Ver a prova técnica</a>
+        </div>
+        <div class="pill-row">
+          <div class="pill">Pedido → Decupagem → Carta → Jobs</div>
+          <div class="pill">DA → Motion → Dev → Final → QA</div>
+          <div class="pill">Gate técnico + rastreabilidade + entrega</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fratura">
+    <div class="container">
+      <div class="section-head narrow">
+        <span class="label">a fratura do mercado</span>
+        <h2>O que quebra não é a criatividade. É a costura entre as etapas.</h2>
+        <p class="body">Planilha, WhatsApp, pasta, memória e improviso conseguem tocar operação pequena. Quando a complexidade sobe, isso não escala. Só esconde gargalo, empurra erro para frente e transforma retrabalho em rotina.</p>
+      </div>
+
+      <div class="fracture-grid">
+        <div class="fracture-collage">
+          <div class="sticker red">prazo estourando</div>
+          <div class="paper p1">
+            <h3>WhatsApp</h3>
+            <p>“Consegue subir mais dois formatos ainda hoje?” O pedido mudou, mas ninguém travou novo escopo.</p>
+            <small>caos operacional</small>
+          </div>
+          <div class="paper p2">
+            <h3>Planilha</h3>
+            <p>Controle manual sem visão real de fila, prioridade, capacidade, versão ou gargalo.</p>
+            <small>controle improvisado</small>
+          </div>
+          <div class="paper p3">
+            <h3>Arquivo errado</h3>
+            <p>A arte entra ruim, contamina a sequência e o custo explode só no final.</p>
+            <small>custo invisível</small>
+          </div>
+          <div class="thread t1"></div>
+          <div class="thread t2"></div>
+          <div class="thread t3"></div>
+          <div class="sticker blue">ninguém vê tudo</div>
+        </div>
+
+        <div class="fracture-list">
+          <div class="fracture-item">
+            <strong>Sem visão consolidada</strong>
+            <p>O coordenador reage tarde porque não enxerga o fluxo inteiro em um lugar só.</p>
+          </div>
+          <div class="fracture-item">
+            <strong>Retrabalho normalizado</strong>
+            <p>Sem gate técnico real, o erro passa adiante e custa mais caro em cada etapa seguinte.</p>
+          </div>
+          <div class="fracture-item">
+            <strong>Escopo informal</strong>
+            <p>O que foi vendido, o que foi decupado e o que foi pedido no meio do processo deixam de bater.</p>
+          </div>
+          <div class="fracture-item">
+            <strong>Cliente cobrando no escuro</strong>
+            <p>Sem status confiável, a resposta vira improviso e a autoridade da produtora desce.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sistema">
+    <div class="container">
+      <div class="section-head wide">
+        <span class="label">o sistema</span>
+        <h2>O RUSH fecha esse buraco em vez de maquiar ele.</h2>
+        <p class="body">A lógica não começa em “task”. Começa em pedido. Depois decupa, congela em carta, cria jobs, distribui na fábrica, barra erro no gate técnico e fecha em entrega rastreável. Cada parte existe para impedir vazamento operacional.</p>
+      </div>
+
+      <div class="operation-panel panel">
+        <div class="operation-top">
+          <div class="operation-title">Linha de produção ativa</div>
+          <div class="operation-badge">multi-etapas · operação ao vivo</div>
+        </div>
+        <div class="operation-stage">
+          <div class="belt"></div>
+
+          <div class="nodes">
+            <div class="node orange"><div class="node-dot"></div><span>Pedido</span></div>
+            <div class="node blue down"><div class="node-dot"></div><span>Decupagem</span></div>
+            <div class="node violet"><div class="node-dot"></div><span>Carta</span></div>
+            <div class="node orange down"><div class="node-dot"></div><span>Motion</span></div>
+            <div class="node blue"><div class="node-dot"></div><span>Dev</span></div>
+            <div class="node green down"><div class="node-dot"></div><span>QA</span></div>
+          </div>
+
+          <div class="job j1">
+            <small>JOB-041</small>
+            <strong>Campanha varejo · 2 formatos</strong>
+            <span>Motion · urgente</span>
+          </div>
+          <div class="job j2">
+            <small>JOB-058</small>
+            <strong>Social pack · feed + stories</strong>
+            <span>QA interno</span>
+          </div>
+          <div class="job j3">
+            <small>JOB-063</small>
+            <strong>HTML5 programático · final</strong>
+            <span>Dev + final</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fluxo">
+    <div class="container">
+      <div class="section-head wide">
+        <span class="label">sequência operacional</span>
+        <h2>Não é uma coleção de telas. É uma cadeia com ordem, dono e consequência.</h2>
+        <p class="body">Cada etapa existe para herdar informação da anterior e travar erro antes que ele chegue no final. É isso que separa software bonito de sistema de operação.</p>
+      </div>
+
+      <div class="flow-panel panel">
+        <div class="flow-grid">
+          <article class="flow-card">
+            <span class="flow-tag">01 · entrada</span>
+            <h3>Pedido</h3>
+            <p>Cliente, campanha, prazo, contexto e escopo-lei do trabalho.</p>
+          </article>
+          <article class="flow-card">
+            <span class="flow-tag">02 · cálculo</span>
+            <h3>Decupagem</h3>
+            <p>Quebra de peças, complexidade, tempo, custo e risco operacional.</p>
+          </article>
+          <article class="flow-card">
+            <span class="flow-tag">03 · contrato</span>
+            <h3>Carta</h3>
+            <p>O que foi prometido vira documento congelado para aprovação.</p>
+          </article>
+          <article class="flow-card">
+            <span class="flow-tag">04 · produção</span>
+            <h3>Jobs</h3>
+            <p>Unidades de trabalho nascem com status, urgência e responsáveis.</p>
+          </article>
+          <article class="flow-card">
+            <span class="flow-tag">05 · fábrica</span>
+            <h3>Fábrica</h3>
+            <p>DA, Motion, Dev, Final e QA operam com contexto e ordem clara.</p>
+          </article>
+          <article class="flow-card">
+            <span class="flow-tag">06 · controle</span>
+            <h3>Gate técnico</h3>
+            <p>Laudo, confronto, tolerância e bloqueio impedem erro mascarado.</p>
+          </article>
+          <article class="flow-card">
+            <span class="flow-tag">07 · saída</span>
+            <h3>Entrega</h3>
+            <p>Histórico, versão, rastreabilidade e visibilidade externa confiável.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fabrica">
+    <div class="container">
+      <div class="section-head wide">
+        <span class="label">a fábrica</span>
+        <h2>Cada etapa tem dono. Cada dono recebe contexto suficiente para trabalhar certo.</h2>
+        <p class="body">A lógica aqui é adulta: o executor não entra para descobrir problema escondido. Entra para operar o que já foi qualificado, com fila, prioridade, regra e responsabilidade visível.</p>
+      </div>
+
+      <div class="roles-grid">
+        <article class="role-card">
+          <div class="role-icon ri-da">DA</div>
+          <h3>DA</h3>
+          <p>Recebe a arte, valida estrutura e impede que arquivo problemático contamine a operação inteira.</p>
+          <div class="tag-row">
+            <span class="tag">Laudo de entrada</span>
+            <span class="tag">Triagem técnica</span>
+          </div>
+        </article>
+
+        <article class="role-card">
+          <div class="role-icon ri-mo">MO</div>
+          <h3>Motion</h3>
+          <p>Anima o que já passou pelo crivo técnico. Produz, não investiga bomba.</p>
+          <div class="tag-row">
+            <span class="tag">Fila por prioridade</span>
+            <span class="tag">Desdobras claras</span>
+          </div>
+        </article>
+
+        <article class="role-card">
+          <div class="role-icon ri-dev">DEV</div>
+          <h3>Dev</h3>
+          <p>Clicktag, peso, compatibilidade e empacotamento técnico para mídia digital.</p>
+          <div class="tag-row">
+            <span class="tag">HTML5 final</span>
+            <span class="tag">Regras por veículo</span>
+          </div>
+        </article>
+
+        <article class="role-card">
+          <div class="role-icon ri-qa">QA</div>
+          <h3>Final + QA</h3>
+          <p>Confronto técnico, gate automático, aprovação e entrega rastreável.</p>
+          <div class="tag-row">
+            <span class="tag">Confronto ΔE</span>
+            <span class="tag">Aprovação</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prova">
+    <div class="container">
+      <div class="section-head wide">
+        <span class="label">prova técnica</span>
+        <h2>Sem critério técnico, qualidade vira discussão. Com critério técnico, vira dado.</h2>
+        <p class="body">O valor do RUSH não está só em “acompanhar status”. Está em transformar validação em critério verificável, rastreável e defensável dentro da operação.</p>
+      </div>
+
+      <div class="proof-panel panel">
+        <div class="proof-screen">
+          <div class="proof-top">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <strong>Laudo de Entrada × Laudo de Saída</strong>
+          </div>
+
+          <div class="proof-body">
+            <div class="proof-grid">
+              <div class="proof-card">
+                <div class="proof-tag"><span class="proof-dot" style="background:#8faed0"></span>Entrada · PSD</div>
+                <div class="proof-row"><span class="proof-label">Perfil de cor</span><span class="proof-val ok">sRGB ●</span></div>
+                <div class="proof-row"><span class="proof-label">Dimensões</span><span class="proof-val">300×250</span></div>
+                <div class="proof-row"><span class="proof-label">Resolução</span><span class="proof-val ok">72 DPI ●</span></div>
+                <div class="proof-row"><span class="proof-label">Camadas ocultas</span><span class="proof-val ok">0 ●</span></div>
+                <div class="proof-row"><span class="proof-label">Smart Objects</span><span class="proof-val ok">0 ●</span></div>
+                <div class="proof-row"><span class="proof-label">Peso</span><span class="proof-val warn">4.2 MB ◐</span></div>
+              </div>
+
+              <div class="proof-card">
+                <div class="proof-tag"><span class="proof-dot" style="background:#71d8b4"></span>Saída · GIF</div>
+                <div class="proof-row"><span class="proof-label">Dimensões</span><span class="proof-val ok">300×250 ●</span></div>
+                <div class="proof-row"><span class="proof-label">Peso</span><span class="proof-val ok">148 KB ●</span></div>
+                <div class="proof-row"><span class="proof-label">Loops</span><span class="proof-val ok">3× ●</span></div>
+                <div class="proof-row"><span class="proof-label">FPS</span><span class="proof-val ok">20 ●</span></div>
+                <div class="proof-row"><span class="proof-label">Duração</span><span class="proof-val ok">15s ●</span></div>
+                <div class="proof-row"><span class="proof-label">Frames</span><span class="proof-val">42</span></div>
+              </div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-badge">✓</div>
+              <div>
+                <strong>Confronto: APROVADO</strong>
+                <p>ΔE médio 4.2 · pior cor 9.1 — dentro da tolerância GIF. O ponto não é o número em si. É a operação deixar de depender de “achei bom”.</p>
+                <div class="result-colors">
+                  <div class="pair"><span class="sw" style="background:#f2c7b9"></span>→<span class="sw" style="background:#f0d0c5"></span>0.3</div>
+                  <div class="pair"><span class="sw" style="background:#6d86ff"></span>→<span class="sw" style="background:#8ca2ff"></span>3.8</div>
+                  <div class="pair"><span class="sw" style="background:#16345f"></span>→<span class="sw" style="background:#264b7c"></span>9.1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="decisao">
+    <div class="container">
+      <div class="section-head wide">
+        <span class="label">consequência</span>
+        <h2>O que o RUSH realmente vende não é tela. É controle.</h2>
+        <p class="body">Controle sobre escopo, capacidade, versão, validação, prioridade, entrega e narrativa diante do cliente. Quando isso falta, a operação trabalha mais e vale menos.</p>
+      </div>
+
+      <div class="decision-grid">
+        <div class="decision-card">
+          <h3>O que ele fecha</h3>
+          <p>Fluxo único, capacidade por profissional, histórico de versões, validação PSD, gate de cor, escopo documentado, fila visível e entrega rastreável.</p>
+          <div class="question-list">
+            <div class="question">Quantas planilhas sua operação precisa para funcionar hoje?</div>
+            <div class="question">Qual o status de cada peça — e quem é o responsável agora?</div>
+            <div class="question">Quando o cliente pede mais formatos no meio do job, você tem registro formal?</div>
+          </div>
+        </div>
+
+        <div class="decision-card">
+          <h3>O que ele elimina</h3>
+          <p>Improviso, retrabalho invisível, validação subjetiva, escopo informal, fila opaca e cliente cobrando no escuro.</p>
+          <div class="question-list">
+            <div class="question">Quantas revisões o PSD já teve antes de chegar no Motion?</div>
+            <div class="question">A cor bateu ou só “pareceu próxima”?</div>
+            <div class="question">Você responde andamento na hora ou vai perguntar para alguém?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fecho">
+    <div class="container">
+      <div class="closing-grid">
+        <div class="closing-card">
+          <span class="label">fecho</span>
+          <h2 style="margin-bottom:22px">Se você não controlar o fluxo, o fluxo controla você.</h2>
+          <p>O RUSH existe para travar o que normalmente fica solto: o intervalo entre o que foi vendido, o que foi combinado, o que entrou na fábrica, o que passou no técnico e o que foi entregue. Não é acessório. É fundação operacional.</p>
+          <div class="actions" style="margin-top:28px">
+            <a class="btn btn-primary" href="#top">Voltar ao topo</a>
+            <a class="btn btn-secondary" href="#sistema">Rever o sistema</a>
+          </div>
+        </div>
+
+        <div class="closing-card">
+          <h3 style="margin-bottom:14px">Posicionamento</h3>
+          <p class="small">O RUSH não quer parecer “mais uma plataforma”. Quer parecer o sistema que uma produtora séria precisava ter construído antes de crescer.</p>
+          <div style="height:18px"></div>
+          <h3 style="margin-bottom:14px">Leitura final</h3>
+          <p class="small">Produto premium, frio, operacional e inevitável. Sem startup genérica. Sem hero vazio. Sem esteira infantilizada. Sem ruído visual desnecessário.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Reconstrução nova, do zero, com arquitetura e copy refeitas.</div>
+</body>
+</html>

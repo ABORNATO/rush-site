@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RUSH — versão reconstruída do zero</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --bg-soft:#eef2f6;
+      --card:#ffffff;
+      --line:#d8e0e8;
+      --text:#1b2430;
+      --text-2:#3a4b5d;
+      --text-3:#586b7e;
+      --blue:#8fafd1;
+      --blue-2:#5f7692;
+      --orange:#ff8752;
+      --violet:#8e7ef0;
+      --green:#62d7ad;
+      --shadow:0 18px 60px rgba(46,64,87,.08);
+      --max:1180px;
+      --gap-section:360px;
+      --gap-mobile:160px;
+      --radius:28px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(143,175,209,.16), transparent 28%),
+        radial-gradient(circle at 100% 10%, rgba(143,175,209,.10), transparent 26%),
+        linear-gradient(180deg,#fbfcfd 0%, #f4f6f8 100%);
+      overflow-x:hidden;
+    }
+
+    .container{width:min(var(--max), calc(100% - 40px)); margin:0 auto}
+    nav{
+      position:sticky; top:0; z-index:50;
+      background:rgba(250,252,254,.78);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(88,107,126,.12);
+    }
+    .nav-inner{
+      min-height:78px;
+      display:flex; align-items:center; justify-content:space-between; gap:24px;
+    }
+    .brand{display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit}
+    .mark{
+      width:44px; height:44px; border-radius:14px;
+      background:linear-gradient(135deg,#2d6cdf,#7aa5ff);
+      position:relative; box-shadow:0 12px 30px rgba(45,108,223,.18);
+    }
+    .mark:before{
+      content:"";
+      position:absolute; inset:8px 12px 8px 12px;
+      clip-path:polygon(0 100%, 34% 0, 70% 0, 42% 58%, 83% 58%, 18% 100%);
+      background:white;
+    }
+    .brand-copy small{
+      display:block; font:700 11px/1 var(--mono); letter-spacing:.16em; color:var(--text-3); margin-bottom:5px;
+    }
+    .brand-copy strong{
+      display:block; font-size:18px; line-height:1; color:var(--blue-2);
+    }
+    .nav-links{display:flex; gap:28px; align-items:center}
+    .nav-links a{font-size:14px; color:var(--text-3); text-decoration:none}
+    .lang{
+      display:inline-grid; place-items:center;
+      width:42px; height:42px; border-radius:999px;
+      border:1px solid var(--line); color:var(--text); font-weight:700; background:#fff;
+    }
+
+    .section{
+      padding-top:var(--gap-section);
+      padding-bottom:0;
+    }
+
+    .intro{
+      padding-top:72px;
+      min-height:auto;
+    }
+
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:10px;
+      border:1px solid rgba(88,107,126,.14);
+      background:rgba(255,255,255,.72);
+      border-radius:999px;
+      padding:11px 18px;
+      color:var(--blue-2);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      margin-bottom:38px;
+    }
+    .eyebrow .dot{
+      width:8px; height:8px; border-radius:50%; background:var(--blue);
+      box-shadow:0 0 0 4px rgba(143,175,209,.14);
+    }
+
+    h1{
+      font-size:clamp(58px, 9vw, 112px);
+      line-height:.92;
+      letter-spacing:-.07em;
+      max-width:760px;
+      margin-bottom:42px;
+    }
+    .lead{
+      max-width:760px;
+      color:var(--text-2);
+      font-size:16px;
+      line-height:1.55;
+      margin-bottom:44px;
+    }
+    .body-copy{
+      max-width:760px;
+      color:var(--text-3);
+      font-size:18px;
+      line-height:1.65;
+    }
+
+    .support-card{
+      width:min(860px,100%);
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(88,107,126,.12);
+      border-radius:var(--radius);
+      padding:34px;
+      box-shadow:var(--shadow);
+    }
+    .support-text{
+      color:var(--text-3);
+      font-size:18px;
+      line-height:1.65;
+      margin-bottom:34px;
+    }
+    .actions{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:28px}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-height:54px; padding:0 26px; border-radius:999px;
+      font-weight:700; text-decoration:none; transition:.2s ease;
+      border:1px solid transparent;
+    }
+    .btn-primary{background:linear-gradient(135deg,#a6c7e8,#8fafd1); color:#193149}
+    .btn-secondary{background:#fff; border-color:var(--line); color:var(--text)}
+    .btn:hover{transform:translateY(-1px)}
+    .note{
+      color:var(--text-3);
+      font-size:14px;
+      line-height:1.6;
+      margin-bottom:24px;
+      max-width:760px;
+    }
+    .pills{display:flex; flex-wrap:wrap; gap:12px}
+    .pill{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:11px 16px;
+      color:var(--blue-2);
+      font:700 12px/1.2 var(--mono);
+    }
+
+    .stage-wrap{
+      background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(249,251,253,.96));
+      border:1px solid rgba(88,107,126,.12);
+      border-radius:32px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .stage-top{
+      display:flex; justify-content:space-between; align-items:center; gap:20px;
+      padding:20px 24px;
+      background:rgba(255,255,255,.84);
+      border-bottom:1px solid rgba(88,107,126,.10);
+    }
+    .stage-title{
+      color:var(--text);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .stage-badge{
+      border:1px solid rgba(143,175,209,.20);
+      background:rgba(143,175,209,.10);
+      border-radius:999px;
+      padding:8px 14px;
+      color:var(--blue-2);
+      font:700 11px/1 var(--mono);
+    }
+    .stage-body{
+      position:relative;
+      height:340px;
+      padding:24px;
+      background:linear-gradient(180deg,#fbfcfe 0%, #f4f7fa 100%);
+      overflow:hidden;
+    }
+    .belt{
+      position:absolute;
+      left:24px; right:24px; top:50%;
+      transform:translateY(-50%);
+      height:112px;
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(246,248,251,.95), rgba(239,243,247,.98));
+      border:1px solid rgba(88,107,126,.08);
+      overflow:hidden;
+    }
+    .belt:before, .belt:after{
+      content:"";
+      position:absolute; inset:0;
+      background:repeating-linear-gradient(
+        90deg,
+        transparent 0 58px,
+        rgba(88,107,126,.05) 58px 60px
+      );
+      animation:track 14s linear infinite;
+    }
+    .belt:after{transform:translateX(30px); opacity:.5}
+    @keyframes track{
+      from{transform:translateX(0)}
+      to{transform:translateX(120px)}
+    }
+
+    .nodes{
+      position:absolute; inset:0;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:0 78px;
+      pointer-events:none;
+    }
+    .node{
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      transform:translateY(-72px);
+    }
+    .node.down{transform:translateY(72px)}
+    .node-dot{
+      width:18px; height:18px; border-radius:50%;
+      background:#fff; border:2px solid rgba(88,107,126,.16);
+      box-shadow:0 0 0 7px rgba(88,107,126,.04);
+    }
+    .node span{
+      font:700 10px/1.2 var(--mono);
+      letter-spacing:.08em; text-transform:uppercase;
+      color:var(--text-3);
+      text-align:center;
+    }
+    .orange .node-dot{background:rgba(255,135,82,.14); border-color:rgba(255,135,82,.38)}
+    .blue .node-dot{background:rgba(143,175,209,.16); border-color:rgba(143,175,209,.42)}
+    .violet .node-dot{background:rgba(142,126,240,.14); border-color:rgba(142,126,240,.38)}
+    .green .node-dot{background:rgba(98,215,173,.14); border-color:rgba(98,215,173,.38)}
+
+    .job{
+      position:absolute;
+      width:182px; height:74px;
+      border-radius:18px;
+      padding:10px 12px;
+      color:#fff;
+      display:flex; flex-direction:column; justify-content:space-between;
+      box-shadow:0 10px 24px rgba(32,46,64,.14);
+      animation:jobmove 16s linear infinite;
+    }
+    .job small{
+      font:700 9px/1 var(--mono); letter-spacing:.10em; opacity:.9; text-transform:uppercase;
+    }
+    .job strong{
+      font-size:12px; line-height:1.15; letter-spacing:-.01em;
+    }
+    .job span{
+      font-size:10px; opacity:.92;
+    }
+    .job.j1{top:18%; left:-210px; background:linear-gradient(135deg,#ff8752,#ff9a63); animation-delay:0s}
+    .job.j2{top:42%; left:-250px; background:linear-gradient(135deg,#6d87ff,#88a0ff); animation-delay:-5s}
+    .job.j3{top:66%; left:-230px; background:linear-gradient(135deg,#62d7ad,#7be3bc); animation-delay:-10s}
+
+    @keyframes jobmove{
+      from{transform:translateX(0)}
+      to{transform:translateX(calc(var(--max) + 340px))}
+    }
+
+    .section-head{
+      max-width:920px;
+      margin-bottom:44px;
+    }
+    .label{
+      display:block;
+      color:var(--blue-2);
+      font:700 12px/1 var(--mono);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom:18px;
+    }
+    h2{
+      font-size:clamp(36px,6vw,68px);
+      line-height:.96;
+      letter-spacing:-.05em;
+      margin-bottom:22px;
+    }
+    .section-desc{
+      color:var(--text-3);
+      font-size:20px;
+      line-height:1.65;
+      max-width:780px;
+    }
+
+    .wow-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:22px;
+    }
+    .wow-card{
+      background:#fff;
+      border:1px solid rgba(88,107,126,.12);
+      border-radius:26px;
+      padding:30px;
+      box-shadow:var(--shadow);
+      min-height:260px;
+    }
+    .wow-card small{
+      display:block; color:var(--blue-2); font:700 11px/1 var(--mono);
+      letter-spacing:.12em; text-transform:uppercase; margin-bottom:16px;
+    }
+    .wow-card h3{
+      font-size:28px; line-height:1.05; letter-spacing:-.04em; margin-bottom:18px;
+    }
+    .wow-card ul{list-style:none; display:grid; gap:12px}
+    .wow-card li{color:var(--text-3); font:700 13px/1.45 var(--mono)}
+
+    footer{
+      padding:140px 0 70px;
+      color:var(--text-3);
+      text-align:center;
+    }
+
+    @media (max-width: 980px){
+      :root{--gap-section:240px}
+      .wow-grid{grid-template-columns:1fr}
+      .nodes{padding:0 42px}
+      .stage-body{height:320px}
+      .job{width:164px}
+    }
+
+    @media (max-width: 760px){
+      :root{--gap-section:var(--gap-mobile)}
+      .nav-links a{display:none}
+      h1{font-size:58px}
+      .support-card{padding:24px}
+      .actions{flex-direction:column}
+      .btn{width:100%}
+      .stage-top{flex-direction:column; align-items:flex-start}
+      .stage-body{height:300px}
+      .nodes{padding:0 18px}
+      .node{transform:translateY(-58px)}
+      .node.down{transform:translateY(58px)}
+      .node span{font-size:9px}
+      .job{width:148px; height:68px}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="#top">
+        <div class="mark"></div>
+        <div class="brand-copy">
+          <small>BY VOIDDA</small>
+          <strong>RUSH</strong>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="#wow">Problema</a>
+        <a href="#support">Fluxo</a>
+        <a href="#stage">Fábrica</a>
+        <a href="#diagnostic">Diagnóstico</a>
+        <span class="lang">EN</span>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section intro" id="top">
+    <div class="container">
+      <div class="eyebrow"><span class="dot"></span> operação criativa em tempo real</div>
+      <h1>Pare de operar no improviso.</h1>
+      <p class="lead">O problema não é sua equipe. É seu fluxo. O <strong style="color:#5f7692">RUSH</strong> organiza pedido → fábrica → entrega sem ruído.</p>
+      <p class="body-copy">O <strong style="color:#5f7692">RUSH</strong> organiza o miolo que normalmente quebra: pedido, decupagem, orçamento, jobs, fábrica, validação e entrega.<br><br>Sem isso, você escala caos. Com isso, você escala operação.</p>
+    </div>
+  </section>
+
+  <section class="section" id="support">
+    <div class="container">
+      <div class="support-card">
+        <p class="support-text">Sem isso, você escala caos. Com isso, você escala operação.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#stage">Ver o fluxo real</a>
+          <a class="btn btn-secondary" href="#diagnostic">Explorar o laudo técnico</a>
+        </div>
+        <p class="note"><strong style="color:#5f7692">RUSH</strong> é produto da <strong style="color:#1b2430">VOIDDA</strong>. Desenvolvido para produtoras de pós-publicidade que precisam de controle real sobre o fluxo operacional.</p>
+        <div class="pills">
+          <div class="pill">Pedido → Decupagem → Carta → Jobs</div>
+          <div class="pill">DA → Motion → Dev → Final → QA</div>
+          <div class="pill">Laudo + confronto técnico + gate automático</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="stage">
+    <div class="container">
+      <div class="stage-wrap">
+        <div class="stage-top">
+          <div class="stage-title">Linha de produção ativa</div>
+          <div class="stage-badge">multi-etapas · operação ao vivo</div>
+        </div>
+        <div class="stage-body">
+          <div class="belt"></div>
+
+          <div class="nodes">
+            <div class="node orange"><div class="node-dot"></div><span>Pedido</span></div>
+            <div class="node blue down"><div class="node-dot"></div><span>Decupagem</span></div>
+            <div class="node violet"><div class="node-dot"></div><span>Carta</span></div>
+            <div class="node orange down"><div class="node-dot"></div><span>Motion</span></div>
+            <div class="node blue"><div class="node-dot"></div><span>Dev</span></div>
+            <div class="node green down"><div class="node-dot"></div><span>QA</span></div>
+          </div>
+
+          <div class="job j1">
+            <small>JOB-041</small>
+            <strong>Campanha varejo · 2 formatos</strong>
+            <span>Motion · urgente</span>
+          </div>
+          <div class="job j2">
+            <small>JOB-058</small>
+            <strong>Social pack · feed + stories</strong>
+            <span>QA interno</span>
+          </div>
+          <div class="job j3">
+            <small>JOB-063</small>
+            <strong>HTML5 programático · final</strong>
+            <span>Dev + final</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="wow">
+    <div class="container">
+      <div class="section-head">
+        <span class="label">o que muda na prática</span>
+        <h2>Antes: você apaga incêndio. Depois: você controla o fluxo.</h2>
+        <p class="section-desc">Aqui a lógica já nasce separada em blocos. Nada comprimido dentro do mesmo hero. Cada parte entra na rolagem como capítulo próprio.</p>
+      </div>
+
+      <div class="wow-grid">
+        <article class="wow-card">
+          <small>sem rush</small>
+          <h3>Caos operacional</h3>
+          <ul>
+            <li>— pedido muda no meio</li>
+            <li>— retrabalho na finalização</li>
+            <li>— discussão subjetiva com cliente</li>
+          </ul>
+        </article>
+
+        <article class="wow-card">
+          <small>com rush</small>
+          <h3>Operação controlada</h3>
+          <ul>
+            <li>— escopo congelado</li>
+            <li>— gate técnico bloqueia erro</li>
+            <li>— entrega rastreável</li>
+          </ul>
+        </article>
+
+        <article class="wow-card" id="diagnostic">
+          <small>impacto</small>
+          <h3>Resultado direto</h3>
+          <ul>
+            <li>— menos ruído operacional</li>
+            <li>— menos retrabalho caro</li>
+            <li>— previsibilidade real de prazo</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    RUSH — versão reconstruída do zero, sem reaproveitar a estrutura anterior.
+  </footer>
+</body>
+</html>
