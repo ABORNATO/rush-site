@@ -119,30 +119,26 @@
     .la-s{color:#141824;opacity:0}
     .la-h{color:#141824;opacity:0}
     .la-sub{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font:600 13px/1 var(--mono);letter-spacing:.2em;color:#94a3b8;white-space:nowrap;opacity:0}
-    /* Trigger animations only when section scrolls into view */
-    .reveal.in .la-bolt{animation:la-rise .8s ease-out both, la-slide .7s ease-in-out 1.2s both, la-bounce .5s ease 1.9s both}
-    .reveal.in .la-r{animation:la-letter .5s ease-out 2.3s both}
-    .reveal.in .la-u{animation:la-letter .5s ease-out 2.5s both}
-    .reveal.in .la-s{animation:la-letter .5s ease-out 2.7s both}
-    .reveal.in .la-h{animation:la-letter .5s ease-out 2.9s both}
-    .reveal.in .la-sub{animation:la-fade .6s ease-out 3.2s both}
+    /* Trigger only when visible */
+    .reveal.in .la-bolt{animation:la-appear .6s ease-out .2s both, la-bounce .5s ease .9s both}
+    .reveal.in .la-r{animation:la-letter .4s ease-out 1.3s both}
+    .reveal.in .la-u{animation:la-letter .4s ease-out 1.5s both}
+    .reveal.in .la-s{animation:la-letter .4s ease-out 1.7s both}
+    .reveal.in .la-h{animation:la-letter .4s ease-out 1.9s both}
+    .reveal.in .la-sub{animation:la-fade .5s ease-out 2.2s both}
 
-    @keyframes la-rise{
-      0%{opacity:0;transform:translateY(60px) translateX(140px) scale(.7)}
-      100%{opacity:1;transform:translateY(0) translateX(140px) scale(1)}
-    }
-    @keyframes la-slide{
-      0%{transform:translateY(0) translateX(140px)}
-      100%{transform:translateY(0) translateX(0)}
+    @keyframes la-appear{
+      0%{opacity:0;transform:translateY(40px) scale(.6)}
+      100%{opacity:1;transform:translateY(0) scale(1)}
     }
     @keyframes la-bounce{
-      0%{transform:translateY(0) translateX(0)}
-      40%{transform:translateY(-16px) translateX(0)}
-      70%{transform:translateY(3px) translateX(0)}
-      100%{transform:translateY(0) translateX(0)}
+      0%{transform:translateY(0)}
+      35%{transform:translateY(-18px)}
+      65%{transform:translateY(4px)}
+      100%{transform:translateY(0)}
     }
     @keyframes la-letter{
-      0%{opacity:0;transform:translateX(-12px)}
+      0%{opacity:0;transform:translateX(-14px)}
       100%{opacity:1;transform:translateX(0)}
     }
     @keyframes la-fade{
@@ -1006,7 +1002,7 @@
       document.querySelectorAll('.fan-deck').forEach(el=>fanObs.observe(el));
 
       /* Scroll fade: sections fade out as they exit top, fade in as they enter bottom */
-      const fadeSections=document.querySelectorAll('.section, .opening-def, .hero, .quiz-inline, .closing');
+      const fadeSections=document.querySelectorAll('.section, .hero, .quiz-inline, .closing');
       const fadeZone=0.35; /* top/bottom 35% of viewport is the fade zone */
 
       function scrollFade(){
