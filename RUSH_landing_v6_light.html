@@ -107,6 +107,7 @@
     .hero-pill{padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.08);font:600 12px/1.2 var(--mono);color:#3a4560}
 
     /* === OPENING DEFINITION === */
+    .logo-section{min-height:70vh;display:flex;align-items:center;justify-content:center;background:var(--bg2)}
     .opening-def{position:relative;z-index:1;padding:120px 0;background:var(--bg2)}
     .opening-inner{margin:0 auto;text-align:center}
     .opening-mark{margin-bottom:36px;line-height:1}
@@ -150,7 +151,7 @@
     .opening-sub{margin-top:24px;font-size:18px;line-height:1.6;color:#5c6680;max-width:800px;margin-left:auto;margin-right:auto}
 
     /* === SECTIONS === */
-    .section{position:relative;z-index:1;padding:160px 0}
+    .section{position:relative;z-index:1;padding:100px 0}
     .section:nth-child(even of .section){background:var(--bg2)}
     .section-head{display:grid;grid-template-columns:.95fr 1.05fr;gap:28px;align-items:end;margin-bottom:56px}
     .label{font:700 12px/1 var(--mono);letter-spacing:.15em;color:var(--blue);text-transform:uppercase;margin-bottom:16px}
@@ -321,6 +322,12 @@
     /* === SCROLL ANIMATIONS === */
     .reveal{opacity:0;transform:translateY(80px);transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1)}
     .reveal.in{opacity:1;transform:none}
+    /* Logo section: just fade, no slide — children handle their own animation */
+    .logo-section.reveal{transform:none;transition:opacity 1.2s ease}
+    .logo-section.reveal.in{opacity:1}
+    /* Text section: slide up independently with its own timing */
+    .opening-def.reveal{transform:translateY(60px);transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.22,1,.36,1)}
+    .opening-def.reveal.in{opacity:1;transform:none}
     /* Staggered children within sections */
     .reveal.slide-left{transform:translateX(-50px)}
     .reveal.slide-left.in{transform:none}
@@ -330,7 +337,7 @@
     .reveal.scale-in.in{transform:scale(1);opacity:1}
 
     /* Section dividers */
-    .section-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.06) 20%,rgba(0,0,0,.06) 80%,transparent);margin:40px auto;width:80%;position:relative;z-index:1}
+    .section-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.06) 20%,rgba(0,0,0,.06) 80%,transparent);margin:20px auto;width:80%;position:relative;z-index:1}
 
     /* === MOCK / PROVA VISUAL === */
     .mock{border:1px solid rgba(0,0,0,.08);border-radius:28px;background:white;box-shadow:var(--shadow-lg);overflow:hidden;transition:transform .4s ease, box-shadow .4s ease}
@@ -546,10 +553,8 @@
     </div>
   </header>
 
-  <section class="opening-def reveal">
-    <div class="container">
-      <div class="opening-inner">
-        <div class="opening-mark">
+  <section class="logo-section reveal">
+    <div class="container" style="text-align:center">
         <div class="logo-anim">
           <svg class="la-bolt" viewBox="0 0 52 90" xmlns="http://www.w3.org/2000/svg">
             <polygon points="0,70 28,0 44,0 22,46 52,46 16,90 0,90" fill="#2563eb"/>
@@ -558,7 +563,14 @@
           <span class="la-r">R</span><span class="la-u">U</span><span class="la-s">S</span><span class="la-h">H</span>
           <span class="la-sub">BY VOIDDA</span>
         </div>
-      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="opening-def reveal">
+    <div class="container">
+      <div class="opening-inner">
         <h2 class="opening-text"><span class="rush-name">RUSH</span> é produto da <strong>VOIDDA</strong>. Desenvolvido para produtoras de pós-produção publicitária que precisam de controle real sobre o fluxo operacional.</h2>
         <p class="opening-sub">Da entrada do briefing à entrega final — o sistema que organiza o miolo operacional de produtoras criativas.</p>
       </div>
@@ -982,12 +994,45 @@
         entries.forEach(e=>{
           if(e.isIntersecting){
             e.target.classList.add('in');
+            /* Force animation restart on logo section */
+            if(e.target.classList.contains('logo-section')){
+              e.target.querySelectorAll('.la-bolt,.la-r,.la-u,.la-s,.la-h,.la-sub').forEach(el=>{
+                el.style.animation='none';
+                void el.offsetWidth;
+                el.style.animation='';
+              });
+            }
           } else {
             e.target.classList.remove('in');
           }
         })
       },{threshold:0.08, rootMargin:'0px 0px -40px 0px'});
-      document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+      document.querySelectorAll('.reveal:not(.logo-section):not(.opening-def)').forEach(el=>io.observe(el));
+
+      /* Independent observers for logo + text sections (different thresholds = staggered entry) */
+      const logoObs=new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            e.target.classList.add('in');
+            e.target.querySelectorAll('.la-bolt,.la-r,.la-u,.la-s,.la-h,.la-sub').forEach(el=>{
+              el.style.animation='none';
+              void el.offsetWidth;
+              el.style.animation='';
+            });
+          } else {
+            e.target.classList.remove('in');
+          }
+        })
+      },{threshold:0.15});
+      document.querySelectorAll('.logo-section').forEach(el=>logoObs.observe(el));
+
+      const defObs=new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){ e.target.classList.add('in'); }
+          else { e.target.classList.remove('in'); }
+        })
+      },{threshold:0.15, rootMargin:'0px 0px -120px 0px'});
+      document.querySelectorAll('.opening-def').forEach(el=>defObs.observe(el));
 
       /* Fan-deck: cards fan out when visible, collapse when out */
       const fanObs=new IntersectionObserver((entries)=>{
